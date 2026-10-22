@@ -1,587 +1,87 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EEE3203 W03 – Mesh and nodal analysis, step by step</title>
+<title>Circuit Analysis</title>
+<meta name="description" content="Interactive, step-by-step practice for nodal and mesh analysis of DC and AC (phasor) circuits.">
 <style>
-:root{--bg:#f4f6f8;--card:#fff;--ink:#16242e;--muted:#5b6b76;--line:#d5dbe1;
-  --c1:#c62828;--c2:#1565c0;--c3:#6a1b9a;--src:#00695c;--nb:#e65100;--nc:#8d6e00;--hl:#ffe08a;--ok:#2e7d32;--bad:#c62828;--note:#eef4fb}
-@media (prefers-color-scheme:dark){:root{--bg:#12171c;--card:#1b232b;--ink:#e8eef2;--muted:#9fb0bb;--line:#35424d;
-  --c1:#ff7b72;--c2:#6cb6ff;--c3:#d2a8ff;--src:#5fd3c0;--nb:#ffa657;--nc:#e3c04d;--hl:#6b5a14;--ok:#7ee787;--bad:#ff7b72;--note:#222e3a}}
+:root{--bg:#f4f6f8;--card:#fff;--ink:#16242e;--muted:#5b6b76;--line:#d5dbe1;--note:#eef4fb;--acc:#1f7a8c;--k1:#d9480f;--k2:#1565c0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12171c;--card:#1b232b;--ink:#e8eef2;--muted:#9fb0bb;--line:#35424d;--note:#222e3a;--acc:#5fd3c0;--k1:#ff9e5e;--k2:#6cb6ff}}
+:root[data-theme="dark"]{--bg:#12171c;--card:#1b232b;--ink:#e8eef2;--muted:#9fb0bb;--line:#35424d;--note:#222e3a;--acc:#5fd3c0;--k1:#ff9e5e;--k2:#6cb6ff}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 "Segoe UI",system-ui,Arial,sans-serif}
-header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--card)}
-h1{font-size:1.2rem;margin:0}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Segoe UI",system-ui,-apple-system,Arial,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+header{padding:12px 20px;border-bottom:1px solid var(--line);background:var(--card)}
+h1{font-size:1.25rem;margin:0}
 h1 small{display:block;font-weight:400;color:var(--muted);font-size:.85rem}
-main{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;padding:16px 20px;max-width:1500px;margin:auto}
-@media (max-width:980px){main{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
-.left{display:flex;flex-direction:column;gap:16px}
-svg{display:block;width:100%;height:auto}
-svg text{font-family:"Segoe UI",system-ui,Arial,sans-serif;fill:var(--ink)}
-.wire{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
-.node{fill:none;stroke-width:13;stroke-linecap:round;stroke-linejoin:round;opacity:.45}
-.halo{fill:var(--hl);opacity:0;transition:opacity .25s}
-.halo.on{opacity:1}
-.loop{fill:none;stroke-width:2.5;stroke-dasharray:2 7;stroke-linecap:round}
-.fade{transition:opacity .3s}
-.c1{color:var(--c1)}.c2{color:var(--c2)}.c3{color:var(--c3)}.cs{color:var(--src)}.cb{color:var(--nb)}.cc{color:var(--nc)}
-.c1,.c2,.c3,.cs,.cb,.cc{font-weight:600}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-button{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 14px;cursor:pointer}
-button:hover{border-color:var(--muted)}
-button:disabled{opacity:.4;cursor:default}
-.seg button{border:0;border-radius:0}
-.seg button.on,.dots button.on{background:var(--ink);color:var(--card)}
-.ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.nav{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
-.dots{display:flex;gap:4px;margin:0 6px}
-.dots button{padding:2px 0;width:32px;border-radius:50%}
-h2{font-size:1.15rem;margin:.2em 0 .5em}
-p,ul,ol{margin:.5em 0}
-ul,ol{padding-left:1.2em}
-.eq{font-size:1.08rem;margin:.35em 0;padding:6px 10px;border-left:3px solid var(--line);font-variant-numeric:tabular-nums}
-.term{opacity:.12;transition:opacity .4s;border-radius:4px;padding:1px 2px;cursor:default}
-.term.on{opacity:1}
-.term[data-el]:hover{background:var(--hl)}
-.note{background:var(--note);border-radius:8px;padding:8px 12px;font-size:.93rem;margin:.7em 0}
-.note b{font-weight:600}
-table{border-collapse:collapse;width:100%;font-size:.95rem;margin:.6em 0}
-th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
-th{background:var(--note)}
-.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}
-.muted{color:var(--muted);font-size:.9rem}
-details{margin:.6em 0}summary{cursor:pointer;color:var(--muted)}
-.guess{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:.6em 0;padding:8px 12px;background:var(--note);border-radius:8px}
-.guess input{flex:1;min-width:180px}
-input[type=range]{accent-color:var(--nb)}
-.bal{display:grid;grid-template-columns:3em 1fr 4.5em;gap:8px;align-items:center;margin:.25em 0;font-size:.95rem}
-.bar{height:14px;background:var(--note);border-radius:7px;overflow:hidden;display:flex}
-.bar i{display:block;height:100%;transition:width .15s}
-.sl{display:grid;grid-template-columns:8.5em 1fr 3.5em;gap:8px;align-items:center;margin:.2em 0}
-.sl output{text-align:right;font-variant-numeric:tabular-nums}
-.presets{display:flex;flex-wrap:wrap;gap:6px;margin:.6em 0}
-.presets button{font-size:.9rem;padding:4px 10px}
+main{width:100%;max-width:1100px;margin:0 auto;padding:24px 20px 50px;flex:1}
+.intro{margin:0 0 18px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+a.topic{display:flex;flex-direction:column;gap:6px;color:inherit;text-decoration:none;border-top:4px solid var(--c);transition:border-color .15s,box-shadow .15s,transform .15s}
+a.topic:hover,a.topic:focus-visible{border-color:var(--c);box-shadow:0 6px 18px rgba(0,0,0,.08);transform:translateY(-2px);outline:none}
+a.topic.nodal{--c:var(--k2)}
+a.topic.mesh{--c:var(--k1)}
+h2{font-size:1.3rem;margin:0}
+h2.group{font-size:.95rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:26px 0 10px}
+h2.group:first-of-type{margin-top:0}
+.sub{color:var(--muted);font-size:.92rem;margin:0}
+p{margin:.3em 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
+.chip{display:inline-block;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:20px;background:var(--note);color:var(--acc);letter-spacing:.02em;text-transform:uppercase}
+.inc{font-size:.88rem;color:var(--muted)}
+.go{margin-top:auto;padding-top:8px;font-weight:600;color:var(--c)}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:18px 16px 28px;border-top:1px solid var(--line)}
+@media (max-width:600px){body{font-size:16px}main{padding:16px 16px 40px}header{padding:10px 16px}.card{padding:14px 16px}}
+@media (prefers-reduced-motion:reduce){a.topic{transition:none}a.topic:hover{transform:none}}
 </style>
 </head>
 <body>
 <header>
-  <h1>Mesh and nodal analysis, step by step<small>EEE3203 Electric Circuit Theory · Week 3</small></h1>
-  <div class="ctrl">
-    <div class="seg" id="tabs">
-      <button data-t="mesh">Mesh analysis (KVL)</button><button data-t="nodal">Nodal analysis (KCL)</button><button data-t="explore">Explore</button>
-    </div>
-    <button id="pause">Pause</button>
-  </div>
+  <h1>Circuit Analysis<small>Interactive, step-by-step practice</small></h1>
 </header>
-
 <main>
-  <div class="left">
-    <div class="card">
-      <svg id="ckt" viewBox="0 0 840 350" role="img" aria-label="Two-mesh resistor circuit with two voltage sources">
-        <!-- the two meshes ("window panes") -->
-        <g id="g-win" class="fade">
-          <rect x="170" y="80" width="250" height="220" fill="var(--c1)" opacity=".13"/>
-          <rect x="420" y="80" width="250" height="220" fill="var(--c2)" opacity=".13"/>
-          <text x="300" y="196" text-anchor="middle" font-size="22" font-weight="600" style="fill:var(--c1)">Mesh 1</text>
-          <text x="540" y="196" text-anchor="middle" font-size="22" font-weight="600" style="fill:var(--c2)">Mesh 2</text>
-        </g>
-        <!-- node colouring: one colour = one node = one voltage -->
-        <g id="g-nodes" class="fade">
-          <path class="node" stroke="var(--muted)" d="M170,220 V300 H670 V220 M420,230 V300"/>
-          <path class="node" stroke="var(--src)" d="M170,160 V80 H250"/>
-          <path class="node" stroke="var(--nb)" d="M330,80 H505 M420,80 V150"/>
-          <path class="node" stroke="var(--nc)" d="M585,80 H670 V160"/>
-        </g>
-        <!-- highlight halos -->
-        <rect class="halo" id="h-vs1" x="132" y="152" width="76" height="76" rx="38"/>
-        <rect class="halo" id="h-R1"  x="242" y="60"  width="96" height="40" rx="8"/>
-        <rect class="halo" id="h-R2"  x="400" y="142" width="40" height="96" rx="8"/>
-        <rect class="halo" id="h-R3"  x="497" y="60"  width="96" height="40" rx="8"/>
-        <rect class="halo" id="h-vs2" x="632" y="152" width="76" height="76" rx="38"/>
-        <!-- wires and elements -->
-        <path class="wire" d="M170,220 V300 H670 V220 M170,160 V80 H250 M330,80 H505 M585,80 H670 V160 M420,80 V150 M420,230 V300"/>
-        <path class="wire" d="M250,80 l7,-10 l13,20 l13,-20 l13,20 l13,-20 l13,20 l8,-10"/>
-        <path class="wire" d="M505,80 l7,-10 l13,20 l13,-20 l13,20 l13,-20 l13,20 l8,-10"/>
-        <path class="wire" d="M420,150 l10,7 l-20,13 l20,13 l-20,13 l20,13 l-20,13 l10,8"/>
-        <circle class="wire" cx="170" cy="190" r="30"/><circle class="wire" cx="670" cy="190" r="30"/>
-        <path class="wire" stroke-width="2.5" d="M162,177 H178 M170,169 V185 M162,204 H178 M662,177 H678 M670,169 V185 M662,204 H678"/>
-        <circle cx="420" cy="80" r="5" fill="var(--ink)"/><circle cx="420" cy="300" r="5" fill="var(--ink)"/>
-        <text id="t-r1" x="290" y="44" text-anchor="middle" font-size="18"></text>
-        <text id="t-r3" x="545" y="44" text-anchor="middle" font-size="18"></text>
-        <text id="t-r2" x="460" y="150" font-size="18"></text>
-        <text id="t-vs1" x="126" y="196" text-anchor="end" font-size="19" style="fill:var(--src)"></text>
-        <text id="t-vs2" x="714" y="196" font-size="19" style="fill:var(--src)"></text>
-
-        <!-- reference node and node-voltage labels (nodal) -->
-        <g id="g-gnd" class="fade">
-          <path class="wire" d="M420,300 V318 M400,318 H440 M407,325 H433 M414,332 H426"/>
-          <text x="452" y="334" font-size="16" style="fill:var(--muted)">reference node, 0 V</text>
-        </g>
-        <g id="g-nlab" class="fade" font-size="18" font-weight="600" text-anchor="middle">
-          <text id="t-na" x="168" y="64" style="fill:var(--src)"></text>
-          <text id="t-nb" x="420" y="62" style="fill:var(--nb)"></text>
-          <text id="t-nc" x="672" y="64" style="fill:var(--nc)"></text>
-        </g>
-
-        <!-- mesh-current loops -->
-        <g id="g-loop1" class="fade">
-          <path id="loop1" class="loop" stroke="var(--c1)" d="M239,115 H368 A24,24 0 0 1 392,139 V241 A24,24 0 0 1 368,265 H239 A24,24 0 0 1 215,241 V139 A24,24 0 0 1 239,115 Z"/>
-          <path fill="var(--c1)" d="M384,186 h16 l-8,14 z M296,107 v16 l14,-8 z"/>
-          <text x="303" y="186" text-anchor="middle" font-size="24" font-weight="600" style="fill:var(--c1)">i₁</text>
-          <text id="t-i1" x="303" y="214" text-anchor="middle" font-size="18" style="fill:var(--c1)"></text>
-          <g id="dots-l1" fill="var(--c1)"></g>
-        </g>
-        <g id="g-loop2" class="fade">
-          <path id="loop2" class="loop" stroke="var(--c2)" d="M472,115 H601 A24,24 0 0 1 625,139 V241 A24,24 0 0 1 601,265 H472 A24,24 0 0 1 448,241 V139 A24,24 0 0 1 472,115 Z"/>
-          <path fill="var(--c2)" d="M440,200 h16 l-8,-14 z M529,107 v16 l14,-8 z"/>
-          <text x="540" y="196" text-anchor="middle" font-size="24" font-weight="600" style="fill:var(--c2)">i₂</text>
-          <text id="t-i2" x="540" y="224" text-anchor="middle" font-size="18" style="fill:var(--c2)"></text>
-          <g id="dots-l2" fill="var(--c2)"></g>
-        </g>
-        <text id="t-shared" class="fade" x="420" y="334" text-anchor="middle" font-size="18" style="fill:var(--c3)">current down through R₂ = i₁ − i₂</text>
-
-        <!-- resistor polarity seen by each KVL walk -->
-        <g id="g-pol1" class="fade" font-size="20" font-weight="700" text-anchor="middle" style="fill:var(--c1)">
-          <text x="240" y="72" style="fill:var(--c1)">+</text><text x="340" y="72" style="fill:var(--c1)">−</text>
-          <text x="402" y="150" style="fill:var(--c1)">+</text><text x="402" y="244" style="fill:var(--c1)">−</text>
-        </g>
-        <g id="g-pol2" class="fade" font-size="20" font-weight="700" text-anchor="middle">
-          <text x="438" y="244" style="fill:var(--c2)">+</text><text x="438" y="132" style="fill:var(--c2)">−</text>
-          <text x="495" y="72" style="fill:var(--c2)">+</text><text x="595" y="72" style="fill:var(--c2)">−</text>
-        </g>
-        <!-- KVL walker -->
-        <g id="g-walk" class="fade">
-          <path id="walk1" fill="none" d="M170,300 V80 H420 V300 H170"/>
-          <path id="walk2" fill="none" d="M420,300 V80 H670 V300 H420"/>
-          <circle id="walker" r="10" stroke="var(--card)" stroke-width="3"/>
-        </g>
-
-        <!-- real branch currents -->
-        <g id="g-branch" class="fade">
-          <path id="b1" fill="none" d="M420,300 H170 V80 H420"/>
-          <path id="b2" fill="none" d="M420,80 H670 V300 H420"/>
-          <path id="b3" fill="none" d="M420,80 V300"/>
-          <g id="dots-b1" fill="var(--c1)"></g><g id="dots-b2" fill="var(--c2)"></g><g id="dots-b3" fill="var(--c3)"></g>
-          <path fill="var(--c1)" d="M352,70 v20 l17,-10 z"/>
-          <path fill="var(--c2)" d="M462,70 v20 l17,-10 z"/>
-          <path fill="var(--c3)" d="M410,256 h20 l-10,17 z"/>
-          <text id="t-b1" x="300" y="122" text-anchor="middle" font-size="18" style="fill:var(--c1)"></text>
-          <text id="t-b2" x="552" y="122" text-anchor="middle" font-size="18" style="fill:var(--c2)"></text>
-          <text id="t-b3" x="398" y="212" text-anchor="end" font-size="18" style="fill:var(--c3)"></text>
-        </g>
-      </svg>
-      <div class="muted" id="ckt-cap"></div>
-    </div>
-
-    <div class="card" id="aux-card">
-      <svg id="aux" viewBox="0 0 840 250" role="img" aria-label="Voltage drawn as height"></svg>
-      <div class="guess" id="guess-box">
-        <label for="guess">Guess <span class="cb">v<sub>b</sub></span></label>
-        <input type="range" id="guess" min="0" max="20" step="0.5" value="16">
-        <output id="guess-out" class="cb"></output>
-      </div>
-      <div id="aux-info"></div>
-      <div class="muted" id="aux-cap"></div>
-    </div>
+  <p class="intro">Choose a method for DC or AC circuits. Each page explains the method, works through graded questions step by step, and generates new practice circuits. Everything runs in your browser.</p>
+  <h2 class="group">DC circuits</h2>
+  <div class="grid">
+    <a class="card topic nodal" href="nodal-analysis.html">
+      <h2>Nodal Analysis</h2>
+      <p class="sub">From one unknown node to the supernode, with dependent sources</p>
+      <p>Unknowns are <b>node voltages</b>. Write <b>KCL</b> at each node that is not already known.</p>
+      <div class="chips"><span class="chip">Warm-up</span><span class="chip">Standard</span><span class="chip">Dependent sources</span><span class="chip">Supernode</span><span class="chip">Challenge</span></div>
+      <p class="inc">How it works · Questions · Practice generator</p>
+      <span class="go">Open Nodal Analysis &rarr;</span>
+    </a>
+    <a class="card topic mesh" href="mesh-analysis.html">
+      <h2>Mesh Analysis</h2>
+      <p class="sub">From one loop to the supermesh, with dependent sources</p>
+      <p>Unknowns are <b>mesh currents</b>. Write <b>KVL</b> around each mesh whose current is not already known.</p>
+      <div class="chips"><span class="chip">Warm-up</span><span class="chip">Standard</span><span class="chip">Dependent sources</span><span class="chip">Supermesh</span><span class="chip">Challenge</span></div>
+      <p class="inc">How it works · Questions · Practice generator</p>
+      <span class="go">Open Mesh Analysis &rarr;</span>
+    </a>
   </div>
-
-  <div class="card">
-    <div class="nav" id="nav">
-      <button id="prev">◀ Back</button>
-      <div class="dots" id="dots"></div>
-      <button id="next">Next ▶</button>
-      <span class="muted">or use the ← → keys</span>
-    </div>
-    <div id="panel"></div>
+  <h2 class="group">AC circuits (phasors)</h2>
+  <div class="grid">
+    <a class="card topic nodal" href="nodal-analysis-ac.html">
+      <h2>Nodal Analysis with Phasors</h2>
+      <p class="sub">From one unknown node to the supernode, with dependent sources</p>
+      <p>Unknowns are <b>phasor node voltages</b>. Write <b>KCL</b> at each unknown node using <b>impedances</b>.</p>
+      <div class="chips"><span class="chip">Warm-up</span><span class="chip">Standard</span><span class="chip">Dependent sources</span><span class="chip">Supernode</span><span class="chip">Challenge</span></div>
+      <p class="inc">How it works · Questions · Practice generator</p>
+      <span class="go">Open Nodal Analysis (AC) &rarr;</span>
+    </a>
+    <a class="card topic mesh" href="mesh-analysis-ac.html">
+      <h2>Mesh Analysis with Phasors</h2>
+      <p class="sub">From one loop to the supermesh, with dependent sources</p>
+      <p>Unknowns are <b>phasor mesh currents</b>. Write <b>KVL</b> around each unknown mesh using <b>impedances</b>.</p>
+      <div class="chips"><span class="chip">Warm-up</span><span class="chip">Standard</span><span class="chip">Dependent sources</span><span class="chip">Supermesh</span><span class="chip">Challenge</span></div>
+      <p class="inc">How it works · Questions · Practice generator</p>
+      <span class="go">Open Mesh Analysis (AC) &rarr;</span>
+    </a>
   </div>
 </main>
-
-<script>
-// ---------- circuit data and solution ----------
-const D={Va:20,Vc:10,R1:2,R2:4,R3:2};          // worked example
-let P={...D};                                   // values used on the Explore tab
-// branch currents for any value of the middle node voltage vb (arrows: R1 left-to-right, R2 down, R3 left-to-right)
-const currents=(p,vb)=>({vb,iR1:(p.Va-vb)/p.R1,iR2:vb/p.R2,iR3:(vb-p.Vc)/p.R3});
-function solve(p){
-  const vb=(p.Va/p.R1+p.Vc/p.R3)/(1/p.R1+1/p.R2+1/p.R3);           // nodal: KCL at node b
-  const a=p.R1+p.R2,b=-p.R2,d=p.R2+p.R3,det=a*d-b*b;               // mesh: a i1 + b i2 = Va ; b i1 + d i2 = -Vc
-  const i1=(p.Va*d-b*-p.Vc)/det,i2=(a*-p.Vc-b*p.Va)/det;
-  return {...currents(p,vb),i1,i2};
-}
-const S0=solve(D);
-console.assert(Math.abs(S0.i1-4)<1e-9&&Math.abs(S0.i2-1)<1e-9&&Math.abs(S0.vb-12)<1e-9&&Math.abs(S0.iR2-3)<1e-9,'worked example values');
-
-// ---------- formatting (3 s.f.) ----------
-const n3=x=>Math.abs(x)<1e-9?0:Number(x.toPrecision(3));
-const f=x=>{const v=n3(x);return (v<0?'−':'')+Math.abs(v)};
-const ss=(b,sub,rest='')=>`${b}<tspan dy="4" font-size="72%">${sub}</tspan><tspan dy="-4">${rest}</tspan>`; // subscript inside SVG text
-const i1='<span class="c1">i<sub>1</sub></span>', i2='<span class="c2">i<sub>2</sub></span>';
-const va='<span class="cs">v<sub>a</sub></span>', vb='<span class="cb">v<sub>b</sub></span>', vc='<span class="cc">v<sub>c</sub></span>';
-const r1='<span class="c1">i<sub>R1</sub></span>', r2='<span class="c3">i<sub>R2</sub></span>', r3='<span class="c2">i<sub>R3</sub></span>';
-const R=n=>`R<sub>${n}</sub>`;
-const T=(el,html)=>`<span class="term"${el?` data-el="${el}"`:''}>${html}</span>`;
-
-let tab='mesh', step=0, paused=matchMedia('(prefers-reduced-motion:reduce)').matches, guess=16, hover='';
-
-// ---------- step text ----------
-const STEPS={mesh:[
-()=>`<h2>Mesh analysis – the idea</h2>
-<p>This circuit has two sources, so the resistors are neither in series nor in parallel. We need a method.</p>
-<p>A <b>mesh</b> is a loop with no other loop inside it – like a <b>window pane</b>. This circuit has <b>two meshes</b> (shaded).</p>
-<p>In mesh analysis the unknowns are <b>currents</b>, and the law we use is <b>KVL</b>.</p>
-<ol><li>Give each mesh a current.</li><li>Walk round each mesh and write KVL.</li><li>Solve the equations for the mesh currents.</li><li>Get the real branch currents from the mesh currents.</li></ol>
-<div class="note">Two meshes → two unknown currents → <b>two equations</b>.</div>`,
-
-()=>`<h2>Step 1 – Give each mesh a current</h2>
-<p>Draw one circulating current in each mesh, both <b>clockwise</b>: ${i1} in the left mesh and ${i2} in the right mesh.</p>
-<p>The dots go round in one direction only. That direction is the arrow we chose. The <b>size</b> of each current is still unknown.</p>
-<div class="note">Mesh currents are <b>bookkeeping</b>: a tidy way to name the unknowns. If an answer comes out negative, the real current simply flows anticlockwise.</div>`,
-
-()=>`<h2>Step 2 – Who carries what?</h2>
-<ul><li>The 20 V source and ${R(1)} sit in mesh 1 only, so they carry ${i1}.</li>
-<li>${R(3)} and the 10 V source sit in mesh 2 only, so they carry ${i2}.</li>
-<li><b>${R(2)} is shared.</b> ${i1} passes <b>down</b> through it and ${i2} passes <b>up</b> through it.</li></ul>
-<div class="eq">Current down through ${R(2)} = <span class="c3">${i1} − ${i2}</span></div>
-<div class="eq">Current up through ${R(2)} = <span class="c3">${i2} − ${i1}</span></div>
-<p>Look at the two columns of dots beside ${R(2)}: red goes down, blue goes up. They oppose, so we <b>subtract</b>.</p>
-<div class="note"><b>Most common mistake:</b> writing 4${i1} for the shared resistor. It is 4(${i1} − ${i2}).</div>`,
-
-()=>`<h2>Step 3 – KVL around mesh 1</h2>
-<p>Follow the <span class="c1">red walker</span> clockwise from the bottom-left corner. At each element, write the voltage with the sign of the <b>terminal met first</b>. Back at the start, the total is zero.</p>
-<div class="eq">${T('vs1','−20')} ${T('R1',`+ 2${i1}`)} ${T('R2',`+ 4(${i1} − ${i2})`)} ${T('',' = 0')}</div>
-<ul><li>${T('vs1','20 V source: the walker meets the <b>−</b> terminal first, so write −20 (a rise).')}</li>
-<li>${T('R1',`${R(1)}: only ${i1} flows here. Current enters at the + end, and we meet + first: +2${i1}.`)}</li>
-<li>${T('R2',`${R(2)}: we walk <b>down</b>, so use the downward current ${i1} − ${i2}: +4(${i1} − ${i2}).`)}</li></ul>
-<p>${T('',`Open the bracket, then collect ${i1} and ${i2}:`)}</p>
-<div class="eq">${T('',`−20 + 2${i1} + 4${i1} − 4${i2} = 0`)}</div>
-<div class="eq">${T('',`6${i1} − 4${i2} = 20 &nbsp; … (1)`)}</div>
-<p><button id="rewalk">↻ Walk again</button></p>`,
-
-()=>`<h2>Step 4 – KVL around mesh 2</h2>
-<p>Follow the <span class="c2">blue walker</span> clockwise from the bottom of ${R(2)}.</p>
-<div class="eq">${T('R2',`4(${i2} − ${i1})`)} ${T('R3',`+ 2${i2}`)} ${T('vs2','+ 10')} ${T('',' = 0')}</div>
-<ul><li>${T('R2',`${R(2)}: now we walk <b>up</b>, so use the upward current ${i2} − ${i1}: +4(${i2} − ${i1}).`)}</li>
-<li>${T('R3',`${R(3)}: only ${i2} flows here: +2${i2}.`)}</li>
-<li>${T('vs2','10 V source: the walker meets the <b>+</b> terminal first, so write +10 (a drop).')}</li></ul>
-<p>${T('',`Open the bracket, then collect ${i1} and ${i2}:`)}</p>
-<div class="eq">${T('',`4${i2} − 4${i1} + 2${i2} + 10 = 0`)}</div>
-<div class="eq">${T('',`−4${i1} + 6${i2} = −10 &nbsp; … (2)`)}</div>
-<div class="note">${T('',`${R(2)} appears in <b>both</b> equations, with ${i1} and ${i2} swapped. That is the −4 in each equation.`)}</div>
-<p><button id="rewalk">↻ Walk again</button></p>`,
-
-()=>`<h2>Step 5 – Solve the two equations</h2>
-<div class="eq">6${i1} − 4${i2} = 20 &nbsp; … (1)<br>−4${i1} + 6${i2} = −10 &nbsp; … (2)</div>
-<div class="note"><b>Maths reminder – elimination.</b> Multiply the equations so that one unknown has the same number in both (with opposite signs), then add. That unknown disappears.</div>
-<p>Make the ${i2} terms −12${i2} and +12${i2}:</p>
-<div class="eq">(1) × 3: &nbsp; 18${i1} − 12${i2} = 60<br>(2) × 2: &nbsp; −8${i1} + 12${i2} = −20</div>
-<p>Add the two lines:</p>
-<div class="eq">10${i1} = 40 &nbsp;→&nbsp; <span class="c1">${i1} = 40 ÷ 10 = 4 A</span></div>
-<p>Put ${i1} = 4 into equation (1):</p>
-<div class="eq">6(4) − 4${i2} = 20 &nbsp;→&nbsp; 24 − 4${i2} = 20 &nbsp;→&nbsp; 4${i2} = 4<br><span class="c2">${i2} = 4 ÷ 4 = 1 A</span></div>
-<p>Check in equation (2): −4(4) + 6(1) = −16 + 6 = −10 <span class="ok">✓</span></p>
-<details><summary>Same answer with Cramer's rule</summary>
-<div class="eq">Δ = (6)(6) − (−4)(−4) = 36 − 16 = 20<br>Δ<sub>1</sub> = (20)(6) − (−10)(−4) = 120 − 40 = 80<br>Δ<sub>2</sub> = (6)(−10) − (−4)(20) = −60 + 80 = 20<br>${i1} = Δ<sub>1</sub>/Δ = 80 ÷ 20 = 4 A, &nbsp; ${i2} = Δ<sub>2</sub>/Δ = 20 ÷ 20 = 1 A</div></details>
-<p class="muted">The dots now move at speeds that match the answers: ${i1} is four times ${i2}.</p>`,
-
-()=>`<h2>Step 6 – From mesh currents to real currents</h2>
-<p>The loops are gone. The dots now run along the <b>real wires</b>.</p>
-<table><tr><th>Branch (arrow)</th><th>Mesh currents passing</th><th>Branch current</th><th>Voltage = R × i</th></tr>
-<tr><td>20 V source and ${R(1)}<br><span class="muted">left to right</span></td><td>${i1} only</td><td>${r1} = ${i1} = <b>4 A</b></td><td>2 Ω × 4 A = 8 V</td></tr>
-<tr><td>${R(2)} (shared)<br><span class="muted">downward</span></td><td>${i1} down, ${i2} up</td><td>${r2} = ${i1} − ${i2} = 4 A − 1 A = <b>3 A</b></td><td>4 Ω × 3 A = 12 V</td></tr>
-<tr><td>${R(3)} and 10 V source<br><span class="muted">left to right</span></td><td>${i2} only</td><td>${r3} = ${i2} = <b>1 A</b></td><td>2 Ω × 1 A = 2 V</td></tr></table>
-<p><b>Check 1 – KCL at the top middle node</b> (in = out):</p>
-<div class="eq">4 A = 3 A + 1 A <span class="ok">✓</span></div>
-<p><b>Check 2 – KVL with numbers</b> (see the two walks under the circuit):</p>
-<div class="eq">Mesh 1: −20 + 8 + 12 = 0 <span class="ok">✓</span><br>Mesh 2: −12 + 2 + 10 = 0 <span class="ok">✓</span></div>
-<p><b>Check 3 – power</b> (supplied = absorbed):</p>
-<div class="eq">20 V × 4 A = 80 W supplied<br>4²(2) + 3²(4) + 1²(2) + 10 V × 1 A = 32 + 36 + 2 + 10 = 80 W <span class="ok">✓</span></div>
-<div class="note">The 1 A flows <b>into the + terminal</b> of the 10 V source, so that source is <b>absorbing</b> 10 W, like a battery being charged.</div>
-<p>Next: open the <b>Nodal analysis</b> tab and solve the same circuit a second way.</p>`
-],
-
-nodal:[
-()=>`<h2>Nodal analysis – the idea</h2>
-<p>A <b>node</b> is a point where elements join. All the wire joined to that point is the <b>same node</b>, because a perfect wire has no voltage across it.</p>
-<p>In the picture, <b>one colour = one node = one voltage</b>. Count the colours: this circuit has <b>4 nodes</b> (the whole bottom wire is one node).</p>
-<p>In nodal analysis the unknowns are <b>node voltages</b>, and the law we use is <b>KCL</b>.</p>
-<ol><li>Choose a reference node (0 V).</li><li>Find which node voltages are already known.</li><li>Write each resistor current using Ohm's law and the node voltages.</li><li>Write KCL at each unknown node and solve.</li></ol>
-<table><tr><th></th><th>Mesh</th><th>Nodal</th></tr>
-<tr><td>Unknowns</td><td>mesh currents</td><td>node voltages</td></tr>
-<tr><td>Law</td><td>KVL (walk round a loop)</td><td>KCL (stand at a node)</td></tr></table>`,
-
-()=>`<h2>Step 1 – Choose the reference node</h2>
-<p>A voltage is always measured <b>between two points</b>. So we pick one node and call it <b>0 V</b>: the reference node (ground).</p>
-<p>Choose the <b>bottom wire</b>: the most elements join there, including the − terminal of both sources.</p>
-<p>Name the other nodes <span class="cs">a</span>, <span class="cb">b</span> and <span class="cc">c</span>. Their node voltages ${va}, ${vb}, ${vc} are all measured from the reference node.</p>
-<div class="note"><b>Think of voltage as height.</b> The reference node is sea level. A node voltage tells you how high that node is above sea level. See the picture under the circuit.</div>`,
-
-()=>`<h2>Step 2 – Which node voltages do we already know?</h2>
-<ul><li>The 20 V source connects node a (+) to the reference node (−). So it <b>holds</b> node a 20 V above the reference: ${va} = 20 V.</li>
-<li>In the same way the 10 V source gives ${vc} = 10 V.</li>
-<li>Nothing fixes node b. ${vb} is the <b>only unknown</b>.</li></ul>
-<div class="eq">${va} = 20 V, &nbsp; ${vc} = 10 V, &nbsp; ${vb} = ?</div>
-<div class="note">One unknown node → <b>one equation</b>. Mesh analysis needed two for this same circuit.</div>`,
-
-()=>`<h2>Step 3 – Currents from node voltages</h2>
-<p>Ohm's law for a resistor between two nodes:</p>
-<div class="eq">i = (v<sub>tail of arrow</sub> − v<sub>head of arrow</sub>) ÷ R</div>
-<p>Current flows <b>downhill</b>, from the higher voltage to the lower. Draw an arrow on each resistor, then write its current:</p>
-<div class="eq">${T('R1',`${r1} = (${va} − ${vb})/${R(1)} = (20 − ${vb})/2`)}<br>${T('R2',`${r2} = (${vb} − 0)/${R(2)} = ${vb}/4`)}<br>${T('R3',`${r3} = (${vb} − ${vc})/${R(3)} = (${vb} − 10)/2`)}</div>
-<p><b>Try it:</b> drag the <span class="cb">Guess v<sub>b</sub></span> slider under the circuit. Node b moves up and down, the ramps change slope and the three currents change.</p>
-<div class="note">If a current comes out <b>negative</b>, it really flows against the arrow. Try a guess below 10 V and watch ${r3}.</div>`,
-
-()=>`<h2>Step 4 – KCL at node b</h2>
-<p>Charge cannot pile up at a node, so <b>current in = current out</b>.</p>
-<p>At node b: ${r1} flows in; ${r2} and ${r3} flow out.</p>
-<div class="eq">${r1} = ${r2} + ${r3}</div>
-<p>Put in the three expressions from Step 3:</p>
-<div class="eq">(20 − ${vb})/2 = ${vb}/4 + (${vb} − 10)/2</div>
-<p><b>Try it first:</b> drag the slider until the In and Out bars are equal. Only <b>one</b> value of ${vb} balances the node. Nodal analysis is simply the algebra that finds this value without guessing.</p>
-<div class="note">Guess too high → node b is too far above its neighbours → too much flows out. Guess too low → too much flows in.</div>`,
-
-()=>`<h2>Step 5 – Solve for ${vb}</h2>
-<div class="eq">(20 − ${vb})/2 = ${vb}/4 + (${vb} − 10)/2</div>
-<div class="note"><b>Maths reminder – clear the fractions.</b> Multiply <b>every</b> term by a number that all the denominators (2, 4, 2) divide into. Here that number is 4.</div>
-<div class="eq">4 × (20 − ${vb})/2 = 4 × ${vb}/4 + 4 × (${vb} − 10)/2<br>2(20 − ${vb}) = ${vb} + 2(${vb} − 10)</div>
-<p>Open the brackets:</p>
-<div class="eq">40 − 2${vb} = ${vb} + 2${vb} − 20<br>40 − 2${vb} = 3${vb} − 20</div>
-<p>Bring the ${vb} terms to one side and the numbers to the other:</p>
-<div class="eq">40 + 20 = 3${vb} + 2${vb}<br>60 = 5${vb}<br><span class="cb">${vb} = 60 ÷ 5 = 12 V</span></div>
-<p class="muted">Node b now sits at 12 V in both pictures: the same value you found with the slider.</p>`,
-
-()=>`<h2>Step 6 – Branch currents, and compare</h2>
-<p>Put ${vb} = 12 V back into the three Ohm's-law expressions:</p>
-<div class="eq">${r1} = (20 − 12) V ÷ 2 Ω = <b>4 A</b><br>${r2} = 12 V ÷ 4 Ω = <b>3 A</b><br>${r3} = (12 − 10) V ÷ 2 Ω = <b>1 A</b></div>
-<p>Check KCL at node b: 4 A = 3 A + 1 A <span class="ok">✓</span></p>
-<table><tr><th>Branch</th><th>Mesh analysis</th><th>Nodal analysis</th></tr>
-<tr><td>${R(1)}</td><td>${i1} = 4 A</td><td>${r1} = 4 A</td></tr>
-<tr><td>${R(2)}</td><td>${i1} − ${i2} = 3 A</td><td>${r2} = 3 A</td></tr>
-<tr><td>${R(3)}</td><td>${i2} = 1 A</td><td>${r3} = 1 A</td></tr>
-<tr><td>Equations needed</td><td>2 (two meshes)</td><td>1 (one unknown node)</td></tr></table>
-<div class="note"><b>Both methods always give the same answer.</b> Before you start, count: number of meshes against number of unknown nodes. Choose the method with fewer equations. Use the other one to check.</div>
-<p>Next: open the <b>Explore</b> tab and change the values yourself.</p>`
-]};
-
-const CKT_CAP={mesh:['','The dots show which way each mesh-current arrow points.','Red dots go down beside R₂, blue dots go up.',
-  'The walker lights up each element as it crosses it. Hover over a term on the right to see which element it comes from.',
-  'The walker lights up each element as it crosses it. Hover over a term on the right to see which element it comes from.',
-  'Dot speed now follows the size of each current.','Dot speed follows the size of each branch current.'],
- nodal:['Each colour is one node.','Each colour is one node. The grey node is the reference.','','Dot speed and direction follow your guess.','Dot speed and direction follow your guess.',
-  'Dot speed follows the size of each branch current.','Dot speed follows the size of each branch current.']};
-const AUX_CAP={mesh:{3:'<b>Voltage as height.</b> The walker climbs 20 V at the source, then walks down across R₁ and R₂. KVL says it must finish at the height where it started. (The step sizes are drawn from the final answers; at this stage we do not know them yet.)',
-  4:'<b>Surprise:</b> across R₂ the walker <b>climbs</b>. The term 4(i₂ − i₁) will come out negative, because i₁ turns out bigger than i₂. You do not need to know that in advance: write each term by the rule and the signs take care of themselves.',
-  6:'Walk each mesh with the real numbers: every walk returns to the height where it started. That is KVL.'},
- nodal:{1:'<b>Voltage as height.</b> The reference node is sea level, 0 V. Every node voltage is a height measured from here.',
-  2:'Each source is a pillar that holds its node at a fixed height. Node b has no pillar: its height is the unknown.',
-  3:'Each resistor is a ramp. Current runs downhill: a bigger height difference (or a smaller resistance) gives a bigger current.',
-  4:'Each resistor is a ramp. Current runs downhill: a bigger height difference (or a smaller resistance) gives a bigger current.',
-  5:'Node b settles at the one height where current in = current out.',6:'Node b settles at the one height where current in = current out.'}};
-
-// ---------- moving dots ----------
-const $=id=>document.getElementById(id), NS='http://www.w3.org/2000/svg';
-function Flow(pathId,groupId){
-  const p=$(pathId), len=p.getTotalLength(), n=Math.round(len/30), dots=[];
-  for(let i=0;i<n;i++){const c=document.createElementNS(NS,'circle');c.setAttribute('r',4.5);$(groupId).appendChild(c);dots.push(c)}
-  let off=0;
-  this.move=(d)=>{off=((off+d)%len+len)%len;
-    dots.forEach((c,i)=>{const q=p.getPointAtLength((off+i*len/n)%len);c.setAttribute('cx',q.x);c.setAttribute('cy',q.y)})}
-  this.move(0);
-}
-const fl={l1:new Flow('loop1','dots-l1'),l2:new Flow('loop2','dots-l2'),b1:new Flow('b1','dots-b1'),b2:new Flow('b2','dots-b2'),b3:new Flow('b3','dots-b3')};
-
-// ---------- KVL walks: where each element sits along the path, and the height after it ----------
-const WLEN=940;
-const WALK=[
- {col:'var(--c1)',name:'Mesh 1 walk',path:'walk1',lv:[0,D.Va,S0.vb,0],
-  r:[{el:'vs1',a:80,b:140,n:'20 V source'},{el:'R1',a:300,b:380,n:'R₁'},{el:'R2',a:540,b:620,n:'R₂'}],
-  sym:['up 20 V','down 2i₁','down 4(i₁ − i₂)']},
- {col:'var(--c2)',name:'Mesh 2 walk',path:'walk2',lv:[0,S0.vb,D.Vc,0],
-  r:[{el:'R2',a:70,b:150,n:'R₂'},{el:'R3',a:305,b:385,n:'R₃'},{el:'vs2',a:550,b:610,n:'10 V source'}],
-  sym:['4(i₂ − i₁): a climb!','down 2i₂','down 10 V']}];
-function height(w,s){let v=w.lv[0];
-  w.r.forEach((r,k)=>{if(s>=r.b)v=w.lv[k+1];else if(s>r.a)v=w.lv[k]+(w.lv[k+1]-w.lv[k])*(s-r.a)/(r.b-r.a)});return v}
-let walkS=0, stairXY=null;
-function stair(w,x0,wd,numeric,marker){
-  const X=s=>x0+s*wd/WLEN, Y=v=>160-v*5.5;
-  let pts=`${X(0)},${Y(0)}`, h='';
-  w.r.forEach((r,k)=>{const a=w.lv[k],b=w.lv[k+1];
-    pts+=` ${X(r.a)},${Y(a)} ${X(r.b)},${Y(b)}`;
-    const lab=numeric?`${b>a?'up':'down'} ${f(Math.abs(b-a))} V`:w.sym[k];
-    h+=`<text x="${X(r.b)+4}" y="${Y(b)-9}" font-size="17" style="fill:${w.col}">${lab}</text>
-    <text x="${X((r.a+r.b)/2)}" y="186" text-anchor="middle" font-size="16" style="fill:var(--muted)">${r.n}</text>`});
-  pts+=` ${X(WLEN)},${Y(0)}`;
-  h=`<line x1="${X(0)}" y1="${Y(0)}" x2="${X(WLEN)}" y2="${Y(0)}" stroke="var(--muted)" stroke-dasharray="4 4"/>
-  <text x="${X(0)}" y="22" font-size="18" font-weight="600" style="fill:${w.col}">${w.name}</text>
-  <text x="${X(WLEN)}" y="22" text-anchor="end" font-size="15" style="fill:var(--muted)">height = voltage above the start</text>
-  <polyline points="${pts}" fill="none" stroke="${w.col}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-  <circle cx="${X(0)}" cy="${Y(0)}" r="5" fill="${w.col}"/><circle cx="${X(WLEN)}" cy="${Y(0)}" r="5" fill="${w.col}"/>`+h;
-  if(marker){h+=`<circle id="sm" r="9" fill="${w.col}" stroke="var(--card)" stroke-width="3"/>`;stairXY={X,Y}}
-  return h;
-}
-
-// ---------- voltage landscape (nodal) ----------
-function land(p,c,lvl){
-  const vmax=Math.max(20,p.Va,p.Vc), Y=v=>212-v*160/vmax, G=Y(0);
-  let h=`<line x1="70" y1="24" x2="70" y2="${G}" stroke="var(--muted)"/><text x="62" y="18" text-anchor="end" font-size="13" style="fill:var(--muted)">volts</text>`;
-  for(let v=0;v<=vmax;v+=5)h+=`<line x1="64" y1="${Y(v)}" x2="70" y2="${Y(v)}" stroke="var(--muted)"/><text x="58" y="${Y(v)+4}" text-anchor="end" font-size="12" style="fill:var(--muted)">${v}</text>`;
-  h+=`<line x1="70" y1="${G}" x2="800" y2="${G}" stroke="var(--muted)" stroke-width="5" stroke-linecap="round"/>
-  <text x="420" y="${G+24}" text-anchor="middle" font-size="15" style="fill:var(--muted)">reference node = 0 V (sea level)</text>`;
-  const plat=(x,v,col,lab,dash)=>`<line x1="${x-45}" y1="${Y(v)}" x2="${x+45}" y2="${Y(v)}" stroke="${col}" stroke-width="6" stroke-linecap="round" ${dash?'stroke-dasharray="2 11"':''}/>
-    <text x="${x}" y="${Y(v)-12}" text-anchor="middle" font-size="17" font-weight="600" style="fill:${col}">${lab}</text>`;
-  const pillar=(x,v,col,lab,src)=>`<rect x="${x-25}" y="${Y(v)}" width="50" height="${G-Y(v)}" fill="${col}" opacity=".22"/>`+plat(x,v,col,lab)+
-    `<text x="${x}" y="${G+24}" text-anchor="middle" font-size="14" style="fill:${col}">${src}</text>`;
-  // ramp = resistor; arrowhead points downhill (the way the current really flows)
-  const ramp=(x1,y1,x2,y2,col,lab,I,side)=>{const mx=(x1+x2)/2,my=(y1+y2)/2,sgn=n3(I)>0?1:-1,th=Math.atan2((y2-y1)*sgn,(x2-x1)*sgn),a=12,w=.45;
-    const tx=mx+7*Math.cos(th),ty=my+7*Math.sin(th);
-    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="3" stroke-linecap="round"/>`+
-    (n3(I)?`<polygon fill="${col}" points="${tx},${ty} ${tx-a*Math.cos(th-w)},${ty-a*Math.sin(th-w)} ${tx-a*Math.cos(th+w)},${ty-a*Math.sin(th+w)}"/>`:'')+
-    (side?`<text x="${mx+14}" y="${my+5}" font-size="15" style="fill:${col}">${lab}</text>`:`<text x="${mx}" y="${my-13}" text-anchor="middle" font-size="15" style="fill:${col}">${lab}</text>`)};
-  if(lvl>=3){
-    h+=ramp(215,Y(p.Va),375,Y(c.vb),'var(--c1)',ss('R','1',`: ${f(Math.abs(c.iR1))} A`),c.iR1)
-      +ramp(465,Y(c.vb),625,Y(p.Vc),'var(--c2)',ss('R','3',`: ${f(Math.abs(c.iR3))} A`),c.iR3)
-      +ramp(420,Y(c.vb),420,G,'var(--c3)',ss('R','2',`: ${f(Math.abs(c.iR2))} A`),c.iR2,true);
-  }
-  if(lvl>=2){
-    h+=pillar(170,p.Va,'var(--src)',ss('v','a',` = ${f(p.Va)} V`),`${f(p.Va)} V source`)+pillar(670,p.Vc,'var(--nc)',ss('v','c',` = ${f(p.Vc)} V`),`${f(p.Vc)} V source`);
-    h+=lvl===2?plat(420,vmax/2,'var(--nb)',ss('v','b',' = ?'),true):plat(420,c.vb,'var(--nb)',ss('v','b',` = ${f(c.vb)} V`));
-  }
-  return h;
-}
-function bars(c){
-  const out=c.iR2+c.iR3, k=100/Math.max(10,Math.abs(c.iR1),Math.abs(out)), w=x=>Math.max(0,x)*k;
-  const split=c.iR2>=0&&c.iR3>=0;
-  return `<div class="bal"><span>In</span><div class="bar"><i style="width:${w(c.iR1)}%;background:var(--c1)"></i></div><b>${f(c.iR1)} A</b></div>
-  <div class="bal"><span>Out</span><div class="bar">${split?`<i style="width:${w(c.iR2)}%;background:var(--c3)"></i><i style="width:${w(c.iR3)}%;background:var(--c2)"></i>`:`<i style="width:${w(out)}%;background:var(--c3)"></i>`}</div><b>${f(out)} A</b></div>
-  <div class="muted">In = ${r1} = ${f(c.iR1)} A. &nbsp; Out = ${r2} + ${r3} = ${f(c.iR2)} A + ${c.iR3<0?'('+f(c.iR3)+' A)':f(c.iR3)+' A'} = ${f(out)} A.</div>`;
-}
-function verdict(c){
-  const d=c.iR1-(c.iR2+c.iR3);
-  if(Math.abs(d)<.005)return `<p class="ok">✓ Balanced. KCL is satisfied, so v<sub>b</sub> = ${f(c.vb)} V is the answer.</p>`;
-  return d<0?`<p class="bad">✗ ${f(-d)} A more leaves than arrives. Impossible, so this guess is too high. Lower v<sub>b</sub>.</p>`
-            :`<p class="bad">✗ ${f(d)} A more arrives than leaves. Impossible, so this guess is too low. Raise v<sub>b</sub>.</p>`;
-}
-
-// ---------- Explore tab ----------
-const SL=[['Va','Left source (V)',0,30],['Vc','Right source (V)',0,30],['R1','R₁ (Ω)',1,10],['R2','R₂ (Ω)',1,10],['R3','R₃ (Ω)',1,10]];
-function buildExplore(){
-  $('panel').innerHTML=`<h2>Explore – change the circuit</h2>
-  <p>Move the sliders. Both methods are solved again each time, and they always agree.</p>
-  ${SL.map(([k,lab,a,b])=>`<div class="sl"><label for="ex-${k}">${lab}</label><input type="range" id="ex-${k}" min="${a}" max="${b}" step="1"><output id="eo-${k}"></output></div>`).join('')}
-  <div class="presets"><button data-p="20,10,2,4,2">Worked example</button><button data-p="20,10,4,4,2">R₁ = 4 Ω: no current in R₃</button><button data-p="10,20,2,4,2">Swap the sources</button><button data-p="12,12,3,6,3">Equal sources</button></div>
-  <div id="ex-out"></div>
-  <p><b>Things to try</b></p>
-  <ul><li>Raise the right source until ${r3} becomes zero, then negative. What has happened to the heights of node b and node c?</li>
-  <li>Make ${R(2)} very small. Why does ${vb} fall?</li>
-  <li>Before you move a slider, predict which way each current will change. Then check.</li></ul>`;
-  SL.forEach(([k])=>{$('ex-'+k).oninput=e=>{P[k]=+e.target.value;render(false)}});
-  document.querySelectorAll('.presets button').forEach(b=>b.onclick=()=>{const v=b.dataset.p.split(',').map(Number);P={Va:v[0],Vc:v[1],R1:v[2],R2:v[3],R3:v[4]};render(false)});
-}
-function updateExplore(S){
-  SL.forEach(([k])=>{$('ex-'+k).value=P[k];$('eo-'+k).textContent=P[k]+(k[0]==='V'?' V':' Ω')});
-  const say=(x,pos,neg,zero)=>n3(x)>0?pos:n3(x)<0?neg:zero;
-  $('ex-out').innerHTML=`<p><b>Mesh analysis</b> (two equations)</p>
-  <div class="eq">${P.R1+P.R2}${i1} − ${P.R2}${i2} = ${P.Va}<br>−${P.R2}${i1} + ${P.R2+P.R3}${i2} = −${P.Vc}<br>${i1} = ${f(S.i1)} A, &nbsp; ${i2} = ${f(S.i2)} A</div>
-  <p><b>Nodal analysis</b> (one equation)</p>
-  <div class="eq">(${P.Va} − ${vb})/${P.R1} = ${vb}/${P.R2} + (${vb} − ${P.Vc})/${P.R3}<br>${vb} = ${f(S.vb)} V</div>
-  <table><tr><th>Branch</th><th>From mesh</th><th>From nodal</th><th>What it means</th></tr>
-  <tr><td>${R(1)}</td><td>${i1} = ${f(S.i1)} A</td><td>${r1} = ${f(S.iR1)} A</td><td>${say(S.iR1,'left to right; the left source supplies power','<b>negative</b>: really right to left; the left source is being charged','no current: node a and node b are at the same voltage')}</td></tr>
-  <tr><td>${R(2)}</td><td>${i1} − ${i2} = ${f(S.i1-S.i2)} A</td><td>${r2} = ${f(S.iR2)} A</td><td>${say(S.iR2,'downward','','no current: node b is at 0 V')}</td></tr>
-  <tr><td>${R(3)}</td><td>${i2} = ${f(S.i2)} A</td><td>${r3} = ${f(S.iR3)} A</td><td>${say(S.iR3,'left to right, into the + terminal: the right source is being charged','<b>negative</b>: really right to left; the right source supplies power','no current: node b and node c are at the same voltage, so there is no slope')}</td></tr></table>`;
-}
-
-// ---------- render ----------
-const HALOS=['vs1','R1','R2','R3','vs2'];
-const light=el=>HALOS.forEach(k=>$('h-'+k).classList.toggle('on',k===el));
-const reveal=el=>document.querySelectorAll('.term:not(.on)').forEach(t=>{if(el==='*'||t.dataset.el===el)t.classList.add('on')});
-let cur=S0, dotsFor='';
-function render(restart){
-  const m=tab==='mesh', n=tab==='nodal', x=tab==='explore', A=x?P:D, S=solve(A);
-  const walking=m&&(step===3||step===4);
-  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
-  $('pause').textContent=paused?'Play':'Pause';
-  // step navigation
-  $('nav').style.display=x?'none':'';
-  if(!x&&dotsFor!==tab){dotsFor=tab;$('dots').innerHTML='';
-    STEPS[tab].forEach((_,i)=>{const b=document.createElement('button');b.textContent=i;b.title=i?'Step '+i:'The idea';b.onclick=()=>go(i);$('dots').appendChild(b)})}
-  if(!x){document.querySelectorAll('#dots button').forEach((b,i)=>b.classList.toggle('on',i===step));
-    $('prev').disabled=step===0;$('next').disabled=step===STEPS[tab].length-1}
-  // panel
-  if(x){if(!$('ex-out'))buildExplore();updateExplore(S)}
-  else if(restart||!walking){$('panel').innerHTML=STEPS[tab][step]();if(walking)walkS=0}
-  if(!walking||paused)reveal('*');
-  document.querySelectorAll('.term[data-el]').forEach(t=>{t.onmouseenter=()=>{hover=t.dataset.el;light(hover)};t.onmouseleave=()=>{hover='';if(!walking)light(m&&step===2?'R2':'')}});
-  const rw=$('rewalk');if(rw)rw.onclick=()=>{paused=false;render(true)};
-  // which currents the circuit shows
-  const vbShown=n?(step===3||step===4?guess:S0.vb):S.vb;
-  cur=n?currents(D,vbShown):S;
-  // circuit layers
-  const show=(id,o)=>$(id).style.opacity=+o;
-  const loops=m&&step>=1&&step<=5;
-  show('g-win',m&&step===0);
-  show('g-loop1',loops?(step===4?.25:1):0);show('g-loop2',loops?(step===3?.25:1):0);
-  show('t-shared',m&&step===2);show('g-pol1',m&&step===3);show('g-pol2',m&&step===4);show('g-walk',walking);
-  show('g-branch',(m&&step===6)||(n&&step>=3)||x);
-  show('g-nodes',n);show('g-gnd',(n&&step>=1)||x);show('g-nlab',n||x);
-  $('walker').setAttribute('fill',step===4?'var(--c2)':'var(--c1)');
-  // labels
-  $('t-vs1').textContent=f(A.Va)+' V';$('t-vs2').textContent=f(A.Vc)+' V';
-  [1,2,3].forEach(k=>$('t-r'+k).innerHTML=ss('R',k,` = ${A['R'+k]} Ω`));
-  $('t-i1').textContent=m&&step>=5?'= '+f(S.i1)+' A':'';$('t-i2').textContent=m&&step>=5?'= '+f(S.i2)+' A':'';
-  if(m){$('t-b1').textContent='i₁ = '+f(S.i1)+' A';$('t-b2').textContent='i₂ = '+f(S.i2)+' A';$('t-b3').textContent='i₁ − i₂ = '+f(S.i1-S.i2)+' A'}
-  else [1,3,2].forEach((k,j)=>$('t-b'+(j+1)).innerHTML=ss('i','R'+k,` = ${f(cur['iR'+k])} A`));
-  if(n&&step<2){$('t-na').textContent='node a';$('t-nb').textContent='node b';$('t-nc').textContent='node c'}
-  else{$('t-na').innerHTML=ss('v','a',` = ${f(A.Va)} V`);$('t-nc').innerHTML=ss('v','c',` = ${f(A.Vc)} V`);
-    $('t-nb').innerHTML=ss('v','b',n&&step===2?' = ?':` = ${f(vbShown)} V`+(n&&step<5?' (guess)':''))}
-  $('ckt-cap').textContent=x?'Dot speed and direction follow the real branch currents.':CKT_CAP[tab][step];
-  if(!walking)light(m&&step===2?'R2':'');
-  // card under the circuit: KVL staircase (mesh) or voltage landscape (nodal, explore)
-  const aux=$('aux'), isStair=m&&(step===3||step===4||step===6), isLand=(n&&step>=1)||x;
-  $('aux-card').style.display=isStair||isLand?'':'none';
-  $('guess-box').style.display=n&&(step===3||step===4)?'':'none';
-  $('guess').value=guess;$('guess-out').textContent=f(guess)+' V';
-  let info='';
-  if(isStair){aux.setAttribute('viewBox','0 0 840 195');
-    aux.innerHTML=step===6?stair(WALK[0],40,350,true)+stair(WALK[1],450,350,true):stair(WALK[step-3],60,720,false,true)}
-  if(isLand){aux.setAttribute('viewBox','0 0 840 246');
-    aux.innerHTML=land(A,cur,x?3:Math.min(step,3));
-    if(n&&step===3)info=`<div class="eq">${r1} = (20 − ${f(guess)}) V ÷ 2 Ω = ${f(cur.iR1)} A<br>${r2} = ${f(guess)} V ÷ 4 Ω = ${f(cur.iR2)} A<br>${r3} = (${f(guess)} − 10) V ÷ 2 Ω = ${f(cur.iR3)} A</div>`
-      +(cur.iR3<0?`<p class="muted">${r3} is negative: node c is higher than node b, so this current really flows right to left.</p>`:'');
-    if((n&&step>=4)||x)info=bars(cur)+(n&&step===4?verdict(cur):'')}
-  $('aux-info').innerHTML=info;
-  $('aux-cap').innerHTML=x?AUX_CAP.nodal[3]:(AUX_CAP[tab][step]||'');
-}
-
-// ---------- animation loop ----------
-let last=performance.now();
-const sp=i=>Math.max(-150,Math.min(150,12*i));   // dot speed in px/s for a current in A
-function tick(t){const dt=Math.min(.1,(t-last)/1000);last=t;
-  if(!paused){
-    if(tab==='mesh'&&step>=1&&step<=5){fl.l1.move((step===5?sp(S0.i1):40)*dt);fl.l2.move((step===5?sp(S0.i2):40)*dt)}
-    if(tab==='mesh'&&(step===3||step===4)){
-      const w=WALK[step-3];walkS+=105*dt;
-      if(walkS>=WLEN){walkS-=WLEN;reveal('*')}
-      const r=w.r.find(r=>walkS>=r.a-12&&walkS<=r.b+12), el=r?r.el:'';
-      if(el)reveal(el);if(!hover)light(el);
-    }
-    if((tab==='mesh'&&step===6)||(tab==='nodal'&&step>=3)||tab==='explore'){fl.b1.move(sp(cur.iR1)*dt);fl.b2.move(sp(cur.iR3)*dt);fl.b3.move(sp(cur.iR2)*dt)}
-  }
-  if(tab==='mesh'&&(step===3||step===4)){const w=WALK[step-3],q=$(w.path).getPointAtLength(walkS),sm=$('sm');
-    $('walker').setAttribute('cx',q.x);$('walker').setAttribute('cy',q.y);
-    if(sm&&stairXY){sm.setAttribute('cx',stairXY.X(walkS));sm.setAttribute('cy',stairXY.Y(height(w,walkS)))}}
-  requestAnimationFrame(tick)}
-requestAnimationFrame(tick);
-
-// ---------- controls ----------
-function go(i){step=Math.max(0,Math.min(STEPS[tab].length-1,i));render(true)}
-$('prev').onclick=()=>go(step-1);$('next').onclick=()=>go(step+1);
-$('pause').onclick=()=>{paused=!paused;render(false)};
-$('guess').oninput=e=>{guess=+e.target.value;render(false)};
-document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;step=0;hover='';render(true)});
-addEventListener('keydown',e=>{if(tab==='explore'||e.target.tagName==='INPUT')return;
-  if(e.key==='ArrowRight')go(step+1);if(e.key==='ArrowLeft')go(step-1)});
-render(true);
-</script>
+<footer>Developed by Muhammad 'Aasim Asyafi'ie bin Ahmad, 2026</footer>
 </body>
 </html>

@@ -1,0 +1,1418 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nodal Analysis</title>
+<meta name="description" content="Nodal Analysis, step by step: from one unknown node to the supernode, with dependent sources.">
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--ink:#16242e;--muted:#5b6b76;--line:#d5dbe1;--hl:#ffe08a;--ok:#2e7d32;--bad:#c62828;--note:#eef4fb;--warn:#fff4e5;
+  --k0:#7d8a94;--k1:#d9480f;--k2:#1565c0;--k3:#2b8a3e;--k4:#8d6e00;--kx:#ae3ec9;--sup:#c2255c;--acc:#1f7a8c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12171c;--card:#1b232b;--ink:#e8eef2;--muted:#9fb0bb;--line:#35424d;--hl:#6b5a14;--ok:#7ee787;--bad:#ff7b72;--note:#222e3a;--warn:#3a2f1c;
+  --k0:#8c99a3;--k1:#ff9e5e;--k2:#6cb6ff;--k3:#69db7c;--k4:#e3c04d;--kx:#e599f7;--sup:#f783ac;--acc:#5fd3c0}}
+:root[data-theme="dark"]{--bg:#12171c;--card:#1b232b;--ink:#e8eef2;--muted:#9fb0bb;--line:#35424d;--hl:#6b5a14;--ok:#7ee787;--bad:#ff7b72;--note:#222e3a;--warn:#3a2f1c;
+  --k0:#8c99a3;--k1:#ff9e5e;--k2:#6cb6ff;--k3:#69db7c;--k4:#e3c04d;--kx:#e599f7;--sup:#f783ac;--acc:#5fd3c0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:5}
+h1{font-size:1.25rem;margin:0}
+h1 small{display:block;font-weight:400;color:var(--muted);font-size:.85rem}
+.home{display:inline-block;font-size:.85rem;color:var(--muted);text-decoration:none;margin-bottom:2px}
+.home:hover{color:var(--acc);text-decoration:underline}
+nav.tabs{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;flex-wrap:wrap}
+nav.tabs button{border:0;border-radius:0}
+button{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 14px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button:disabled{opacity:.4;cursor:default}
+button.on,button.primary{background:var(--ink);color:var(--card);border-color:var(--ink)}
+main{max-width:1500px;margin:auto;padding:16px 20px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+h2{font-size:1.2rem;margin:.1em 0 .4em}
+h3{font-size:1.02rem;margin:0 0 .25em}
+p{margin:.45em 0}
+.muted{color:var(--muted);font-size:.92rem}
+.note{background:var(--note);border-radius:9px;padding:9px 13px;margin:.7em 0;font-size:.95rem}
+.warn{background:var(--warn);border-radius:9px;padding:9px 13px;margin:.7em 0;font-size:.95rem}
+.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}
+/* level strip */
+.levels{display:grid;gap:10px;margin-bottom:16px}
+.level{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.level .lname{font-weight:600;min-width:11em}
+.level .lname small{display:block;font-weight:400;color:var(--muted);font-size:.82rem}
+.qbtn{font-size:.92rem;padding:4px 11px}
+/* question layout */
+.qgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:16px;align-items:start}
+@media (max-width:1000px){.qgrid{grid-template-columns:1fr}}
+.sticky{position:sticky;top:76px}
+@media (max-width:1000px){header{position:static}.sticky{top:0;z-index:3}.sticky .card{padding:6px 8px;box-shadow:0 4px 10px rgba(0,0,0,.12)}.sticky .hint{display:none}svg.ckt{max-height:36vh}}
+.qhead{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.chip{display:inline-block;font-size:.78rem;font-weight:600;padding:2px 9px;border-radius:20px;background:var(--note);color:var(--acc);letter-spacing:.02em;text-transform:uppercase}
+.qtext{margin:.6em 0 .8em}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.8em 0}
+ol.steps{list-style:none;padding:0;margin:0;counter-reset:st}
+ol.steps>li{border-left:3px solid var(--line);padding:6px 0 8px 14px;margin:0 0 10px;counter-increment:st}
+ol.steps>li h3::before{content:"Step " counter(st) " · ";color:var(--muted);font-weight:600}
+ol.steps>li.new{border-left-color:var(--acc)}
+.line{margin:.45em 0}
+.how{font-size:.86rem;color:var(--muted)}
+.eq{font-size:1.07rem;padding:3px 10px;border-left:3px solid var(--line);margin-top:2px;font-variant-numeric:tabular-nums;overflow-x:auto}
+.eq:empty{display:none}
+details{margin:.6em 0}summary{cursor:pointer;color:var(--muted)}
+.answer{border:2px solid var(--acc);border-radius:10px;padding:8px 14px;margin:12px 0}
+.try{background:var(--note);border-radius:9px;padding:8px 13px}
+.try label{display:inline-flex;gap:6px;align-items:center;margin:4px 14px 4px 0}
+.try input{width:7.5em;font:inherit;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+/* terms and variables */
+.term{border-radius:4px;padding:0 2px;transition:background .12s;cursor:default}
+.term.hl{background:var(--hl);box-shadow:0 0 0 2px var(--hl)}
+.var{font-weight:600;font-style:italic;border-radius:4px}
+.var.hl{background:var(--hl)}
+.k0{color:var(--k0)}.k1{color:var(--k1)}.k2{color:var(--k2)}.k3{color:var(--k3)}.k4{color:var(--k4)}.kx{color:var(--kx)}
+/* circuit */
+svg.ckt{display:block;width:100%;height:auto;max-height:70vh;touch-action:manipulation}
+svg.ckt text{font-family:"Segoe UI",system-ui,Arial,sans-serif;fill:var(--ink)}
+.wire{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.src{fill:var(--card)}
+.arrowhead{fill:var(--ink)}
+.sign{stroke:var(--ink);stroke-width:2.5;fill:none}
+.dot{fill:var(--ink)}
+.ul{stroke-width:14;stroke-linecap:round;opacity:0;transition:opacity .15s}
+svg.colour .ul{opacity:.35}
+svg.colour .ul.hl{opacity:.8}
+.ul.k0{stroke:var(--k0)}.ul.k1{stroke:var(--k1)}.ul.k2{stroke:var(--k2)}.ul.k3{stroke:var(--k3)}.ul.k4{stroke:var(--k4)}
+.lab{font-size:23px}
+.lab.nm{font-weight:600}
+.lab.val{fill:var(--muted)}
+svg.ckt text.lab.dep{fill:var(--kx);font-weight:600}
+svg.ckt text.lab.muted{fill:var(--muted);font-size:19px}
+svg.ckt text.lab.nl{font-weight:700;font-size:25px}
+svg.ckt text.k1{fill:var(--k1)}svg.ckt text.k2{fill:var(--k2)}svg.ckt text.k3{fill:var(--k3)}svg.ckt text.k4{fill:var(--k4)}
+.ndot.k1{fill:var(--k1)}.ndot.k2{fill:var(--k2)}.ndot.k3{fill:var(--k3)}.ndot.k4{fill:var(--k4)}
+.nlab.hl .ndot{r:11}
+.halo{fill:var(--hl);opacity:0;transition:opacity .12s}
+g.el{cursor:pointer}
+g.el.hl .halo{opacity:1}
+.ctrl .cline{stroke:var(--kx);stroke-width:2.5}
+.ctrl .chead{fill:var(--kx)}
+.ctrl .csign{stroke:var(--kx);stroke-width:2.5;fill:none}
+svg.ckt text.lab.cx{fill:var(--kx);font-weight:700}
+.ctrl.hl .cline,.ctrl.hl .csign{stroke-width:5}
+.loop .lp{fill:none;stroke-width:2.5;stroke-dasharray:3 6;stroke-linecap:round}
+.loop.k1 .lp{stroke:var(--k1)}.loop.k2 .lp{stroke:var(--k2)}.loop.k3 .lp{stroke:var(--k3)}
+.loop.k1 .lph{fill:var(--k1)}.loop.k2 .lph{fill:var(--k2)}.loop.k3 .lph{fill:var(--k3)}
+svg.ckt .loop.k1 text{fill:var(--k1)}svg.ckt .loop.k2 text{fill:var(--k2)}svg.ckt .loop.k3 text{fill:var(--k3)}
+.lab.ml{font-size:30px;font-weight:700;font-style:italic}
+.loop.hl .lp{stroke-width:5;stroke-dasharray:none}
+.loop{cursor:pointer}
+.bubble{fill:var(--sup);fill-opacity:.06;stroke:var(--sup);stroke-width:2.5;stroke-dasharray:8 6;display:none}
+svg.ckt text.lab.sup{fill:var(--sup);font-weight:600;display:none}
+svg.over .bubble,svg.over text.lab.sup{display:inline}
+/* method page */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,430px),1fr));gap:16px}
+.mgrid .card ol,.mgrid .card ul{padding-left:1.3em;margin:.4em 0}
+.recipe{counter-reset:r}
+table{border-collapse:collapse;width:100%;font-size:.95rem;margin:.6em 0}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+th{background:var(--note)}
+.gen{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.gen .code{font-family:Consolas,monospace;font-size:.9rem;color:var(--muted)}
+.gen input{width:9em;font:inherit;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+.hint{font-size:.88rem;color:var(--muted);margin:.4em 0 0}
+@media (max-width:600px){body{font-size:16px}main{padding:12px 12px 50px}header{padding:10px 12px}.card{padding:12px}.level .lname{min-width:100%}}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:18px 16px 28px;border-top:1px solid var(--line)}
+.fdot{pointer-events:none}
+.fdot.acc{fill:var(--acc)}.fdot.k1{fill:var(--k1)}.fdot.k2{fill:var(--k2)}.fdot.k3{fill:var(--k3)}
+.flowbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px}
+.flowbar button{font-size:.88rem;padding:3px 10px}
+@media (prefers-reduced-motion:reduce){.flow{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div><a class="home" href="index.html">&larr; All topics</a><h1>Nodal Analysis<small>Step by step, from one unknown node to the supernode, with dependent sources</small></h1></div>
+  <nav class="tabs" aria-label="Sections"><button data-v="method">How it works</button><button data-v="questions">Questions</button><button data-v="practice">Practice generator</button></nav>
+</header>
+<main></main>
+<footer>Developed by Muhammad 'Aasim Asyafi'ie bin Ahmad, 2026</footer>
+<script>
+'use strict';
+// Shared engine for the nodal / mesh analysis pages: exact fractions, linear expressions, a ladder-shaped
+// netlist, an independent MNA solver, the SVG drawing and the step-by-step solution writer.
+// Every number the steps print is derived by the step writer itself and then compared with the MNA solution.
+
+// ===================================================================== exact fractions
+const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+const lcm = (a, b) => Math.abs(a / gcd(a, b) * b);
+class Fr {
+  constructor(n, d = 1) {
+    if (!Number.isFinite(n) || !Number.isFinite(d) || d === 0) throw Error('bad fraction');
+    if (d < 0) { n = -n; d = -d; }
+    const g = gcd(n, d); this.n = n / g; this.d = d / g;
+    if (Math.abs(this.n) > 1e12 || this.d > 1e12) throw Error('fraction overflow');
+  }
+  static of(x) {
+    if (x instanceof Fr) return x;
+    if (Number.isInteger(x)) return new Fr(x, 1);
+    let d = 1; while (Math.abs(x * d - Math.round(x * d)) > 1e-9 && d < 1e6) d *= 10;
+    return new Fr(Math.round(x * d), d);
+  }
+  add(o) { o = F(o); return new Fr(this.n * o.d + o.n * this.d, this.d * o.d); }
+  sub(o) { return this.add(F(o).neg()); }
+  mul(o) { o = F(o); return new Fr(this.n * o.n, this.d * o.d); }
+  div(o) { o = F(o); if (!o.n) throw Error('divide by zero'); return new Fr(this.n * o.d, this.d * o.n); }
+  neg() { return new Fr(-this.n, this.d); }
+  abs() { return new Fr(Math.abs(this.n), this.d); }
+  get z() { return this.n === 0; }
+  isInt() { return this.d === 1; }
+  val() { return this.n / this.d; }
+  eq(o) { o = F(o); return this.n === o.n && this.d === o.d; }
+  sign() { return Math.sign(this.n); }
+}
+const F = x => Fr.of(x);
+
+// ===================================================================== linear expressions  (sum of c·var + const)
+class LE {
+  constructor(k = new Map(), c = F(0)) { this.k = k; this.c = c; }
+  static v(name, co = 1) { return F(co).z ? LE.n(0) : new LE(new Map([[name, F(co)]])); }
+  static n(x) { return new LE(new Map(), F(x)); }
+  clone() { return new LE(new Map(this.k), this.c); }
+  add(o) {
+    const r = this.clone();
+    for (const [v, c] of o.k) { const s = (r.k.get(v) || F(0)).add(c); if (s.z) r.k.delete(v); else r.k.set(v, s); }
+    r.c = r.c.add(o.c); return r;
+  }
+  sub(o) { return this.add(o.scale(-1)); }
+  scale(s) { s = F(s); const r = new LE(new Map(), this.c.mul(s)); if (s.z) return r; for (const [v, c] of this.k) r.k.set(v, c.mul(s)); return r; }
+  subst(v, e) {            // replace var v by expression e, keeping the place of v in the written order
+    if (!this.k.has(v)) return this;
+    const cv = this.k.get(v), r = new LE(new Map(), this.c.add(e.c.mul(cv)));
+    const put = (x, c) => { const s = (r.k.get(x) || F(0)).add(c); if (s.z) r.k.delete(x); else r.k.set(x, s); };
+    for (const [x, cx] of this.k) { if (x === v) for (const [y, cy] of e.k) put(y, cy.mul(cv)); else put(x, cx); }
+    return r;
+  }
+  co(v) { return this.k.get(v) || F(0); }
+  vars() { return [...this.k.keys()]; }
+  get isConst() { return this.k.size === 0; }
+  get parts() { return this.k.size + (this.c.z ? 0 : 1); }
+  at(vals) { let s = this.c; for (const [v, c] of this.k) { if (!(v in vals)) throw Error('no value for ' + v); s = s.add(c.mul(vals[v])); } return s; }
+  first(v) { if (!this.k.has(v)) return this; const r = new LE(new Map([[v, this.k.get(v)]]), this.c); for (const [x, c] of this.k) if (x !== v) r.k.set(x, c); return r; }
+  sorted() { const r = new LE(new Map(), this.c); [...this.k.keys()].sort(vcmp).forEach(v => r.k.set(v, this.k.get(v))); return r; }
+}
+const vcmp = (a, b) => (a.length - b.length) || (a < b ? -1 : a > b ? 1 : 0);
+
+// solve LE = 0 equations for the listed vars (Gauss-Jordan by substitution); throws if singular
+function solveLin(eqs, vars) {
+  eqs = eqs.slice(); const sol = [];
+  for (const v of vars) {
+    const i = eqs.findIndex(e => !e.co(v).z);
+    if (i < 0) throw Error('singular system');
+    const e = eqs.splice(i, 1)[0], c = e.co(v);
+    const ex = e.sub(LE.v(v, c)).scale(F(-1).div(c));
+    eqs = eqs.map(q => q.subst(v, ex)); sol.forEach(s => { s[1] = s[1].subst(v, ex); }); sol.push([v, ex]);
+  }
+  eqs.forEach(e => { if (!e.isConst || !e.c.z) throw Error('inconsistent system'); });
+  const r = {}; sol.forEach(([v, ex]) => { if (!ex.isConst) throw Error('underdetermined'); r[v] = ex.c; }); return r;
+}
+
+// ===================================================================== number / symbol formatting
+const MINUS = '−';
+function fnum(f) {
+  f = F(f);
+  if (f.d === 1) return (f.n < 0 ? MINUS : '') + Math.abs(f.n);
+  let d = f.d; while (d % 2 === 0) d /= 2; while (d % 5 === 0) d /= 5;
+  if (d === 1) { const s = String(Math.abs(f.val())); if (s.length <= 7) return (f.n < 0 ? MINUS : '') + s; }
+  return (f.n < 0 ? MINUS : '') + Math.abs(f.n) + '/' + f.d;
+}
+const fnP = f => (F(f).sign() < 0 ? '(' + fnum(f) + ')' : fnum(f));               // negative numbers in brackets
+function sf3(x) { x = x instanceof Fr ? x.val() : x; if (Math.abs(x) < 1e-12) return '0'; const v = Number(x.toPrecision(3)); return (v < 0 ? MINUS : '') + Math.abs(v); }
+function fans(f) { const s = fnum(f); return s.includes('/') ? s + ' ≈ ' + sf3(f) : s; }   // answers: exact, plus 3 s.f. if a fraction
+const coefH = a => { const s = fnum(a); return s.includes('/') ? '(' + s + ')' : s; };
+const SUBU = { 0: '₀', 1: '₁', 2: '₂', 3: '₃', 4: '₄', 5: '₅', 6: '₆', 7: '₇', 8: '₈', 9: '₉', x: 'ₓ', p: 'ₚ', s: 'ₛ', a: 'ₐ', b: 'ᵦ' };
+const uni = (b, s) => b + String(s).split('').map(c => SUBU[c] || c).join('');
+const sub = (b, s) => `${b}<sub>${s}</sub>`;
+// a variable: v1, v2 (node voltages), i1, i2 (mesh currents), x (the controlling quantity)
+const VH = v => v === 'x' ? '' : `<span class="var k${v.slice(1)}" data-var="${v}">${v[0]}<sub>${v.slice(1)}</sub></span>`;
+function leH(e) {
+  const parts = []; for (const [v, c] of e.k) parts.push([c, VH(v)]); if (!e.c.z) parts.push([e.c, null]);
+  if (!parts.length) return '0';
+  return parts.map(([c, vh], i) => {
+    const neg = c.sign() < 0, a = c.abs(), mag = vh ? (a.eq(1) ? '' : coefH(a)) + vh : fnum(a);
+    return i === 0 ? (neg ? MINUS : '') + mag : (neg ? ' − ' : ' + ') + mag;
+  }).join('');
+}
+const stdH = (e, c) => leH(e.sorted()) + ' = ' + fnum(c);
+const wrapT = (el, h) => (el ? `<span class="term" data-el="${el}">${h}</span>` : h);
+const listJoin = a => (a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]);
+
+// ===================================================================== equation terms
+// term value = sgn · k · ex / den.  sym: symbolic display of a dependent source (e.g. 2iₓ) until it is substituted.
+const Tm = o => Object.assign({ el: null, sgn: 1, k: F(1), ex: LE.n(0), den: F(1), sym: null, dep: null, disp: null, bare: false }, o);
+function tVal(t) { if (t.sym) return t.dep.ex.scale(F(t.sgn).mul(t.k).mul(t.dep.g).mul(t.dep.ck).div(t.dep.den)); return t.ex.scale(F(t.sgn).mul(t.k).div(t.den)); }
+function single(e) { return e.k.size === 1 && e.c.z; }
+function tSign(t) {
+  if (t.sym || t.disp) return t.sgn;
+  const e = t.ex; if (e.isConst) return t.sgn * e.c.mul(t.k).sign() || 1;
+  if (single(e)) return t.sgn * t.k.sign() * e.co(e.vars()[0]).sign();
+  return t.sgn * t.k.sign();
+}
+function core(t, mult) {                               // display without the leading sign
+  if (t.sym) return (mult ? mult + ' × ' : '') + t.sym;
+  if (t.disp) return (mult ? mult + ' × ' : '') + t.disp;
+  const e = t.ex, k = t.k.abs();
+  if (e.isConst) { const v = e.c.mul(k).div(t.den).abs(); return mult ? mult + ' × ' + fnum(e.c.abs().mul(k).div(t.den)) : fnum(v); }
+  let inner;
+  if (single(e)) inner = leH(e.scale(e.co(e.vars()[0]).sign()));
+  else inner = t.bare ? leH(e) : '(' + leH(e) + ')';
+  let s = (k.eq(1) ? '' : coefH(k)) + inner;
+  if (!t.den.eq(1)) s += '/' + fnum(t.den);
+  return (mult ? mult + ' × ' : '') + s;
+}
+function sideH(ts, mult) {
+  if (!ts.length) return mult ? mult + ' × 0' : '0';
+  return ts.map((t, i) => { const sg = tSign(t); const pre = i === 0 ? (sg < 0 ? MINUS : '') : (sg < 0 ? ' − ' : ' + '); return pre + wrapT(t.el, core(t, mult)); }).join('');
+}
+const eqH = (q, mult) => sideH(q.L, mult) + ' = ' + sideH(q.R, mult);
+const mapT = (q, f) => ({ ...q, L: q.L.map(f), R: q.R.map(f) });
+const allT = q => [...q.L, ...q.R];
+const hasVar = (q, v) => allT(q).some(t => t.ex.k.has(v) || (t.dep && t.dep.ex.k.has(v)));
+const hasSym = q => allT(q).some(t => t.sym);
+function substEq(q, v, e) { return mapT(q, t => { const n = { ...t, ex: t.ex.subst(v, e), disp: null }; if (t.dep) n.dep = { ...t.dep, ex: t.dep.ex.subst(v, e) }; return n; }); }
+function depEq(q, ctrl) {
+  return mapT(q, t => {
+    if (!t.sym) return t;
+    const c = { ...t, sym: null, k: t.k.mul(t.dep.g).mul(t.dep.ck), ex: t.dep.ex, den: t.dep.den, dep: null };
+    const inner = core(Tm({ k: t.dep.ck, ex: t.dep.ex, den: t.dep.den }));
+    c.disp = (t.dep.g.eq(1) ? '' : fnum(t.dep.g) + ' × ') + (t.dep.ex.parts > 1 && t.dep.ck.eq(1) && t.dep.den.eq(1) ? '(' + leH(t.dep.ex) + ')' : inner);
+    return c;
+  });
+}
+function denOf(t) { const s = t.k.div(t.den); let L = s.d; for (const c of t.ex.k.values()) L = lcm(L, s.mul(c).d); return lcm(L, s.mul(t.ex.c).d); }
+function openT(t) {
+  const s = t.k.div(t.den).mul(t.sgn), out = [];
+  for (const [v, c] of t.ex.k) out.push(Tm({ el: t.el, ex: LE.v(v, s.mul(c)) }));
+  if (!t.ex.c.z) out.push(Tm({ el: t.el, ex: LE.n(s.mul(t.ex.c)) }));
+  return out;
+}
+// tidy one equation into a·x + b·y = c, recording every move. Returns {lines, e, c}
+function tidy(q, meta) {
+  const lines = []; let cur = q;
+  const push = (how, h) => { if (!lines.length || lines[lines.length - 1].eq !== h) lines.push({ how, eq: h }); };
+  const ts = allT(cur); let L = 1; ts.forEach(t => { L = lcm(L, denOf(t)); });
+  if (L > 1) {
+    const dens = [...new Set(ts.filter(t => !t.den.eq(1)).map(t => fnum(t.den)))];
+    meta.lcm = Math.max(meta.lcm || 1, L);
+    push(`Multiply <b>every</b> term on <b>both</b> sides by ${L}` + (dens.length > 1 ? ` (the lowest number that ${listJoin(dens)} all divide into)` : '') + ' to clear the fraction' + (dens.length > 1 ? 's.' : '.'), eqH(cur, L));
+    cur = mapT(cur, t => ({ ...t, k: t.k.mul(L).div(t.den), den: F(1), disp: null, sym: null }));
+    push('Each fraction cancels, leaving a whole number in front of its bracket.', eqH(cur));
+  }
+  const op = { L: cur.L.flatMap(openT), R: cur.R.flatMap(openT) };
+  if (eqH(op) !== eqH(cur)) push('Open the brackets: multiply the number in front into every term inside. A minus sign in front changes every sign inside.', eqH(op));
+  cur = op;
+  const isV = t => !t.ex.isConst, flip = t => ({ ...t, ex: t.ex.scale(-1) });
+  if (!cur.L.some(isV) && cur.R.some(isV)) { cur = { L: cur.R, R: cur.L }; push('Swap the two sides so that the unknowns are on the left.', eqH(cur)); }
+  const mv = { L: [...cur.L.filter(isV), ...cur.R.filter(isV).map(flip)], R: [...cur.R.filter(t => !isV(t)), ...cur.L.filter(t => !isV(t)).map(flip)] };
+  if (eqH(mv) !== eqH(cur)) push('Move the unknowns to the left and the plain numbers to the right. A term changes sign when it crosses the = sign.', eqH(mv));
+  let e = LE.n(0), c = F(0); mv.L.forEach(t => { e = e.add(tVal(t)); }); mv.R.forEach(t => { c = c.add(tVal(t).c); });
+  e = new LE(e.k, F(0));
+  if (e.isConst) throw Error('equation has no unknowns');
+  push('Collect like terms: add up the numbers in front of each unknown, and add up the plain numbers.', stdH(e, c));
+  let D = c.d; for (const v of e.k.values()) D = lcm(D, v.d);
+  if (D > 1) { e = e.scale(D); c = c.mul(D); push(`Multiply both sides by ${D} to remove the fractions.`, stdH(e, c)); meta.frac = true; }
+  const lead = e.sorted().co(e.sorted().vars()[0]);
+  if (lead.sign() < 0) { e = e.scale(-1); c = c.neg(); push(`Multiply both sides by ${MINUS}1 so that the first term is positive.`, stdH(e, c)); }
+  let g = Math.abs(c.n); for (const v of e.k.values()) g = gcd(g, v.n); if (c.z && e.k.size === 1) g = Math.abs(e.co(e.vars()[0]).n);
+  if (g > 1 && e.k.size > 1) { e = e.scale(F(1).div(g)); c = c.div(g); push(`Every number divides by ${g}: divide both sides by ${g} to keep the numbers small.`, stdH(e, c)); }
+  return { lines, e: e.sorted(), c };
+}
+
+// ===================================================================== solving the tidied equations
+// show a·x + b·y with one unknown replaced by its number, in the written order
+const putH = (e, v, val) => [...e.sorted().k].map(([x, c], i) => {
+  const neg = c.sign() < 0, a = c.abs(), body = x === v ? (a.eq(1) ? fnP(val) : coefH(a) + '(' + fnum(val) + ')') : (a.eq(1) ? '' : coefH(a)) + VH(x);
+  return i === 0 ? (neg ? MINUS : '') + body : (neg ? ' − ' : ' + ') + body;
+}).join('');
+function solveStd(eqs, vars, meta) {
+  const lines = []; const vals = {};
+  const lab = i => `(${i + 1})`;
+  const one = (e, c, tag) => {
+    const v = e.vars()[0], a = e.co(v), val = c.div(a);
+    if (!a.eq(1)) lines.push({ how: `${tag}Divide both sides by ${fnum(a)}.`, eq: `${VH(v)} = ${fnum(c)} ÷ ${fnP(a)} = <b>${fans(val)}</b>` });
+    else lines.push({ how: `${tag}This already gives the answer.`, eq: `${VH(v)} = <b>${fans(val)}</b>` });
+    vals[v] = val; return val;
+  };
+  if (eqs.length === 1) { one(eqs[0].e, eqs[0].c, ''); return { lines, vals }; }
+  let [p, q] = eqs; const [x, y] = vars;
+  // one equation already has a single unknown: solve it first, then substitute
+  const lone = [p, q].findIndex(z => z.e.k.size === 1);
+  if (lone >= 0) {
+    const A = [p, q][lone], Bq = [p, q][1 - lone], v = A.e.vars()[0], o = v === x ? y : x;
+    one(A.e, A.c, `Equation ${lab(lone)} has only one unknown, so solve it first. `);
+    const bo = Bq.e.co(o), bv = Bq.e.co(v), rest = Bq.c.sub(bv.mul(vals[v]));
+    lines.push({ how: `Put ${VH(v)} = ${fnum(vals[v])} into equation ${lab(1 - lone)}.`, eq: `${putH(Bq.e, v, vals[v])} = ${fnum(Bq.c)}` });
+    lines.push({ how: 'Work out the bracket and move the number to the right-hand side.', eq: `${leH(LE.v(o, bo))} = ${fnum(Bq.c)} ${bv.mul(vals[v]).sign() < 0 ? '+' : '−'} ${fnum(bv.mul(vals[v]).abs())} = ${fnum(rest)}` });
+    one(LE.v(o, bo), rest, '');
+    return { lines, vals };
+  }
+  // elimination: make the coefficients of one unknown the same size, then add or subtract
+  const cost = w => lcm(Math.abs(p.e.co(w).n), Math.abs(q.e.co(w).n));
+  const w = cost(y) <= cost(x) ? y : x, o = w === x ? y : x;
+  const a1 = p.e.co(w), a2 = q.e.co(w), L = cost(w), m1 = L / Math.abs(a1.n), m2 = L / Math.abs(a2.n);
+  meta.mult = Math.max(meta.mult || 1, m1, m2);
+  lines.push({ how: '<b>Maths reminder – elimination.</b> Make one unknown have the same number in front in both equations, then add or subtract the equations so that it disappears.', eq: `${stdH(p.e, p.c)} &nbsp; … (1)<br>${stdH(q.e, q.c)} &nbsp; … (2)` });
+  const P1 = p.e.scale(m1), C1 = p.c.mul(m1), P2 = q.e.scale(m2), C2 = q.c.mul(m2);
+  if (m1 !== 1 || m2 !== 1) {
+    lines.push({ how: `To remove ${VH(w)}, make its number ${L} in both: ` + [m1 !== 1 ? `multiply (1) by ${m1}` : '', m2 !== 1 ? `multiply (2) by ${m2}` : ''].filter(Boolean).join(' and ') + '. Multiply <b>every</b> term, including the right-hand side.',
+      eq: `${m1 !== 1 ? `(1) × ${m1}: &nbsp; ` : '(1): &nbsp; '}${stdH(P1, C1)}<br>${m2 !== 1 ? `(2) × ${m2}: &nbsp; ` : '(2): &nbsp; '}${stdH(P2, C2)}` });
+  }
+  const same = a1.sign() === a2.sign();
+  const E = same ? P1.sub(P2) : P1.add(P2), C = same ? C1.sub(C2) : C1.add(C2);
+  const ec = E.co(o);
+  lines.push({ how: same ? `The ${VH(w)} terms have the same sign, so <b>subtract</b> the second line from the first: ${VH(w)} cancels.` : `The ${VH(w)} terms have opposite signs, so <b>add</b> the two lines: ${VH(w)} cancels.`,
+    eq: `${leH(LE.v(o, ec))} = ${fnum(C)}` });
+  if (ec.z) throw Error('elimination failed');
+  const vo = C.div(ec); vals[o] = vo;
+  lines.push({ how: ec.eq(1) ? 'This gives the first answer.' : `Divide both sides by ${fnum(ec)}.`, eq: `${VH(o)} = ${ec.eq(1) ? '' : `${fnum(C)} ÷ ${fnP(ec)} = `}<b>${fans(vo)}</b>` });
+  const bo = p.e.co(o), rest = p.c.sub(bo.mul(vo));
+  lines.push({ how: `Put ${VH(o)} = ${fnum(vo)} back into equation (1) to find ${VH(w)}.`, eq: `${putH(p.e, o, vo)} = ${fnum(p.c)}` });
+  lines.push({ how: 'Work out the bracket and move that number to the right-hand side (it changes sign).', eq: `${leH(LE.v(w, a1))} = ${fnum(p.c)} ${bo.mul(vo).sign() < 0 ? '+' : '−'} ${fnum(bo.mul(vo).abs())} = ${fnum(rest)}` });
+  const vw = rest.div(a1); vals[w] = vw;
+  lines.push({ how: a1.eq(1) ? 'This gives the second answer.' : `Divide both sides by ${fnum(a1)}.`, eq: `${VH(w)} = ${a1.eq(1) ? '' : `${fnum(rest)} ÷ ${fnP(a1)} = `}<b>${fans(vw)}</b>` });
+  const chk = q.e.at(vals);
+  lines.push({ how: 'Check both answers in equation (2):', eq: `${[...q.e.sorted().k].map(([v, c], i) => (i ? (c.sign() < 0 ? ' − ' : ' + ') : (c.sign() < 0 ? '−' : '')) + (c.abs().eq(1) ? fnP(vals[v]) : coefH(c.abs()) + '(' + fnum(vals[v]) + ')')).join('')} = ${fnum(chk)} <span class="ok">✓</span>` });
+  if (!chk.eq(q.c)) throw Error('check failed');
+  // Cramer's rule, for students who prefer it
+  const a = p.e.co(x), b = p.e.co(y), c2 = q.e.co(x), d = q.e.co(y);
+  const Dl = a.mul(d).sub(b.mul(c2)), Dx = p.c.mul(d).sub(b.mul(q.c)), Dy = a.mul(q.c).sub(p.c.mul(c2));
+  const cramer = `Δ = (${fnum(a)})(${fnum(d)}) − (${fnum(b)})(${fnum(c2)}) = ${fnum(Dl)}<br>` +
+    `Δ<sub>1</sub> = (${fnum(p.c)})(${fnum(d)}) − (${fnum(b)})(${fnum(q.c)}) = ${fnum(Dx)}<br>` +
+    `Δ<sub>2</sub> = (${fnum(a)})(${fnum(q.c)}) − (${fnum(p.c)})(${fnum(c2)}) = ${fnum(Dy)}<br>` +
+    `${VH(x)} = Δ<sub>1</sub> ÷ Δ = ${fnum(Dx)} ÷ ${fnP(Dl)} = ${fans(Dx.div(Dl))}, &nbsp; ${VH(y)} = Δ<sub>2</sub> ÷ Δ = ${fnum(Dy)} ÷ ${fnP(Dl)} = ${fans(Dy.div(Dl))}`;
+  return { lines, vals, cramer };
+}
+
+// ===================================================================== the ladder netlist
+// spec = { cols: [el | [el, el] | null], top: [el | 'w' | null], bot: [el | 'w'], arch: {from, to, el} }
+// el = { t: 'R'|'V'|'I'|'VCVS'|'CCVS'|'VCCS'|'CCCS', v: value or gain, flip, n: name suffix, x: 'i'|'v' (this R is the control) }
+// Terminal a is the top (columns) or left (horizontal) end. V-type: value = v_a − v_b (+ at a).
+// I-type: the arrow points to a (the source pushes current out of terminal a). flip swaps the ends.
+const DX = 230, X0 = 110;
+const isV = e => e.t === 'V' || e.t === 'VCVS' || e.t === 'CCVS';
+const isI = e => e.t === 'I' || e.t === 'VCCS' || e.t === 'CCCS';
+const isDep = e => e.t.length === 4;
+function buildNet(spec) {
+  const ncol = spec.cols.length, arch = spec.arch;
+  const T = arch ? 160 : 90, B = T + 240, AY = T - 90;
+  const P = {}, els = [], wires = [], cnt = { R: 0, V: 0, I: 0, D: 0 };
+  const pt = (id, x, y) => { P[id] = { id, x, y }; };
+  for (let j = 0; j < ncol; j++) { pt('t' + j, X0 + j * DX, T); pt('b' + j, X0 + j * DX, B); }
+  const mk = (s, a, b, pos, j) => {
+    const fam = isDep(s) ? 'D' : s.t; cnt[fam]++;
+    const suf = s.n || String(cnt[fam]);
+    const e = { ...s, id: fam + suf, fam, suf, pos, j, a, b, v: F(s.v) };
+    if (s.flip) { e.a = b; e.b = a; }
+    if (fam === 'R') { e.name = sub('R', suf); e.uname = uni('R', suf); }
+    else if (fam === 'V') { e.name = sub('V', suf); e.uname = uni('V', suf); }
+    else if (fam === 'I') { e.name = sub('I', suf); e.uname = uni('I', suf); }
+    else { e.name = 'dependent source'; e.uname = 'dependent'; }
+    els.push(e); return e;
+  };
+  for (let j = 0; j < ncol; j++) {
+    const c = spec.cols[j];
+    if (c && c !== 'w') {
+      const arr = Array.isArray(c) ? c : [c];
+      if (arr.length === 1) mk(arr[0], 't' + j, 'b' + j, 'col', j);
+      else { pt('m' + j, X0 + j * DX, (T + B) / 2); mk(arr[0], 't' + j, 'm' + j, 'col', j); mk(arr[1], 'm' + j, 'b' + j, 'col', j); }
+    } else if (c === 'w') wires.push(['t' + j, 'b' + j]);
+    if (j < ncol - 1) {
+      const tp = spec.top ? spec.top[j] : 'w';
+      if (tp === 'w' || tp === undefined) wires.push(['t' + j, 't' + (j + 1)]); else if (tp) mk(tp, 't' + j, 't' + (j + 1), 'top', j);
+      const bt = spec.bot ? spec.bot[j] : 'w';
+      if (bt === 'w' || bt === undefined) wires.push(['b' + j, 'b' + (j + 1)]); else if (bt) mk(bt, 'b' + (j + 1), 'b' + j, 'bot', j);
+    }
+  }
+  if (arch) {
+    pt('a' + arch.from, X0 + arch.from * DX, AY); pt('a' + arch.to, X0 + arch.to * DX, AY);
+    wires.push(['t' + arch.from, 'a' + arch.from], ['t' + arch.to, 'a' + arch.to]);
+    mk(arch.el, 'a' + arch.from, 'a' + arch.to, 'arch', arch.from);
+  }
+  // bottom-segment elements were made right-to-left; re-orient so that a is the left end unless flipped
+  els.filter(e => e.pos === 'bot').forEach(e => { const l = 'b' + e.j, r = 'b' + (e.j + 1); if (!e.flip) { e.a = l; e.b = r; } else { e.a = r; e.b = l; } });
+  // nodes = groups of points joined by wire
+  const par = {}; Object.keys(P).forEach(k => { par[k] = k; });
+  const find = k => (par[k] === k ? k : (par[k] = find(par[k])));
+  wires.forEach(([p, q]) => { par[find(p)] = find(q); });
+  const groups = {}; Object.keys(P).forEach(k => { (groups[find(k)] = groups[find(k)] || []).push(k); });
+  const gr = find('b0');
+  const nodes = Object.entries(groups).map(([r, pts]) => ({ r, pts, gnd: r === gr, x: Math.min(...pts.map(p => P[p].x)), y: Math.min(...pts.map(p => P[p].y)) }));
+  nodes.sort((p, q) => (p.gnd - q.gnd) || (p.x - q.x) || (p.y - q.y));
+  let num = 0; nodes.forEach(n => { n.num = n.gnd ? 0 : ++num; n.v = n.gnd ? null : 'v' + n.num; });
+  const byR = {}; nodes.forEach(n => { byR[n.r] = n; });
+  els.forEach(e => { e.na = byR[find(e.a)]; e.nb = byR[find(e.b)]; });
+  const ctrlEl = els.find(e => e.x);
+  const net = { spec, P, els, wires, nodes, ncol, T, B, AY, arch: !!arch, ctrl: ctrlEl, el: id => els.find(e => e.id === id), nodeOf: p => byR[find(p)] };
+  net.W = X0 * 2 + (ncol - 1) * DX + 30; net.H = B + 80;
+  els.forEach(e => {
+    const p = P[e.a], q = P[e.b];
+    e.dirWord = p.x === q.x ? (q.y > p.y ? 'down' : 'up') : (q.x > p.x ? 'to the right' : 'to the left');
+    e.revWord = { down: 'up', up: 'down', 'to the right': 'to the left', 'to the left': 'to the right' }[e.dirWord];
+    e.label = e.lab || valLabel(e, net);
+  });
+  return net;
+}
+const ctrlU = net => (net.ctrl ? (net.ctrl.x === 'i' ? 'iₓ' : 'vₓ') : '');
+const ctrlH = net => (net.ctrl ? `<span class="var kx" data-var="x">${net.ctrl.x}<sub>x</sub></span>` : '');
+function valLabel(e, net) {
+  if (e.fam === 'R') return fnum(e.v) + ' Ω';
+  if (e.fam === 'V') return fnum(e.v) + ' V';
+  if (e.fam === 'I') return fnum(e.v) + ' A';
+  return (e.v.eq(1) ? '' : fnum(e.v)) + ctrlU(net);
+}
+const depH = (e, net) => (e.v.eq(1) ? '' : fnum(e.v)) + ctrlH(net);
+const depUnit = e => (isV(e) ? 'V' : 'A');
+const elH = e => (e.fam === 'D' ? 'the dependent source' : e.name);       // element name in sentences
+const elHv = (e, net) => (e.fam === 'D' ? `the dependent source (${depH(e, net)})` : `${e.name} (${e.label})`);
+
+// ===================================================================== independent check: modified nodal analysis
+function mna(net) {
+  const vl = n => (n.gnd ? LE.n(0) : LE.v('n' + n.num));
+  let cx = null;
+  if (net.ctrl) { const X = net.ctrl, vx = vl(X.na).sub(vl(X.nb)); cx = X.x === 'v' ? vx : vx.scale(F(1).div(X.v)); }
+  const iab = e => {
+    if (e.t === 'R') return vl(e.na).sub(vl(e.nb)).scale(F(1).div(e.v));
+    if (e.t === 'I') return LE.n(e.v.neg());
+    if (isI(e)) return cx.scale(e.v.neg());
+    return LE.v('j' + e.id);
+  };
+  const eqs = [];
+  net.nodes.filter(n => !n.gnd).forEach(n => {
+    let s = LE.n(0);
+    net.els.forEach(e => { if (e.na === n) s = s.add(iab(e)); if (e.nb === n) s = s.sub(iab(e)); });
+    eqs.push(s);
+  });
+  net.els.filter(isV).forEach(e => {
+    const val = e.t === 'V' ? LE.n(e.v) : cx.scale(e.v);
+    eqs.push(vl(e.na).sub(vl(e.nb)).sub(val));
+  });
+  const vars = [...net.nodes.filter(n => !n.gnd).map(n => 'n' + n.num), ...net.els.filter(isV).map(e => 'j' + e.id)];
+  const s = solveLin(eqs, vars);
+  const V = n => (n.gnd ? F(0) : s['n' + n.num]);
+  const r = { v: {}, i: {}, vab: {}, p: {} };
+  net.nodes.forEach(n => { if (!n.gnd) r.v[n.v] = V(n); });
+  net.els.forEach(e => { const i = iab(e).at(s); r.i[e.id] = i; r.vab[e.id] = V(e.na).sub(V(e.nb)); r.p[e.id] = r.vab[e.id].mul(i); });
+  r.ctrl = cx ? cx.at(s) : null;
+  // mesh currents of the ladder (clockwise, mesh k between column k-1 and column k)
+  const m = net.ncol - 1; let acc = F(0); r.mesh = {};
+  for (let j = m; j >= 1; j--) {
+    const col = net.els.filter(e => e.pos === 'col' && e.j === j);
+    if (!col.length) { r.mesh = null; break; }
+    const e = col[0], down = net.P[e.a].y < net.P[e.b].y ? r.i[e.id] : r.i[e.id].neg();
+    acc = down.add(acc); r.mesh['i' + j] = acc;
+  }
+  return r;
+}
+
+// ===================================================================== shared pipeline: constraints, tidy, solve
+// ctx: {kind, net, S (steps), eqs: [{name, q}], cons: [{el, say, q}], known: {var: Fr}, unknowns: [vars], ctrlDef}
+function pipeline(ctx) {
+  const { S, net } = ctx, meta = ctx.meta;
+  // 1. put in known values
+  const kv = Object.keys(ctx.known);
+  if (kv.length) {
+    const lines = [];
+    ctx.eqs.forEach(E => { let q = E.q; kv.forEach(v => { if (hasVar(q, v)) q = substEq(q, v, LE.n(ctx.known[v])); }); if (q !== E.q) { lines.push({ how: `${E.name}:`, eq: eqH(q) }); E.q = q; } });
+    ctx.cons.forEach(C => { let q = C.q; kv.forEach(v => { if (hasVar(q, v)) q = substEq(q, v, LE.n(ctx.known[v])); }); C.q = q; });
+    if (lines.length) S.push({ title: 'Put in the known value' + (kv.length > 1 ? 's' : ''), say: `Replace ${listJoin(kv.map(v => `${VH(v)} by ${fnum(ctx.known[v])}`))} wherever it appears.`, lines });
+  }
+  // 2. dependent sources: write the controlling quantity with the unknowns, then substitute
+  if (net.ctrl && (ctx.eqs.some(E => hasSym(E.q)) || ctx.cons.some(C => hasSym(C.q)))) {
+    const X = net.ctrl, d = ctx.ctrlDef, lines = [];
+    let dex = d.ex; kv.forEach(v => { dex = dex.subst(v, LE.n(ctx.known[v])); });
+    lines.push({ how: d.how, eq: `${ctrlH(net)} = ${wrapT(X.id, d.html)}` });
+    if (dex !== d.ex) lines.push({ how: 'Put in the known value:', eq: `${ctrlH(net)} = ${wrapT(X.id, core(Tm({ k: d.ck, ex: dex, den: d.den, bare: d.ck.eq(1) && d.den.eq(1) })))}` });
+    const swap = q => { const r = mapT(q, t => (t.sym ? { ...t, dep: { ...t.dep, ex: dex } } : t)); return depEq(r, net); };
+    ctx.eqs.forEach(E => { if (hasSym(E.q)) { E.q = swap(E.q); lines.push({ how: `Substitute into ${E.name}:`, eq: eqH(E.q) }); } });
+    ctx.cons.forEach(C => { if (hasSym(C.q)) { C.q = swap(C.q); C.depDone = true; } });
+    S.push({ title: 'Write the controlling quantity with the unknowns', say: ctx.ctrlSay, lines });
+  }
+  // 3. constraints: rearrange each for one unknown and substitute it everywhere
+  const isol = [];
+  ctx.cons.forEach((C, ci) => {
+    const lines = [{ how: C.how, eq: eqH(C.q0) }];
+    if (eqH(C.q) !== eqH(C.q0)) lines.push({ how: C.depDone ? 'Put in the expression for the controlling quantity (and any known values):' : 'Put in the known value:', eq: eqH(C.q) });
+    isol.forEach(([v, ex]) => { if (hasVar(C.q, v)) { C.q = substEq(C.q, v, ex); lines.push({ how: `Use ${VH(v)} = ${leH(ex)} here too:`, eq: eqH(C.q) }); } });
+    let e = LE.n(0); C.q.L.forEach(t => { e = e.add(tVal(t)); }); C.q.R.forEach(t => { e = e.sub(tVal(t)); });
+    const free = e.vars().filter(v => ctx.unknowns.includes(v));
+    if (!free.length) throw Error('constraint with no unknown');
+    const ones = free.filter(v => e.co(v).abs().eq(1));
+    const w = (ones.length ? ones : free).slice().sort(vcmp).pop();
+    const cw = e.co(w), ex = e.sub(LE.v(w, cw)).scale(F(-1).div(cw));
+    for (const c of ex.k.values()) if (!c.isInt()) meta.frac = true;
+    if (!ex.c.isInt()) meta.frac = true;
+    lines.push({ how: `Rearrange to get ${VH(w)} on its own.`, eq: `${VH(w)} = ${leH(ex)}` });
+    isol.forEach(s => { s[1] = s[1].subst(w, ex); });
+    isol.push([w, ex]);
+    const sl = [];
+    ctx.eqs.forEach(E => { if (hasVar(E.q, w)) { E.q = substEq(E.q, w, ex); sl.push({ how: `Substitute ${VH(w)} = ${leH(ex)} into ${E.name}:`, eq: eqH(E.q) }); } });
+    ctx.cons.slice(ci + 1).forEach(D => { if (hasVar(D.q, w)) D.q = substEq(D.q, w, ex); });
+    S.push({ title: C.title, say: C.say, lines: lines.concat(sl) });
+  });
+  const left = ctx.unknowns.filter(v => !isol.some(s => s[0] === v));
+  if (left.length !== ctx.eqs.length) throw Error(`unknowns ${left.length} vs equations ${ctx.eqs.length}`);
+  // 4. tidy every equation into standard form
+  const std = ctx.eqs.map((E, i) => {
+    const t = tidy(E.q, meta);
+    S.push({ title: `Tidy ${E.name} into equation (${i + 1})`, say: 'Now only numbers and unknowns are left. Tidy the equation one move at a time.', lines: t.lines.concat([{ how: 'Label it:', eq: `${stdH(t.e, t.c)} &nbsp; … (${i + 1})` }]) });
+    return t;
+  });
+  std.forEach(t => t.e.vars().forEach(v => { if (!left.includes(v)) throw Error('stray variable ' + v); }));
+  // 5. solve
+  const sol = solveStd(std, left.slice().sort(vcmp), meta);
+  S.push({ title: std.length === 1 ? 'Solve the equation' : 'Solve the two equations', say: std.length === 1 ? `One equation, one unknown.` : 'Two equations, two unknowns.', lines: sol.lines, details: sol.cramer ? { title: "Same answer with Cramer's rule", html: sol.cramer } : null });
+  const vals = { ...ctx.known, ...sol.vals };
+  // 6. back-substitute the isolated unknowns
+  if (isol.length) {
+    const lines = [];
+    isol.slice().reverse().forEach(([w, ex]) => {
+      const shown = [...ex.k].map(([v, c], i) => (i ? (c.sign() < 0 ? ' − ' : ' + ') : (c.sign() < 0 ? '−' : '')) + (c.abs().eq(1) ? '' : coefH(c.abs())) + fnP(vals[v])).join('') + (ex.c.z ? '' : (ex.k.size ? (ex.c.sign() < 0 ? ' − ' : ' + ') + fnum(ex.c.abs()) : fnum(ex.c)));
+      vals[w] = ex.at(vals);
+      lines.push({ how: `Use ${VH(w)} = ${leH(ex)}:`, eq: `${VH(w)} = ${shown} = <b>${fans(vals[w])}</b>` });
+    });
+    S.push({ title: 'Back-substitute', say: 'Put the answer into the rearranged equation to find the last unknown.', lines });
+  }
+  return vals;
+}
+
+// ===================================================================== NODAL ANALYSIS
+function nodalSteps(net, q) {
+  const S = [], meta = {};
+  const nodes = net.nodes.filter(n => !n.gnd);
+  const vl = n => (n.gnd ? LE.n(0) : LE.v(n.v));
+  const nn = n => (n.gnd ? 'the reference node' : `node ${n.num}`);
+  if (net.els.some(e => e.pos === 'bot')) throw Error('nodal needs a plain bottom wire');
+  // controlling quantity
+  let ctrlDef = null;
+  if (net.ctrl) {
+    const X = net.ctrl, ex = vl(X.na).sub(vl(X.nb));
+    ctrlDef = X.x === 'v'
+      ? { ex, den: F(1), ck: F(1), html: core(Tm({ ex, bare: true })), how: `${ctrlH(net)} is the voltage across ${X.name}, + end minus − end:` }
+      : { ex, den: X.v, ck: F(1), html: core(Tm({ ex, den: X.v })), how: `${ctrlH(net)} is the current in ${X.name} in the direction of its arrow. Ohm's law: (voltage at the tail − voltage at the head) ÷ R:` };
+  }
+  // 1. reference node and names
+  S.push({ title: 'Choose the reference node and name the nodes', say: `Colour the wires: one colour = one node. Take the bottom wire as the <b>reference node</b> (0 V) because the most elements join there. Name the other nodes ${listJoin(nodes.map(n => VH(n.v)))}: each node voltage is measured from the reference.`, lines: [] });
+  // 2. known nodes
+  const known = {}, kl = [];
+  const fixed = n => n.gnd || n.v in known;
+  let more = true;
+  while (more) {
+    more = false;
+    net.els.filter(e => e.t === 'V').forEach(e => {
+      const fa = fixed(e.na), fb = fixed(e.nb);
+      if (fa === fb) return;
+      const kn = fa ? e.nb : e.na, other = fa ? e.na : e.nb;
+      const val = fa ? (e.na.gnd ? F(0) : known[e.na.v]).sub(e.v) : (e.nb.gnd ? F(0) : known[e.nb.v]).add(e.v);
+      known[kn.v] = val; more = true;
+      const plus = e.na === kn ? nn(kn) : nn(other);
+      kl.push({ how: other.gnd ? `${elHv(e, net)} joins ${nn(kn)} to the reference, with its + end at ${plus}. So it holds ${nn(kn)} at ${fnum(val)} V.`
+        : `${elHv(e, net)} joins ${nn(kn)} to ${nn(other)}, which is already known, with its + end at ${plus}. So ${VH(kn.v)} = ${VH(other.v)} ${e.na === kn ? '+' : '−'} ${fnum(e.v)}.`,
+      eq: wrapT(e.id, `${VH(kn.v)} = ${other.gnd ? '' : `${fnP(known[other.v])} ${e.na === kn ? '+' : '−'} ${fnum(e.v)} = `}${fnum(val)} V`) });
+    });
+  }
+  const unknowns = nodes.filter(n => !(n.v in known)).map(n => n.v);
+  // groups: nodes joined by voltage-type elements
+  const par = {}; net.nodes.forEach(n => { par[n.r] = n.r; });
+  const find = r => (par[r] === r ? r : (par[r] = find(par[r])));
+  net.els.filter(isV).forEach(e => { par[find(e.na.r)] = find(e.nb.r); });
+  const comps = {}; net.nodes.forEach(n => { (comps[find(n.r)] = comps[find(n.r)] || []).push(n); });
+  const groups = Object.values(comps).filter(g => !g.some(n => fixed(n)));
+  const cons = net.els.filter(e => isV(e) && !(fixed(e.na) && fixed(e.nb)));
+  S.push({ title: 'Which node voltages are already known?', say: kl.length ? 'A voltage source joined to the reference (or to a known node) fixes the voltage of the node at its other end.' : 'No voltage source is joined straight to the reference, so no node voltage is known yet.',
+    lines: kl.concat([{ how: `Unknowns left: ${unknowns.length ? listJoin(unknowns.map(VH)) : 'none'}. We need <b>${unknowns.length} equation${unknowns.length === 1 ? '' : 's'}</b>.`, eq: '' }]) });
+  if (unknowns.length > 2) throw Error('more than 2 unknowns');
+  // 3. supernodes
+  const sup = groups.filter(g => g.length > 1);
+  sup.forEach(g => {
+    const srcs = net.els.filter(e => isV(e) && g.includes(e.na) && g.includes(e.nb));
+    const inside = net.els.filter(e => !isV(e) && g.includes(e.na) && g.includes(e.nb));
+    S.push({ title: 'Spot the supernode', say: `${listJoin(srcs.map(e => wrapT(e.id, elHv(e, net))))} sits between ${listJoin(g.map(nn))}, and neither is the reference. The current through a voltage source cannot be written with Ohm's law, so draw a bubble round both nodes and the source: a <b>supernode</b>. It gives <b>one KCL equation</b> (round the bubble) and <b>one equation from the source</b>.` +
+      (inside.length ? ` ${listJoin(inside.map(e => wrapT(e.id, e.name)))} joins two nodes inside the bubble, so its current never crosses the dashed line: leave it out of the bubble KCL.` : ''), lines: [] });
+  });
+  // 4. KCL for each group
+  const eqs = [];
+  groups.forEach(g => {
+    const L = [], R = [];
+    net.els.forEach(e => {
+      const ia = g.includes(e.na), ib = g.includes(e.nb);
+      if (ia === ib || isV(e)) return;
+      const n = ia ? e.na : e.nb, o = ia ? e.nb : e.na;
+      if (e.t === 'R') { R.push(Tm({ el: e.id, ex: vl(n).sub(vl(o)).first(n.v), den: e.v })); return; }
+      const into = ia;                       // the source pushes current out of terminal a, i.e. into node a
+      const t = e.t === 'I' ? Tm({ el: e.id, ex: LE.n(e.v) }) : Tm({ el: e.id, sym: depH(e, net), dep: { g: e.v, ex: ctrlDef.ex, den: ctrlDef.den, ck: ctrlDef.ck } });
+      (into ? L : R).push(t);
+    });
+    const name = g.length > 1 ? 'the supernode KCL' : `the KCL at node ${g[0].num}`;
+    eqs.push({ name, q: { L, R }, q0: { L, R }, g });
+    S.push({ title: g.length > 1 ? 'KCL round the supernode' : `KCL at node ${g[0].num}`,
+      say: (g.length > 1 ? 'Count only the currents that cross the dashed line. ' : `Stand at node ${g[0].num}. `) + 'Current <b>in</b> = current <b>out</b>. Write every resistor current as <b>leaving</b> the node: (v<sub>this node</sub> − v<sub>other end</sub>) ÷ R. A source arrow pointing in is current in.' +
+        (L.length ? '' : ' Nothing is drawn as flowing in, so the left-hand side is 0.'),
+      lines: [{ how: 'in = out', eq: eqH({ L, R }) }] });
+  });
+  // constraints from voltage sources between unknown nodes (or a dependent source to ground)
+  const C = cons.map(e => {
+    const lhs = vl(e.na).sub(vl(e.nb)).first(e.na.v || e.nb.v);
+    const L = [Tm({ el: e.id, ex: e.na.gnd ? lhs : lhs, bare: true })];
+    const R = [e.t === 'V' ? Tm({ el: e.id, ex: LE.n(e.v) }) : Tm({ el: e.id, sym: depH(e, net), dep: { g: e.v, ex: ctrlDef.ex, den: ctrlDef.den, ck: ctrlDef.ck } })];
+    const q0 = { L, R };
+    return { el: e.id, q0, q: q0, title: 'Use the voltage source', how: '(+ end) − (− end) = source voltage',
+      say: `${wrapT(e.id, elHv(e, net))} fixes the difference between its two nodes: the voltage at its + end minus the voltage at its − end equals the source voltage.` };
+  });
+  const ctrlSay = net.ctrl ? `The dependent source depends on ${ctrlH(net)}. Write ${ctrlH(net)} with node voltages, then put that into the equation${eqs.length + C.length > 1 ? 's' : ''}.` : '';
+  const vals = pipeline({ kind: 'nodal', S, net, eqs, cons: C, known, unknowns, ctrlDef, ctrlSay, meta });
+  // compare with the independent solution
+  const M = mna(net);
+  nodes.forEach(n => { if (!vals[n.v] || !vals[n.v].eq(M.v[n.v])) throw Error(`mismatch at ${n.v}`); });
+  const res = results(net, q, S, vals, M, 'nodal', { eqs, C, ctrlDef });
+  return { steps: S, unknowns: nodes.filter(n => !(n.v in known)).map(n => n.v), vals, M, meta, answers: res.answers };
+}
+
+// ===================================================================== MESH ANALYSIS
+function meshSteps(net, q) {
+  const S = [], meta = {}, m = net.ncol - 1;
+  if (net.arch) throw Error('mesh analysis needs a planar ladder');
+  const iv = k => (k >= 1 && k <= m ? LE.v('i' + k) : LE.n(0));
+  const mvars = Array.from({ length: m }, (_, k) => 'i' + (k + 1));
+  // current a→b through each element, written with mesh currents
+  const iab = e => {
+    let base;
+    if (e.pos === 'col') base = iv(e.j).sub(iv(e.j + 1));              // downward
+    else if (e.pos === 'top') base = iv(e.j + 1);                       // to the right
+    else base = iv(e.j + 1).scale(-1);                                  // bottom: to the right
+    const p = net.P[e.a], r = net.P[e.b];
+    const fwd = e.pos === 'col' ? r.y > p.y : r.x > p.x;
+    return fwd ? base : base.scale(-1);
+  };
+  const meshesOf = e => iab(e).vars();
+  let ctrlDef = null;
+  if (net.ctrl) {
+    const X = net.ctrl, ex = iab(X);
+    const first = ex.vars().find(v => ex.co(v).sign() > 0); const exo = first ? ex.first(first) : ex;
+    ctrlDef = X.x === 'i'
+      ? { ex: exo, den: F(1), ck: F(1), html: core(Tm({ ex: exo, bare: true })), how: `${ctrlH(net)} is the current in ${X.name} in the direction of its arrow. Add the mesh currents that flow that way and subtract those that flow against it:` }
+      : { ex: exo, den: F(1), ck: X.v, html: core(Tm({ ex: exo, k: X.v })), how: `${ctrlH(net)} is the voltage across ${X.name} (+ end minus − end) = R × (current from + to −):` };
+  }
+  S.push({ title: 'Draw the mesh currents', say: `A mesh is a window of the circuit with no other loop inside it. This circuit has <b>${m} mesh${m > 1 ? 'es' : ''}</b>. Draw one <b>clockwise</b> current in each: ${listJoin(mvars.map(VH))}. If an answer comes out negative, that mesh current really flows anticlockwise.`, lines: [] });
+  // current sources
+  const known = {}, kl = [], consEls = [];
+  const par = {}; mvars.forEach(v => { par[v] = v; });
+  const find = v => (par[v] === v ? v : (par[v] = find(par[v])));
+  net.els.filter(isI).forEach(e => {
+    const ms = meshesOf(e);
+    if (ms.length === 2) { par[find(ms[0])] = find(ms[1]); consEls.push(e); return; }
+    const v = ms[0], arrow = iab(e).scale(-1), co = arrow.co(v);        // current in the arrow direction = co · i_k
+    if (e.t === 'I') {
+      known[v] = e.v.div(co);
+      kl.push({ how: `${elHv(e, net)} is on an outside branch of mesh ${v.slice(1)}, so ${VH(v)} is the only mesh current through it. ${VH(v)} flows ${co.sign() > 0 ? 'the same way as' : 'against'} the source arrow there.`, eq: wrapT(e.id, `${VH(v)} = ${fnum(known[v])} A`) });
+    } else consEls.push(e);
+  });
+  const fixedMesh = new Set(net.els.filter(isI).filter(e => meshesOf(e).length === 1).map(e => meshesOf(e)[0]));
+  const unknowns = mvars.filter(v => !(v in known));
+  S.push({ title: 'Which mesh currents are already known?', say: kl.length ? 'A current source on the outside edge of a mesh carries only that mesh current, so it fixes it.' : 'No current source sits on an outside edge, so no mesh current is known yet.',
+    lines: kl.concat([{ how: `Unknowns left: ${listJoin(unknowns.map(VH))}. We need <b>${unknowns.length} equation${unknowns.length === 1 ? '' : 's'}</b>.`, eq: '' }]) });
+  if (unknowns.length > 2) throw Error('more than 2 unknowns');
+  // groups of meshes joined by a shared current source = supermesh
+  const comps = {}; mvars.forEach(v => { (comps[find(v)] = comps[find(v)] || []).push(v); });
+  const groups = Object.values(comps).map(g => g.sort(vcmp)).filter(g => !g.some(v => fixedMesh.has(v)));
+  groups.filter(g => g.length > 1).forEach(g => {
+    const shared = consEls.filter(e => meshesOf(e).length === 2 && meshesOf(e).every(v => g.includes(v)));
+    const series = net.els.filter(e => !isI(e) && e.pos === 'col' && shared.some(s => s.j === e.j));
+    S.push({ title: 'Spot the supermesh', say: `${listJoin(shared.map(e => wrapT(e.id, elHv(e, net))))} is shared by ${listJoin(g.map(v => 'mesh ' + v.slice(1)))}. Its voltage is unknown, so KVL cannot be written round either mesh on its own. Join the two meshes into a <b>supermesh</b>: walk round the <b>outside</b> of both, skipping the shared branch. This gives <b>one KVL equation</b>; the source gives the second equation.` +
+      (series.length ? ` ${listJoin(series.map(e => wrapT(e.id, e.name)))} is in series with the current source in the shared branch, so it is skipped too.` : ''), lines: [] });
+  });
+  // KVL round each group
+  const eqs = [];
+  groups.forEach(g => {
+    const k1 = +g[0].slice(1), k2 = +g[g.length - 1].slice(1), seq = [];
+    const colEls = j => net.els.filter(e => e.pos === 'col' && e.j === j).sort((a, b) => Math.min(net.P[a.a].y, net.P[a.b].y) - Math.min(net.P[b.a].y, net.P[b.b].y));
+    colEls(k1 - 1).reverse().forEach(e => seq.push([e, 'up', 'i' + k1]));
+    for (let k = k1; k <= k2; k++) net.els.filter(e => e.pos === 'top' && e.j === k - 1).forEach(e => seq.push([e, 'right', 'i' + k]));
+    colEls(k2).forEach(e => seq.push([e, 'down', 'i' + k2]));
+    for (let k = k2; k >= k1; k--) net.els.filter(e => e.pos === 'bot' && e.j === k - 1).forEach(e => seq.push([e, 'left', 'i' + k]));
+    const L = [];
+    seq.forEach(([e, dir, own]) => {
+      const p = net.P[e.a], r = net.P[e.b];
+      const ab = { up: r.y < p.y, down: r.y > p.y, right: r.x > p.x, left: r.x < p.x }[dir] ? 1 : -1;   // +1 when we walk from a to b
+      if (e.t === 'R') { L.push(Tm({ el: e.id, k: e.v, ex: iab(e).scale(ab).first(own) })); return; }
+      if (isI(e)) throw Error('current source on a KVL path');
+      if (e.t === 'V') L.push(Tm({ el: e.id, sgn: ab, ex: LE.n(e.v) }));
+      else L.push(Tm({ el: e.id, sgn: ab, sym: depH(e, net), dep: { g: e.v, ex: ctrlDef.ex, den: ctrlDef.den, ck: ctrlDef.ck } }));
+    });
+    const name = g.length > 1 ? 'the supermesh KVL' : `the KVL for mesh ${k1}`;
+    eqs.push({ name, q: { L, R: [] }, q0: { L, R: [] }, g });
+    S.push({ title: g.length > 1 ? 'KVL round the supermesh' : `KVL round mesh ${k1}`,
+      say: `Start at the bottom-left corner of ${g.length > 1 ? 'the supermesh' : `mesh ${k1}`} and walk <b>clockwise</b>. Add the voltage drop across each element you pass; the total back at the start is 0. A resistor gives R × (current in the walking direction): for a shared resistor that is (this mesh current − the other mesh current). A source gives the sign of the terminal you meet first.`,
+      lines: [{ how: 'sum of voltage drops = 0', eq: eqH({ L, R: [] }) }] });
+  });
+  // constraints from current sources that are shared, or dependent ones on an outside edge
+  const C = consEls.map(e => {
+    const arrow = iab(e).scale(-1); const pos = arrow.vars().find(v => arrow.co(v).sign() > 0); const lhs = pos ? arrow.first(pos) : arrow;
+    const L = [Tm({ el: e.id, ex: lhs, bare: true })];
+    const R = [e.t === 'I' ? Tm({ el: e.id, ex: LE.n(e.v) }) : Tm({ el: e.id, sym: depH(e, net), dep: { g: e.v, ex: ctrlDef.ex, den: ctrlDef.den, ck: ctrlDef.ck } })];
+    const q0 = { L, R };
+    return { el: e.id, q0, q: q0, title: 'Use the current source', how: 'current in the direction of the arrow = source current',
+      say: `${wrapT(e.id, elHv(e, net))} fixes the current in its branch. Add the mesh currents that flow the same way as its arrow and subtract those that flow against it.` };
+  });
+  const ctrlSay = net.ctrl ? `The dependent source depends on ${ctrlH(net)}. Write ${ctrlH(net)} with mesh currents, then put that into the equation${eqs.length + C.length > 1 ? 's' : ''}.` : '';
+  const vals = pipeline({ kind: 'mesh', S, net, eqs, cons: C, known, unknowns, ctrlDef, ctrlSay, meta });
+  const M = mna(net);
+  mvars.forEach(v => { if (!vals[v] || !vals[v].eq(M.mesh[v])) throw Error(`mismatch at ${v}`); });
+  const res = results(net, q, S, vals, M, 'mesh', { eqs, C, ctrlDef, iab });
+  return { steps: S, unknowns, vals, M, meta, answers: res.answers };
+}
+
+// ===================================================================== branch currents, extras, check
+function results(net, q, S, vals, M, kind, X) {
+  const answers = [];
+  const ex = q.extras || [];
+  const vOf = n => (n.gnd ? F(0) : vals[n.v]);
+  const I = {};             // element current a→b, found by the steps
+  const lines = [];
+  if (kind === 'nodal') {
+    net.els.filter(e => e.t === 'R').forEach(e => {
+      let a = e.na, b = e.nb, word = e.dirWord, rev = e.revWord;
+      if (a.gnd) { [a, b] = [b, a]; [word, rev] = [rev, word]; }
+      const i = vOf(a).sub(vOf(b)).div(e.v);
+      I[e.id] = e.na === a ? i : i.neg();
+      const sym = b.gnd ? `${VH(a.v)}/${fnum(e.v)}` : `(${VH(a.v)} − ${VH(b.v)})/${fnum(e.v)}`;
+      const num = b.gnd ? `${fnP(vOf(a))} ÷ ${fnum(e.v)}` : `(${fnum(vOf(a))} − ${fnP(vOf(b))}) ÷ ${fnum(e.v)}`;
+      lines.push({ how: wrapT(e.id, `${e.name}, flowing ${word}:`), eq: wrapT(e.id, `${sym} = ${num} = ${fans(i)} A`) + (i.z ? ' &nbsp; (no current)' : i.sign() < 0 ? ` &nbsp; → really <b>${fans(i.neg())} A ${rev}</b>` : ` &nbsp; → <b>${fans(i)} A ${word}</b>`) });
+    });
+    S.push({ title: 'Find the current in each resistor', say: 'Use i = (v<sub>tail</sub> − v<sub>head</sub>) ÷ R with the node voltages. A negative answer means the current flows the other way.', lines });
+  } else {
+    net.els.forEach(e => {
+      let le = X.iab(e); let word = e.dirWord, rev = e.revWord;
+      const pos = le.vars().find(v => le.co(v).sign() > 0);
+      if (!pos) { le = le.scale(-1); [word, rev] = [rev, word]; }
+      const p2 = le.vars().find(v => le.co(v).sign() > 0); le = le.first(p2);
+      const i = le.at(vals); I[e.id] = X.iab(e).at(vals);
+      if (e.t !== 'R') return;
+      const shown = [...le.k].map(([v, c], k) => (k ? (c.sign() < 0 ? ' − ' : ' + ') : '') + fnP(vals[v])).join('');
+      lines.push({ how: wrapT(e.id, `${e.name}${le.k.size > 1 ? ' (shared)' : ''}, flowing ${word}:`), eq: wrapT(e.id, `${leH(le)}${le.k.size > 1 ? ` = ${shown}` : ''} = ${fans(i)} A`) + (i.z ? ' &nbsp; (no current)' : i.sign() < 0 ? ` &nbsp; → really <b>${fans(i.neg())} A ${rev}</b>` : ` &nbsp; → <b>${fans(i)} A ${word}</b>`) });
+    });
+    S.push({ title: 'Find the current in each resistor', say: 'A resistor on an outside edge carries one mesh current. A shared resistor carries the difference of the two mesh currents.', lines });
+  }
+  // the controlling quantity and the dependent source
+  if (net.ctrl) {
+    const d = X.ctrlDef, cv = d.ex.scale(d.ck.div(d.den)).at(vals);
+    if (!cv.eq(M.ctrl)) throw Error('control mismatch');
+    const dl = net.els.filter(isDep).map(e => ({ how: `${wrapT(e.id, 'The dependent source')}:`, eq: wrapT(e.id, `${depH(e, net)} = ${fnum(e.v)} × ${fnP(cv)} = <b>${fans(e.v.mul(cv))} ${depUnit(e)}</b>`) }));
+    S.push({ title: 'Value of the dependent source', say: `Put the answers into the expression for ${ctrlH(net)}.`, lines: [{ how: '', eq: `${ctrlH(net)} = ${wrapT(net.ctrl.id, d.html)} = <b>${fans(cv)} ${net.ctrl.x === 'i' ? 'A' : 'V'}</b>` }].concat(dl) });
+    answers.push({ v: 'x', html: ctrlH(net), val: cv, unit: net.ctrl.x === 'i' ? 'A' : 'V' });
+  }
+  const ctrlV = net.ctrl ? X.ctrlDef.ex.scale(X.ctrlDef.ck.div(X.ctrlDef.den)).at(vals) : null;
+  const srcVal = e => (isDep(e) ? e.v.mul(ctrlV) : e.v);
+  // voltage-source currents (nodal) by KCL at one node; current-source voltages (mesh) by KVL round one mesh
+  const need = ex.includes('power');
+  if (kind === 'nodal') {
+    net.els.filter(isV).forEach(e => {
+      if (!(need || ex.includes('isrc'))) return;
+      const cand = [e.na, e.nb].filter(n => !n.gnd && net.els.filter(f => isV(f) && (f.na === n || f.nb === n)).length === 1);
+      if (!cand.length) throw Error('cannot find the source current');
+      const n = cand[0], inT = [], outT = [];
+      let sumIn = F(0), sumOut = F(0);
+      net.els.forEach(f => {
+        if (f === e || (f.na !== n && f.nb !== n)) return;
+        const leave = f.na === n ? I[f.id] ?? (isI(f) ? srcVal(f).neg() : null) : (I[f.id] !== undefined ? I[f.id].neg() : (isI(f) ? srcVal(f) : null));
+        if (leave === null) throw Error('unknown current');
+        if (f.t === 'R') { outT.push(wrapT(f.id, fnP(leave))); sumOut = sumOut.add(leave); }
+        else if (leave.sign() < 0) { inT.push(wrapT(f.id, fnum(leave.neg()))); sumIn = sumIn.add(leave.neg()); }
+        else { outT.push(wrapT(f.id, fnum(leave))); sumOut = sumOut.add(leave); }
+      });
+      const is = sumIn.sub(sumOut);               // leaving node n through the source
+      const other = e.na === n ? e.nb : e.na;
+      I[e.id] = e.na === n ? is : is.neg();
+      const ish = `i<sub>s</sub>`;
+      const l2 = [{ how: `KCL at node ${n.num} on its own, with ${ish} = current leaving node ${n.num} through ${elH(e)}:`, eq: `${inT.length ? inT.join(' + ') : '0'} = ${outT.concat([wrapT(e.id, ish)]).join(' + ')}` },
+        { how: `Rearrange for ${ish}:`, eq: `${wrapT(e.id, ish)} = ${fnum(sumIn)} − ${fnP(sumOut)} = <b>${fans(is)} A</b>` }];
+      const toward = is.sign() >= 0 ? (other.gnd ? 'the reference' : `node ${other.num}`) : `node ${n.num}`;
+      l2.push({ how: '', eq: `So ${fans(is.abs())} A flows through ${wrapT(e.id, elH(e))} towards ${toward}.` });
+      S.push({ title: `Current through ${elH(e)}`, say: "A voltage source's current has no formula of its own. Find it with KCL at one of its nodes, now that every other current there is known.", lines: l2 });
+      answers.push({ v: 'is_' + e.id, html: `current through ${elH(e)}`, val: I[e.id].abs(), unit: 'A', hide: true });
+    });
+  } else {
+    net.els.filter(isI).forEach(e => {
+      if (!(need || ex.includes('vsrc'))) return;
+      const ms = X.iab(e).vars(); const k = Math.min(...ms.map(v => +v.slice(1)));
+      // walk mesh k clockwise
+      const seq = [], colEls = j => net.els.filter(f => f.pos === 'col' && f.j === j).sort((a, b) => Math.min(net.P[a.a].y, net.P[a.b].y) - Math.min(net.P[b.a].y, net.P[b.b].y));
+      colEls(k - 1).reverse().forEach(f => seq.push([f, 'up'])); net.els.filter(f => f.pos === 'top' && f.j === k - 1).forEach(f => seq.push([f, 'right']));
+      colEls(k).forEach(f => seq.push([f, 'down'])); net.els.filter(f => f.pos === 'bot' && f.j === k - 1).forEach(f => seq.push([f, 'left']));
+      const parts = []; let sum = F(0), selfDir = 1;
+      seq.forEach(([f, dir]) => {
+        const p = net.P[f.a], r = net.P[f.b];
+        const ab = { up: r.y < p.y, down: r.y > p.y, right: r.x > p.x, left: r.x < p.x }[dir] ? 1 : -1;
+        if (f === e) { selfDir = dir === 'down' || dir === 'right' ? 1 : -1; parts.push(wrapT(f.id, (selfDir > 0 ? '+ ' : '− ') + 'v')); return; }
+        let drop;
+        if (f.t === 'R') drop = f.v.mul(I[f.id]).mul(ab);
+        else if (isV(f)) drop = srcVal(f).mul(ab);
+        else drop = M.vab[f.id].mul(ab);
+        sum = sum.add(drop); parts.push(wrapT(f.id, (drop.sign() < 0 ? '− ' : '+ ') + fnum(drop.abs())));
+      });
+      const vShow = sum.neg().mul(selfDir);       // top minus bottom (or left minus right)
+      const end = e.pos === 'col' ? ['top', 'bottom'] : ['left', 'right'];
+      const pa = net.P[e.a], pb = net.P[e.b]; const aIsFirst = e.pos === 'col' ? pa.y < pb.y : pa.x < pb.x;
+      if (!(aIsFirst ? vShow : vShow.neg()).eq(M.vab[e.id])) throw Error('vsrc mismatch');
+      S.push({ title: `Voltage across ${elH(e)}`, say: `A current source's voltage has no formula of its own. Call it v (${end[0]} end minus ${end[1]} end) and write KVL round mesh ${k}, now that every current is known.`,
+        lines: [{ how: `KVL round mesh ${k} (voltage drops, clockwise):`, eq: parts.join(' ').replace(/^\+ /, '').replace(/^(<[^>]+>)?\+ /, '$1').replace(/^(<[^>]+>)?− /, '$1−') + ' = 0' },
+          { how: 'Rearrange for v:', eq: `v = <b>${fans(vShow)} V</b> &nbsp; (${end[0]} end ${vShow.sign() >= 0 ? 'higher' : 'lower'})` }] });
+      answers.push({ v: 'vs_' + e.id, html: `voltage across ${elH(e)}`, val: vShow, unit: 'V', hide: true });
+    });
+  }
+  // power balance
+  if (need) {
+    const pl = []; let sup = F(0), abs = F(0); const supL = [], absL = [];
+    net.els.forEach(e => {
+      const i = I[e.id] ?? M.i[e.id], v = kind === 'nodal' ? vOf(e.na).sub(vOf(e.nb)) : (isI(e) ? M.vab[e.id] : (e.t === 'R' ? e.v.mul(i) : srcVal(e)));
+      if (!i.eq(M.i[e.id]) || !v.eq(M.vab[e.id])) throw Error('power mismatch ' + e.id);
+      const p = v.mul(i);                                   // absorbed, passive sign convention
+      if (e.t === 'R') { pl.push({ how: wrapT(e.id, `${e.name}:`), eq: wrapT(e.id, `i²R = ${fnum(i.abs()).includes('/') ? '(' + fnum(i.abs()) + ')' : fnum(i.abs())}² × ${fnum(e.v)} = ${fans(p)} W absorbed`) }); abs = abs.add(p); absL.push(fnum(p)); return; }
+      const what = p.sign() < 0 ? 'supplied' : 'absorbed';
+      pl.push({ how: wrapT(e.id, `${e.fam === 'D' ? 'Dependent source' : e.name}:`), eq: wrapT(e.id, `v × i = ${fnum(v.abs())} V × ${fnum(i.abs())} A = ${fans(p.abs())} W ${what}`) + (isV(e) ? ` &nbsp; (current ${p.sign() < 0 ? 'leaves' : 'enters'} its + terminal)` : ` &nbsp; (voltage ${p.sign() < 0 ? 'rises' : 'falls'} in the arrow direction)`) });
+      if (p.sign() < 0) { sup = sup.add(p.neg()); supL.push(fnum(p.neg())); } else { abs = abs.add(p); absL.push(fnum(p)); }
+    });
+    if (!sup.eq(abs)) throw Error('power does not balance');
+    pl.push({ how: '<b>Balance:</b>', eq: `supplied ${supL.join(' + ')} = ${fans(sup)} W; &nbsp; absorbed ${absL.join(' + ')} = ${fans(abs)} W <span class="ok">✓</span>` });
+    S.push({ title: 'Power balance', say: 'Resistors always absorb power. A source supplies power when current leaves its + terminal (voltage source) or when the voltage rises in the direction of its arrow (current source). Total supplied must equal total absorbed.', lines: pl });
+    answers.push({ v: 'ps', html: 'total power supplied', val: sup, unit: 'W', hide: true });
+  }
+  // check: put the answers back into the first written equations
+  const chk = [];
+  const nv = t => { const val = t.sym ? t.dep.ex.scale(t.k.mul(t.dep.g).mul(t.dep.ck).div(t.dep.den)).at(vals) : t.ex.scale(t.k.div(t.den)).at(vals); return val.mul(t.sgn); };
+  const side = ts => (ts.length ? ts.map((t, i) => { const v = nv(t); return (i ? (v.sign() < 0 ? ' − ' : ' + ') : (v.sign() < 0 ? '−' : '')) + wrapT(t.el, fnum(v.abs())); }).join('') : '0');
+  const sum = ts => ts.reduce((s, t) => s.add(nv(t)), F(0));
+  X.eqs.forEach(E => {
+    const q0 = E.q0;
+    const l = sum(q0.L), r = sum(q0.R);
+    if (!l.eq(r)) throw Error('check failed');
+    chk.push({ how: E.name.replace(/^the /, '').replace(/^./, c => c.toUpperCase()) + ':', eq: kind === 'nodal' ? `in: ${side(q0.L)} = ${fnum(l)} A; &nbsp; out: ${side(q0.R)} = ${fnum(r)} A <span class="ok">✓</span>` : `${side(q0.L)} = ${fnum(l)} <span class="ok">✓</span>` });
+  });
+  X.C.forEach(Cn => { const l = sum(Cn.q0.L), r = sum(Cn.q0.R); if (!l.eq(r)) throw Error('constraint check failed'); chk.push({ how: 'The source equation:', eq: `${side(Cn.q0.L)} = ${fnum(l)} and the source gives ${fnum(r)} <span class="ok">✓</span>` }); });
+  if (chk.length) S.push({ title: 'Check', say: 'Put the answers back into the equations as first written. Both sides must agree.', lines: chk });
+  return { answers };
+}
+
+function solveQ(q, kind) {
+  const net = buildNet(q.spec);
+  const r = (kind === 'nodal' ? nodalSteps : meshSteps)(net, q);
+  r.net = net; return r;
+}
+
+// ===================================================================== SVG drawing
+function svgNet(net, kind, opt = {}) {
+  const P = net.P, T = net.T, B = net.B;
+  let ul = '', wr = '', el = '', lb = '', ov = '', hit = '';
+  const loopD = {};
+  const line = (p, q, cls, extra = '') => `<line x1="${p.x}" y1="${p.y}" x2="${q.x}" y2="${q.y}" class="${cls}" ${extra}/>`;
+  const nodeCls = n => (n.gnd ? 'k0' : 'k' + n.num);
+  const nodeVar = n => (n.gnd ? '' : `data-var="${n.v}"`);
+  const deg = {}; const bump = p => { deg[p] = (deg[p] || 0) + 1; };
+  net.wires.forEach(([p, q]) => { bump(p); bump(q); });
+  net.els.forEach(e => { bump(e.a); bump(e.b); });
+  // wires
+  net.wires.forEach(([p, q]) => {
+    const n = net.nodeOf(p);
+    if (kind === 'nodal') ul += line(P[p], P[q], 'ul ' + nodeCls(n), nodeVar(n));
+    wr += line(P[p], P[q], 'wire');
+  });
+  // elements
+  net.els.forEach(e => {
+    const p = P[e.a], q = P[e.b], dx = q.x - p.x, dy = q.y - p.y, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len;
+    const cx = (p.x + q.x) / 2, cy = (p.y + q.y) / 2, half = e.fam === 'R' ? 42 : 30;
+    const s = { x: cx - ux * half, y: cy - uy * half }, t = { x: cx + ux * half, y: cy + uy * half };
+    if (kind === 'nodal') { ul += line(p, s, 'ul ' + nodeCls(e.na), nodeVar(e.na)) + line(t, q, 'ul ' + nodeCls(e.nb), nodeVar(e.nb)); }
+    wr += line(p, s, 'wire') + line(t, q, 'wire');
+    const ang = Math.atan2(dy, dx) * 180 / Math.PI;
+    let body = '';
+    if (e.fam === 'R') body = '<path class="wire" d="M-42,0 l6,-10 l12,20 l12,-20 l12,20 l12,-20 l12,20 l6,-10"/>';
+    else {
+      body = isDep(e) ? '<path class="wire src" d="M-30,0 L0,-30 L30,0 L0,30 Z"/>' : '<circle class="wire src" r="28"/>';
+      if (isI(e)) body += '<path class="wire" stroke-width="2.5" d="M15,0 H-8"/><path class="arrowhead" d="M-17,0 l10,-7 v14 z"/>';
+    }
+    let signs = '';
+    if (isV(e)) {
+      const pp = { x: cx - ux * 13, y: cy - uy * 13 }, mm = { x: cx + ux * 13, y: cy + uy * 13 };
+      signs = `<path class="sign" d="M${pp.x - 6},${pp.y} h12 M${pp.x},${pp.y - 6} v12 M${mm.x - 6},${mm.y} h12"/>`;
+    }
+    // label placement
+    let lx, ly, anch = 'middle', mark = { x: 0, y: 0 };
+    if (e.pos === 'col') {
+      const left = e.j === 0; anch = left ? 'end' : 'start'; lx = cx + (left ? -40 : 40); ly = cy - 6; mark = { x: left ? 1 : -1, y: 0 };
+    } else if (e.pos === 'bot') { lx = cx; ly = cy + 50; mark = { x: 0, y: -1 }; }
+    else { lx = cx; ly = cy - 52; mark = { x: 0, y: 1 }; }
+    const nm = e.fam === 'D' ? '' : e.uname;
+    const l1 = nm ? `<text x="${lx}" y="${ly}" text-anchor="${anch}" class="lab nm">${nm}</text>` : '';
+    const l2 = `<text x="${lx}" y="${ly + (nm ? 26 : 8)}" text-anchor="${anch}" class="lab val${isDep(e) ? ' dep' : ''}">${e.label}</text>`;
+    // control marker (iₓ arrow or vₓ signs) on the controlling resistor
+    let cm = '';
+    if (e.x) {
+      const ox = mark.x * 26, oy = mark.y * 26, ax = cx + ox, ay = cy + oy;
+      if (e.x === 'i') {
+        const a = { x: ax - ux * 22, y: ay - uy * 22 }, b = { x: ax + ux * 22, y: ay + uy * 22 };
+        const h = `M${b.x + ux * 4},${b.y + uy * 4} L${b.x - ux * 8 - uy * 6},${b.y - uy * 8 + ux * 6} L${b.x - ux * 8 + uy * 6},${b.y - uy * 8 - ux * 6} Z`;
+        cm = `<g class="ctrl" data-var="x"><line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="cline"/><path d="${h}" class="chead"/><text x="${ax + mark.x * 18 + (mark.y ? 26 : 0)}" y="${ay + mark.y * 22 + 6}" text-anchor="${mark.x < 0 ? 'end' : mark.x > 0 ? 'start' : 'start'}" class="lab cx">iₓ</text></g>`;
+      } else {
+        const a = { x: ax - ux * 38, y: ay - uy * 38 }, b = { x: ax + ux * 38, y: ay + uy * 38 };
+        cm = `<g class="ctrl" data-var="x"><path class="csign" d="M${a.x - 6},${a.y} h12 M${a.x},${a.y - 6} v12 M${b.x - 6},${b.y} h12"/><text x="${ax + mark.x * 12}" y="${ay + mark.y * 14 + 6}" text-anchor="${mark.x < 0 ? 'end' : mark.x > 0 ? 'start' : 'middle'}" class="lab cx">vₓ</text></g>`;
+      }
+    }
+    const hw = e.pos === 'col' ? [34, half + 8] : [half + 8, 34];
+    el += `<g class="el" data-el="${e.id}"><rect class="halo" x="${cx - hw[0]}" y="${cy - hw[1]}" width="${hw[0] * 2}" height="${hw[1] * 2}" rx="10"/>` +
+      `<g transform="translate(${cx},${cy}) rotate(${ang})">${body}</g>${signs}${l1}${l2}` +
+      `<rect class="hit" x="${Math.min(cx - hw[0], anch === 'end' ? lx - 70 : cx - hw[0])}" y="${Math.min(cy - hw[1], ly - 18)}" width="${hw[0] * 2 + 72}" height="${hw[1] * 2 + 30}" fill="transparent"/></g>` + cm;
+  });
+  // junction dots
+  Object.entries(deg).forEach(([p, d]) => { if (d >= 3) wr += `<circle cx="${P[p].x}" cy="${P[p].y}" r="5" class="dot"/>`; });
+  if (kind === 'nodal') {
+    // ground symbol and node labels
+    const gx = X0 + DX * Math.max(0, Math.floor((net.ncol - 1) / 2)) + (net.ncol > 1 ? DX / 2 : 0);
+    lb += `<g class="gnd"><path class="wire" d="M${gx},${B} V${B + 18} M${gx - 20},${B + 18} H${gx + 20} M${gx - 13},${B + 25} H${gx + 13} M${gx - 6},${B + 32} H${gx + 6}"/><text x="${gx + 28}" y="${B + 32}" class="lab muted">reference, 0 V</text></g>`;
+    net.nodes.filter(n => !n.gnd).forEach(n => {
+      const pts = n.pts.map(k => P[k]).sort((a, b) => (a.y - b.y) || (a.x - b.x));
+      const top = pts.filter(p => p.y === T)[0] || pts[0];
+      const lab = opt.known && n.v in opt.known ? `${uni('v', n.num)} = ${fnum(opt.known[n.v])} V` : uni('v', n.num);
+      lb += `<g class="nlab" data-var="${n.v}"><circle cx="${top.x}" cy="${top.y}" r="7" class="ndot ${nodeCls(n)}"/><text x="${top.x - 10}" y="${top.y - 16}" text-anchor="end" class="lab nl ${nodeCls(n)}">${lab}</text></g>`;
+    });
+    (opt.supernodes || []).forEach(g => {
+      const pts = g.flatMap(n => n.pts.map(k => P[k]));
+      const x1 = Math.min(...pts.map(p => p.x)) - 28, x2 = Math.max(...pts.map(p => p.x)) + 28;
+      const y1 = Math.min(...pts.map(p => p.y)) - 84, y2 = T + 34;
+      ov += `<rect class="bubble" x="${x1}" y="${y1}" width="${x2 - x1}" height="${y2 - y1}" rx="26"/><text x="${x2 - 8}" y="${y2 + 18}" text-anchor="end" class="lab sup">supernode</text>`;
+    });
+  } else {
+    const m = net.ncol - 1;
+    for (let k = 1; k <= m; k++) {
+      const x1 = X0 + (k - 1) * DX + 112, x2 = X0 + k * DX - 44, y1 = T + 62, y2 = B - 62, r = 18;
+      const d = `M${x1 + r},${y1} H${x2 - r} A${r},${r} 0 0 1 ${x2},${y1 + r} V${y2 - r} A${r},${r} 0 0 1 ${x2 - r},${y2} H${x1 + r} A${r},${r} 0 0 1 ${x1},${y2 - r} V${y1 + r} A${r},${r} 0 0 1 ${x1 + r},${y1} Z`;
+      const mx = (x1 + x2) / 2; loopD[k] = d;
+      ov += `<g class="loop k${k}" data-var="i${k}"><path class="lp" d="${d}"/><path class="lph" d="M${mx - 6},${y1 - 7} L${mx + 8},${y1} L${mx - 6},${y1 + 7} Z"/><text x="${mx}" y="${(y1 + y2) / 2 + 8}" text-anchor="middle" class="lab ml">${uni('i', k)}</text></g>`;
+    }
+    (opt.supermeshes || []).forEach(g => {
+      const k1 = +g[0].slice(1), k2 = +g[g.length - 1].slice(1);
+      const x1 = X0 + (k1 - 1) * DX + 14, x2 = X0 + k2 * DX - 14;
+      ov += `<rect class="bubble" x="${x1}" y="${T + 16}" width="${x2 - x1}" height="${B - T - 32}" rx="22"/><text x="${x1 + 12}" y="${T + 42}" text-anchor="start" class="lab sup">supermesh</text>`;
+    });
+  }
+  // brief current-flow dots (warm-up questions only): played from the page with beginElement(), never on their own
+  let fl = '';
+  const flowG = (name, items) => `<g class="flow" data-flow="${name}">` + items.map(it => [0, 1, 2].map(k =>
+    `<circle r="5.5" class="fdot ${it.cls}" opacity="0"><animateMotion dur="${it.dur}s" repeatCount="3" begin="indefinite" path="${it.d}" data-k="${k}"${it.rev ? ' keyPoints="1;0" keyTimes="0;1" calcMode="linear"' : ''}/>` +
+    `<animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.06;0.9;1" dur="${it.dur * 3}s" begin="indefinite" data-k="${k}"/></circle>`).join('')).join('') + '</g>';
+  if (opt.flow && opt.flow.branch) {
+    const items = net.els.filter(e => opt.flow.branch[e.id]).map(e => ({ d: `M${P[e.a].x},${P[e.a].y} L${P[e.b].x},${P[e.b].y}`, rev: opt.flow.branch[e.id] < 0, dur: 1.3, cls: 'acc' }));
+    fl += flowG('real', items);
+  }
+  if (opt.flow && opt.flow.loops) Object.entries(opt.flow.loops).forEach(([name, dirs]) => {
+    fl += flowG(name, Object.entries(dirs).filter(([k, d]) => d && loopD[k]).map(([k, d]) => ({ d: loopD[k], rev: d < 0, dur: 1.6, cls: 'k' + k })));
+  });
+  const H = net.H, top = 0;
+  return `<svg viewBox="0 ${top} ${net.W} ${H}" class="ckt" role="img" aria-label="Circuit diagram">${ul}${wr}${ov}${el}${lb}${fl}</svg>`;
+}
+// which overlays to draw (supernode bubbles / supermesh outlines) and which node values are known
+function overlays(net, kind) {
+  if (kind === 'nodal') {
+    const par = {}; net.nodes.forEach(n => { par[n.r] = n.r; });
+    const find = r => (par[r] === r ? r : (par[r] = find(par[r])));
+    net.els.filter(isV).forEach(e => { par[find(e.na.r)] = find(e.nb.r); });
+    const comps = {}; net.nodes.forEach(n => { (comps[find(n.r)] = comps[find(n.r)] || []).push(n); });
+    return { supernodes: Object.values(comps).filter(g => g.length > 1 && !g.some(n => n.gnd)) };
+  }
+  const groups = [];
+  net.els.filter(e => isI(e) && e.pos === 'col' && e.j > 0 && e.j < net.ncol - 1).forEach(e => groups.push(['i' + e.j, 'i' + (e.j + 1)]));
+  return { supermeshes: groups };
+}
+
+// ===================================================================== random practice questions
+function rng(seed) { let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const POOL = { R: [1, 2, 3, 4, 5, 6, 8, 10, 12], V: [4, 6, 8, 10, 12, 15, 16, 18, 20, 24, 30, 36, 40], I: [1, 2, 3, 4, 5, 6, 8] };
+function friendly(r, kind) {
+  const M = mna(buildNet(r.spec));
+  const main = kind === 'nodal' ? Object.values(M.v) : Object.values(M.mesh || {});
+  if (!main.length) return false;
+  if (main.some(v => !v.isInt() || Math.abs(v.n) > (kind === 'nodal' ? 80 : 15))) return false;
+  if (kind === 'mesh' && main.some(v => v.z)) return false;
+  for (const [id, i] of Object.entries(M.i)) { if (i.z || i.d > 2 || Math.abs(i.val()) > 20) return false; }
+  if (M.ctrl && (M.ctrl.z || M.ctrl.d > 2)) return false;
+  for (const p of Object.values(M.p)) if (p.d > 2) return false;
+  return true;
+}
+function generate(topic, level, seed) {
+  const R = rng(seed), pick = a => a[Math.floor(R() * a.length)];
+  const tpls = topic.templates[level];
+  const helpers = { R, pick, r: () => pick(POOL.R), V: () => pick(POOL.V), I: () => pick(POOL.I), int: (a, b) => a + Math.floor(R() * (b - a + 1)) };
+  for (let tries = 0; tries < 6000; tries++) {
+    const tpl = pick(tpls);
+    const c = tpl(helpers);
+    try {
+      if (!friendly(c, topic.kind)) continue;
+      const s = solveQ(c, topic.kind);
+      if ((s.meta.lcm || 1) > 60 || (s.meta.mult || 1) > 12 || s.meta.frac) continue;
+      return { ...c, id: 'P' + seed, level, generated: true, seed, sol: s };
+    } catch (e) { continue; }
+  }
+  throw Error('could not generate a friendly question');
+}
+
+if (typeof module !== 'undefined') module.exports = { Fr, F, LE, solveLin, buildNet, mna, solveQ, svgNet, overlays, generate, friendly, fnum, fans, isV, isI };
+
+</script>
+<script>
+'use strict';
+// Nodal analysis, up to the supernode: method cards, question bank and practice templates.
+(function () {
+  const R = (v, o) => ({ t: 'R', v, ...o }), V = (v, o) => ({ t: 'V', v, ...o }), I = (v, o) => ({ t: 'I', v, ...o });
+  const D = (t, v, o) => ({ t, v, ...o });
+  const T = (el, h) => `<span class="term" data-el="${el}">${h}</span>`;
+  const v = n => `<span class="var k${n}" data-var="v${n}">v<sub>${n}</sub></span>`;
+  const flipMaybe = (h, e) => (h.R() < 0.35 ? { ...e, flip: true } : e);
+
+  const levels = [
+    { id: 'warm', code: 'W', name: 'Warm-up', blurb: 'one unknown node' },
+    { id: 'std', code: 'S', name: 'Standard', blurb: 'two unknown nodes, known nodes' },
+    { id: 'dep', code: 'D', name: 'Dependent sources', blurb: 'a source set by iₓ or vₓ' },
+    { id: 'sup', code: 'N', name: 'Supernode', blurb: 'a voltage source between two nodes' },
+    { id: 'chal', code: 'C', name: 'Challenge', blurb: 'supernode + dependent source, power' },
+  ];
+
+  // ------------------------------------------------------------ practice templates (values picked at random, kept only if the answers are friendly)
+  const templates = {
+    warm: [
+      h => ({ spec: { cols: [I(h.I()), R(h.r()), R(h.r())], top: ['w', 'w'] } }),
+      h => ({ spec: { cols: [V(h.V()), R(h.r()), flipMaybe(h, I(h.I()))], top: [R(h.r()), 'w'] } }),
+      h => ({ spec: { cols: [I(h.I()), R(h.r()), R(h.r()), I(h.I(), { flip: true })], top: ['w', 'w', 'w'] } }),
+    ],
+    std: [
+      h => ({ spec: { cols: [V(h.V()), R(h.r()), V(h.V())], top: [R(h.r()), R(h.r())] }, extras: h.R() < 0.5 ? ['power'] : [] }),
+      h => ({ spec: { cols: [I(h.I()), R(h.r()), R(h.r()), flipMaybe(h, I(h.I()))], top: ['w', R(h.r()), 'w'] } }),
+      h => ({ spec: { cols: [V(h.V()), R(h.r()), R(h.r()), flipMaybe(h, I(h.I()))], top: [R(h.r()), R(h.r()), 'w'] } }),
+      h => ({ spec: { cols: [V(h.V()), R(h.r()), R(h.r())], top: [R(h.r()), R(h.r())] } }),
+    ],
+    dep: [
+      h => ({ spec: { cols: [V(h.V()), R(h.r(), { x: 'i' }), D('CCCS', h.pick([2, 3, 4, 0.5]), { flip: h.R() < 0.5 })], top: [R(h.r()), 'w'] } }),
+      h => ({ spec: { cols: [I(h.I()), R(h.r()), D('VCCS', h.pick([0.25, 0.5, 1, 2]), { flip: h.R() < 0.5 }), R(h.r())], top: ['w', R(h.r(), { x: 'v' }), 'w'] } }),
+      h => ({ spec: { cols: [V(h.V()), R(h.r()), D('CCVS', h.pick([2, 4, 5, 6, 8, 10]))], top: [R(h.r(), { x: 'i' }), R(h.r())] } }),
+      h => ({ spec: { cols: [I(h.I()), R(h.r(), { x: 'i' }), R(h.r()), D('CCCS', h.pick([2, 3, 0.5]), { flip: h.R() < 0.5 })], top: ['w', R(h.r()), 'w'] } }),
+    ],
+    sup: [
+      h => ({ spec: { cols: [I(h.I()), R(h.r()), R(h.r())], top: ['w', V(h.V(), { flip: h.R() < 0.5 }), 'w'] } }),
+      h => ({ spec: { cols: [I(h.I()), R(h.r()), R(h.r()), flipMaybe(h, I(h.I()))], top: ['w', V(h.V(), { flip: h.R() < 0.5 }), 'w'] }, extras: ['isrc'] }),
+      h => ({ spec: { cols: [V(h.V()), R(h.r()), R(h.r())], top: [R(h.r()), V(h.V(), { flip: h.R() < 0.5 })], arch: { from: 0, to: 2, el: R(h.r()) } } }),
+      h => ({ spec: { cols: [I(h.I()), R(h.r()), R(h.r()), flipMaybe(h, I(h.I()))], top: ['w', V(h.V(), { flip: h.R() < 0.5 }), 'w'], arch: { from: 1, to: 2, el: R(h.r(), { n: 'p' }) } }, extras: ['isrc'] }),
+      h => ({ spec: { cols: [V(h.V()), R(h.r()), R(h.r()), R(h.r())], top: [R(h.r()), V(h.V(), { flip: h.R() < 0.5 }), 'w'] } }),
+    ],
+    chal: [
+      h => ({ spec: { cols: [I(h.I()), R(h.r(), { x: 'i' }), R(h.r())], top: ['w', D('CCVS', h.pick([2, 3, 4, 5, 6]), { flip: h.R() < 0.5 }), 'w'] }, extras: ['power'] }),
+      h => ({ spec: { cols: [V(h.V()), R(h.r()), R(h.r()), D('CCCS', h.pick([2, 3, 0.5]), { flip: h.R() < 0.5 })], top: [R(h.r(), { x: 'i' }), V(h.V(), { flip: h.R() < 0.5 }), 'w'] }, extras: ['power'] }),
+      h => ({ spec: { cols: [I(h.I()), R(h.r(), { x: 'v' }), R(h.r()), flipMaybe(h, I(h.I()))], top: ['w', D('VCVS', h.pick([2, 3, 0.5]), { flip: h.R() < 0.5 }), 'w'] }, extras: ['power'] }),
+    ],
+  };
+
+  // ------------------------------------------------------------ method cards
+  const method = [
+    { title: 'The idea', spec: { cols: [V(12), R(4), R(4)], top: [R(2), 'w'] },
+      html: `<p>A <b>node</b> is a junction <b>plus every wire joined to it</b>. In the picture, <b>one colour = one node</b>; the whole bottom wire is one node, however long it is.</p>
+      <p>Pick one node as the <b>reference</b> (0 V, the ground symbol). Every other node gets a <b>node voltage</b>, measured from the reference. Those node voltages are the unknowns, and the law we use is <b>KCL</b>: current in = current out.</p>
+      <p class="muted">Hover over the circuit: each element lights up.</p>` },
+    { title: 'The recipe',
+      html: `<ol><li><b>Colour the nodes.</b> Choose the reference node (usually the bottom wire).</li>
+      <li><b>Name</b> the other nodes ${v(1)}, ${v(2)}, …</li>
+      <li><b>Known nodes:</b> a voltage source from a node to the reference fixes that node.</li>
+      <li><b>Supernode:</b> a voltage source between two other nodes: put a bubble round it.</li>
+      <li><b>KCL</b> at every unknown node (or round every supernode bubble).</li>
+      <li><b>Solve</b>, then find the currents.</li></ol>
+      <div class="note">Number of equations = number of unknown node voltages. Every question here has at most two.</div>` },
+    { title: 'Current through a resistor',
+      html: `<p>Current flows from the higher voltage to the lower, like water running downhill:</p>
+      <div class="eq">i = (v<sub>tail of arrow</sub> − v<sub>head of arrow</sub>) ÷ R</div>
+      <p>In KCL we write every resistor current as <b>leaving</b> the node we stand at: (v<sub>this node</sub> − v<sub>other end</sub>) ÷ R. If the other end is the reference, that is just v<sub>this node</sub> ÷ R.</p>
+      <p>A <b>negative</b> answer is not a mistake: the current simply flows the other way.</p>
+      <div class="note"><b>Maths reminder – clearing fractions.</b> Multiply <b>every</b> term on <b>both</b> sides by the lowest number that all the denominators divide into. Example: v/6 + v/3 = 9 → (× 6) → v + 2v = 54 → 3v = 54 → v = 18.</div>` },
+    { title: 'Voltage sources: known node or supernode', spec: { cols: [I(8), R(6), R(3)], top: ['w', V(6, { flip: true }), 'w'] }, over: true,
+      html: `<p><b>Source to the reference:</b> it holds its node at the source voltage. That node is <b>known</b>: no KCL needed there.</p>
+      <p><b>Source between two other nodes:</b> its current cannot be written with Ohm's law. Draw a bubble round both nodes and the source, a <b>supernode</b>:</p>
+      <ul><li><b>KCL round the bubble</b>: count only the currents that cross the dashed line.</li>
+      <li><b>Source equation</b>: v<sub>+ end</sub> − v<sub>− end</sub> = source voltage. Here ${v(2)} − ${v(1)} = 6.</li></ul>
+      <p>Two equations for two unknowns, exactly as before.</p>` },
+    { title: 'Dependent sources', spec: { cols: [V(20), R(4, { x: 'i' }), D('CCCS', 2, { flip: true })], top: [R(2), 'w'] },
+      html: `<p>A <b>dependent</b> (controlled) source is drawn as a <b>diamond</b>. Its value is set by a voltage or current somewhere else in the circuit, the <b>controlling quantity</b> (here i<sub>x</sub>, the current in R<sub>2</sub>).</p>
+      <table><tr><th>Type</th><th>Gives</th><th>Example</th></tr>
+      <tr><td>current-controlled current source</td><td>current</td><td>2i<sub>x</sub> (A)</td></tr>
+      <tr><td>voltage-controlled current source</td><td>current</td><td>0.5v<sub>x</sub> (A)</td></tr>
+      <tr><td>current-controlled voltage source</td><td>voltage</td><td>4i<sub>x</sub> (V)</td></tr>
+      <tr><td>voltage-controlled voltage source</td><td>voltage</td><td>3v<sub>x</sub> (V)</td></tr></table>
+      <ol><li>Write KCL treating the dependent source like an ordinary one (keep 2i<sub>x</sub> as it is).</li>
+      <li>Write the controlling quantity with node voltages, e.g. i<sub>x</sub> = (v<sub>a</sub> − v<sub>b</sub>) ÷ R.</li>
+      <li>Substitute, then tidy and solve as usual.</li></ol>` },
+    { title: 'Maths reminder – two equations',
+      html: `<p><b>Elimination:</b> multiply the equations so that one unknown has the same number in front in both, then add (opposite signs) or subtract (same signs).</p>
+      <div class="eq">7v<sub>2</sub> − 3v<sub>3</sub> = 108 … (1)<br>v<sub>2</sub> − 2v<sub>3</sub> = −16 … (2)<br>(1) × 2: 14v<sub>2</sub> − 6v<sub>3</sub> = 216<br>(2) × 3: 3v<sub>2</sub> − 6v<sub>3</sub> = −48<br>subtract: 11v<sub>2</sub> = 264 → v<sub>2</sub> = 24<br>(1): 168 − 3v<sub>3</sub> = 108 → v<sub>3</sub> = 20</div>
+      <p><b>Substitution:</b> if one equation gives one unknown in terms of the other (like a supernode equation v<sub>2</sub> = v<sub>1</sub> + 6), put it into the other equation.</p>
+      <p>Always check: put the answers back into the equation you did not use.</p>` },
+  ];
+
+  // ------------------------------------------------------------ question bank
+  const questions = [];
+  // Q1 (custom warm-up): find the source current that holds a node at a given voltage
+  questions.push({ level: 'warm', title: 'Find the source current',
+    spec: { cols: [I(5, { lab: 'I = ?' }), R(4), V(6)], top: ['w', R(3)] },
+    text: `<p>The top-left node (${v(1)}) is at <b>12 V</b>. Find the source current I that keeps it there.</p>`,
+    verify: M => M.v.v1.eq(12),
+    custom: () => ({
+      unknowns: [], answers: [{ html: 'I', val: F(5), unit: 'A' }],
+      steps: [
+        { title: 'Name the nodes', say: `Take the bottom wire as the reference (0 V). Node 1 is at 12 V (given). The 6 V source holds node 2 at 6 V.`, lines: [{ how: '', eq: `${v(1)} = 12 V, &nbsp; ${T('V1', `${v(2)} = 6 V`)}` }] },
+        { title: 'Current in each resistor', say: 'Use i = (v<sub>tail</sub> − v<sub>head</sub>) ÷ R, with the current leaving node 1.', lines: [
+          { how: `${T('R1', 'R<sub>1</sub>')} goes from node 1 down to the reference:`, eq: T('R1', `(12 − 0) ÷ 4 = 3 A`) },
+          { how: `${T('R2', 'R<sub>2</sub>')} goes from node 1 to node 2 (at 6 V, not 0 V):`, eq: T('R2', `(12 − 6) ÷ 3 = 2 A`) }] },
+        { title: 'KCL at node 1', say: 'Current in = current out. The source pushes I into node 1; the two resistor currents leave.', lines: [
+          { how: 'in = out', eq: `${T('I1', 'I')} = ${T('R1', '3')} + ${T('R2', '2')}` }, { how: '', eq: `I = <b>5 A</b>` }] },
+        { title: 'Check', say: 'The node with the bigger voltage difference across a smaller resistor takes more current: 3 A down R<sub>1</sub>, 2 A across R<sub>2</sub>. Total out 5 A = in 5 A <span class="ok">✓</span>', lines: [] },
+      ] }),
+    mistake: 'Using 12 ÷ 3 = 4 A for R<sub>2</sub>. Its other end is at 6 V, not 0 V: always use the <b>difference</b>.' });
+  questions.push({ level: 'warm', title: 'One unknown node', spec: { cols: [I(10), R(6), R(4)], top: ['w', 'w'] },
+    mistake: 'Forgetting to multiply the source current (on the left) by the LCM when clearing the fractions.' });
+  questions.push({ level: 'warm', title: 'A known node and one unknown', spec: { cols: [V(30), R(10), I(6)], top: [R(5), 'w'] },
+    mistake: 'Writing KCL at node 1. Its voltage is already known, and the current in a voltage source has no Ohm\'s-law formula.' });
+  questions.push({ level: 'std', title: 'Two sources to the reference', spec: { cols: [V(24), R(6), V(12)], top: [R(1), R(2)] }, extras: ['power'],
+    mistake: 'Treating a negative current as an error. It only means the current flows the other way: here into the + end of the 12 V source, which is being charged.' });
+  questions.push({ level: 'std', title: 'Two unknown nodes', spec: { cols: [I(6), R(4), R(12), I(1, { flip: true })], top: ['w', R(2), 'w'] },
+    mistake: 'Putting a source current on the wrong side. Its arrow tells you: arrow into the node = current in.' });
+  questions.push({ level: 'std', title: 'A known node and two unknowns', spec: { cols: [V(10), R(10), R(6), I(10)], top: [R(5), R(4), 'w'] },
+    mistake: 'Opening 2(v<sub>2</sub> − v<sub>3</sub>) as 2v<sub>2</sub> − v<sub>3</sub>. The number in front multiplies <b>every</b> term in the bracket.' });
+  questions.push({ level: 'dep', title: 'Current-controlled current source', spec: { cols: [V(18), R(6, { x: 'i' }), D('CCCS', 2, { flip: true })], top: [R(1), 'w'] },
+    mistake: 'Leaving i<sub>x</sub> in the final equation. Write it with node voltages first, so that only one unknown is left.' });
+  questions.push({ level: 'dep', title: 'Voltage-controlled current source', spec: { cols: [I(6), R(2), D('VCCS', 0.5), R(6)], top: ['w', R(4, { x: 'v' }), 'w'] },
+    mistake: 'Using the wrong sign for v<sub>x</sub>. It is the + end minus the − end as marked on the resistor.' });
+  questions.push({ level: 'dep', title: 'Dependent voltage source to the reference', spec: { cols: [V(30), R(12), D('CCVS', 6)], top: [R(2, { x: 'i' }), R(6)] },
+    mistake: 'Writing KCL at the node of the dependent voltage source. Like any voltage source to the reference, it fixes that node (in terms of i<sub>x</sub>).' });
+  questions.push({ level: 'sup', title: 'A first supernode', spec: { cols: [I(9), R(6), R(3)], top: ['w', V(18, { flip: true }), 'w'] },
+    mistake: 'Writing (v<sub>2</sub> − v<sub>1</sub>)/R for the voltage source. A source is not a resistor: use the source equation instead.' });
+  questions.push({ level: 'sup', title: 'Supernode and the source current', spec: { cols: [I(8), R(4), R(2), I(10, { flip: true })], top: ['w', V(2, { flip: true }), 'w'] }, extras: ['isrc'],
+    mistake: 'Forgetting the source current when you write KCL at one node on its own at the end.' });
+  questions.push({ level: 'sup', title: 'Known node plus a supernode', spec: { cols: [V(40), R(5), R(4)], top: [R(10), V(10)], arch: { from: 0, to: 2, el: R(2) } },
+    mistake: 'Putting the 10 V source current into the bubble KCL. It never crosses the dashed line.' });
+  questions.push({ level: 'sup', title: 'Resistor inside the bubble', spec: { cols: [I(1), R(4), R(6), I(1, { flip: true })], top: ['w', V(5, { flip: true }), 'w'], arch: { from: 1, to: 2, el: R(5, { n: 'p' }) } }, extras: ['isrc'],
+    mistake: 'Putting the R<sub>p</sub> current into the bubble KCL. Both ends of R<sub>p</sub> are inside the bubble.' });
+  questions.push({ level: 'chal', title: 'Supernode with a dependent source', spec: { cols: [I(6), R(3, { x: 'i' }), R(6)], top: ['w', D('CCVS', 3, { flip: true }), 'w'] }, extras: ['power'],
+    mistake: 'Using the dependent source as if it were a fixed 3 V. Its voltage is 3 × i<sub>x</sub>, which you only know at the end.' });
+  questions.push({ level: 'chal', title: 'Known node, supernode and a dependent current', spec: { cols: [V(36), R(2), R(4), D('CCCS', 0.5, { flip: true })], top: [R(4, { x: 'i' }), V(4, { flip: true }), 'w'] }, extras: ['power'],
+    mistake: 'Using a node voltage instead of the voltage <b>across</b> a resistor when you work out its power.' });
+
+  window.TOPIC = { kind: 'nodal', title: 'Nodal Analysis', sub: 'from one unknown node to the supernode, with dependent sources', levels, templates, method, questions };
+})();
+
+</script>
+<script>
+'use strict';
+// Page shell: method view, question bank (every question open, in any order), practice generator,
+// and the two-way hover link between circuit elements and equation terms. Nothing here is timed.
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const TOPIC = window.TOPIC, KIND = TOPIC.kind;
+let view = 'questions', curQ = null, shown = 0, curSol = null, genLevel = TOPIC.levels[1].id;
+
+// ---------------------------------------------------------------- hover: element <-> term, node/mesh <-> variable
+let pinned = null;
+function keyOf(t) { const g = t.closest('[data-el]') || t.closest('[data-var]'); if (!g) return null; return g.dataset.el ? ['el', g.dataset.el] : ['var', g.dataset.var]; }
+function light(k, scope) {
+  $$('.hl').forEach(n => n.classList.remove('hl'));
+  if (!k || !scope) return;
+  $$(`[data-${k[0]}="${k[1]}"]`, scope).forEach(n => n.classList.add('hl'));
+}
+document.addEventListener('mouseover', e => { if (pinned) return; const k = keyOf(e.target); light(k, e.target.closest('.scope')); });
+document.addEventListener('mouseout', e => { if (pinned) return; if (!e.relatedTarget || !keyOf(e.relatedTarget)) light(null); });
+document.addEventListener('click', e => {           // tap to pin a highlight on touch screens; tap again to clear
+  const k = keyOf(e.target);
+  if (!k) { pinned = null; light(null); return; }
+  if (pinned && pinned[0] === k[0] && pinned[1] === k[1]) { pinned = null; light(null); return; }
+  pinned = k; light(k, e.target.closest('.scope'));
+});
+
+// ---------------------------------------------------------------- text helpers
+const T = (el, h) => `<span class="term" data-el="${el}">${h}</span>`;
+const varList = vs => vs.map(v => VH(v));
+function autoText(q, sol) {
+  if (q.text) return q.text;
+  const u = sol.unknowns, ex = q.extras || [];
+  const parts = [`Use ${KIND === 'nodal' ? 'nodal' : 'mesh'} analysis to find ${listJoin(varList(u))}${u.length ? '' : ' the unknowns'}, then the current in each resistor.`];
+  if (ex.includes('isrc')) parts.push(`Find the current through ${listJoin(sol.net.els.filter(isV).map(elH))}.`);
+  if (ex.includes('vsrc')) parts.push(`Find the voltage across ${listJoin(sol.net.els.filter(isI).map(elH))}.`);
+  if (sol.net.ctrl) parts.push(`Find the value of the dependent source.`);
+  if (ex.includes('power')) parts.push('Find the power of every element and show that the power supplied equals the power absorbed.');
+  return parts.map(p => `<p>${p}</p>`).join('');
+}
+function parseNum(s) {
+  s = String(s).trim().replace(/[−–]/g, '-').replace(/\s+/g, '').replace(/[a-zA-ZΩ]+$/, '');
+  if (!s) return null;
+  if (/^-?\d+(\.\d+)?\/\d+(\.\d+)?$/.test(s)) { const [a, b] = s.split('/').map(Number); return b ? a / b : null; }
+  const v = Number(s); return Number.isFinite(v) ? v : null;
+}
+
+// ---------------------------------------------------------------- one question (fixed or generated)
+function stepHTML(s) {
+  const lines = (s.lines || []).map(l => `<div class="line">${l.how ? `<div class="how">${l.how}</div>` : ''}${l.eq ? `<div class="eq">${l.eq}</div>` : ''}</div>`).join('');
+  const cap = h => h.replace(/^((?:<[^>]+>)*)([a-z])/, (m, t, c) => t + c.toUpperCase());
+  return `<h3>${s.title}</h3>${s.say ? `<p>${cap(s.say)}</p>` : ''}${lines}${s.note ? `<div class="note">${s.note}</div>` : ''}` +
+    (s.details ? `<details><summary>${s.details.title}</summary><div class="eq">${s.details.html}</div></details>` : '');
+}
+function solve(q) {
+  if (q.sol) return q.sol;
+  if (q.custom) { const net = buildNet(q.spec); const c = q.custom(net); q.sol = { net, steps: c.steps, unknowns: c.unknowns || [], vals: c.vals || {}, answers: c.answers || [], custom: true }; return q.sol; }
+  q.sol = solveQ(q, KIND); return q.sol;
+}
+function answerList(q, sol) {
+  const a = sol.unknowns.map(v => ({ html: VH(v), val: sol.vals[v], unit: KIND === 'nodal' ? 'V' : 'A' }));
+  return a.concat(sol.answers || []);
+}
+function renderQ(box, q, label) {
+  const sol = solve(q); curQ = q; curSol = sol; shown = 0;
+  const lv = TOPIC.levels.find(l => l.id === q.level);
+  const ans = answerList(q, sol);
+  const tryable = ans.filter(a => !a.hide);
+  box.innerHTML = `<div class="qgrid scope">
+    <div class="sticky"><div class="card"><div id="cktbox"></div>
+      ${q.level === 'warm' ? `<div class="flowbar"><button id="replay"${KIND === 'nodal' ? ' hidden' : ''}>▶ Show the current</button><span class="muted" id="flowcap"></span></div>` : ''}
+      <p class="hint">Hover over (or tap) any element to light up every term it creates in the equations. Hover over a term to find its element. Coloured letters are node voltages or mesh currents.</p></div></div>
+    <div class="card">
+      <div class="qhead"><span class="chip">${lv ? lv.name : ''}</span><h2>${label}</h2></div>
+      <div class="qtext">${autoText(q, sol)}</div>
+      ${tryable.length ? `<details class="try"><summary>Try it yourself first, then check your answers here</summary>
+        <div>${tryable.map((a, i) => `<label>${a.html} = <input data-i="${i}" inputmode="decimal" autocomplete="off"> ${a.unit}</label>`).join('')}
+        <button id="chk">Check</button> <span id="chkout"></span></div></details>` : ''}
+      <div class="ctl"><button class="primary" id="nx">Show next step</button><button id="all">Show all steps</button><button id="hide">Hide steps</button>
+        <span class="muted" id="cnt"></span></div>
+      <ol class="steps">${sol.steps.map(s => `<li hidden>${stepHTML(s)}</li>`).join('')}</ol>
+      <div class="answer" id="ansbox" hidden><b>Answers:</b> ${ans.map(a => `${a.html} = <b>${fans(a.val)} ${a.unit}</b>`).join('; &nbsp; ')}</div>
+      ${q.mistake ? `<div class="warn" id="mist" hidden><b>Common mistake:</b> ${q.mistake}</div>` : ''}
+    </div></div>`;
+  setupFlow(q, sol);
+  drawCkt();
+  $('#nx').onclick = () => reveal(shown + 1);
+  $('#all').onclick = () => reveal(sol.steps.length);
+  $('#hide').onclick = () => reveal(0);
+  const ck = $('#chk');
+  if (ck) ck.onclick = () => {
+    let good = 0;
+    $$('.try input').forEach(inp => {
+      const a = tryable[+inp.dataset.i], v = parseNum(inp.value), t = a.val.val();
+      const ok = v !== null && Math.abs(v - t) <= Math.max(0.01, Math.abs(t) * 0.01);
+      inp.style.borderColor = v === null ? '' : ok ? 'var(--ok)' : 'var(--bad)'; if (ok) good++;
+    });
+    $('#chkout').innerHTML = good === tryable.length ? '<span class="ok">All correct ✓</span>' : `<span class="bad">${good} of ${tryable.length} correct.</span> Open the steps to see where it goes wrong.`;
+  };
+  reveal(0);
+  if (flow && KIND === 'mesh') play('cw');
+}
+// the circuit is drawn once per question; later steps only switch on the node colours / bubble
+function drawCkt() {
+  const sol = curSol, upto = sol.steps.slice(0, shown), svg = $('#cktbox svg');
+  svg.classList.toggle('colour', KIND === 'nodal' && shown > 0);
+  svg.classList.toggle('over', upto.some(s => /supernode|supermesh/i.test(s.title)));
+}
+
+// ---------------------------------------------------------------- brief current-flow dots (warm-up questions only)
+// Nodal: dots run along every element in the real current direction, first shown with the branch currents.
+// Mesh: dots circle each loop clockwise on opening, then in the real direction once the equations are solved.
+let flow = null, flowTimers = [];
+function setupFlow(q, sol) {
+  flow = null;
+  const net = sol.net, opt = overlays(net, KIND);
+  if (q.level === 'warm') {
+    const M = sol.M || mna(net);
+    const trig = sol.steps.findIndex(s => (KIND === 'nodal' ? /current in each resistor|^KCL at node/i : /^Solve/).test(s.title));
+    flow = { trig, fired: false, neg: [] };
+    if (KIND === 'nodal') opt.flow = { branch: Object.fromEntries(net.els.map(e => [e.id, M.i[e.id].sign()])) };
+    else {
+      const m = net.ncol - 1, cw = {}, real = {};
+      for (let k = 1; k <= m; k++) { cw[k] = 1; real[k] = M.mesh['i' + k].sign(); if (real[k] < 0) flow.neg.push(k); }
+      opt.flow = { loops: { cw, real } };
+    }
+  }
+  $('#cktbox').innerHTML = svgNet(net, KIND, opt);
+  const rp = $('#replay');
+  if (rp) rp.onclick = () => play(KIND === 'mesh' && !flow.fired ? 'cw' : 'real');
+}
+function play(name) {
+  flowTimers.forEach(clearTimeout); flowTimers = [];
+  const svg = $('#cktbox svg'); if (!svg || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  $$('.flow animate, .flow animateMotion', svg).forEach(a => { try { a.endElement(); } catch (e) { /* not started yet */ } });
+  $$(`.flow[data-flow="${name}"] circle`, svg).forEach(c => {
+    const m = $('animateMotion', c), o = $('animate', c), dur = parseFloat(m.getAttribute('dur'));
+    flowTimers.push(setTimeout(() => { try { m.beginElement(); o.beginElement(); } catch (e) { /* svg replaced */ } }, +m.dataset.k * dur * 1000 / 3));
+  });
+  const cap = $('#flowcap');
+  if (cap) cap.innerHTML = KIND === 'nodal' ? 'The dots show the real direction of each current.'
+    : name === 'cw' ? 'Each mesh current is drawn clockwise to start with.'
+      : flow.neg.length ? `${listJoin(flow.neg.map(k => VH('i' + k)))} came out negative, so it really flows anticlockwise.` : 'Every mesh current came out positive: it really flows clockwise.';
+}
+function reveal(n) {
+  const li = $$('ol.steps>li'); shown = Math.max(0, Math.min(li.length, n));
+  li.forEach((l, i) => { l.hidden = i >= shown; l.classList.toggle('new', i === shown - 1); });
+  $('#cnt').textContent = `${shown} of ${li.length} steps shown`;
+  $('#nx').disabled = shown >= li.length; $('#hide').disabled = shown === 0; $('#all').disabled = shown >= li.length;
+  $('#ansbox').hidden = shown < li.length; const m = $('#mist'); if (m) m.hidden = shown < li.length;
+  drawCkt();
+  if (flow && flow.trig >= 0 && !flow.fired && shown > flow.trig) {
+    flow.fired = true; play('real');
+    const rp = $('#replay'); if (rp) rp.hidden = false;
+  }
+  if (n > 0 && li[shown - 1] && n === shown && n !== li.length) li[shown - 1].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+// ---------------------------------------------------------------- views
+function setView(v) {
+  view = v; pinned = null;
+  $$('nav.tabs button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  const M = $('main');
+  if (v === 'method') {
+    M.innerHTML = `<div class="mgrid">${TOPIC.method.map((s, i) => `<div class="card scope"><h2>${s.title}</h2>${s.spec ? `<div class="mc" data-i="${i}"></div>` : ''}${s.html}</div>`).join('')}</div>`;
+    $$('.mc').forEach(d => { const s = TOPIC.method[+d.dataset.i]; const net = buildNet(s.spec); d.innerHTML = svgNet(net, KIND, overlays(net, KIND)); const svg = $('svg', d); if (KIND === 'nodal') svg.classList.add('colour'); if (s.over) svg.classList.add('over'); });
+  } else if (v === 'questions') {
+    M.innerHTML = `<div class="card levels">${TOPIC.levels.map(l => `<div class="level"><div class="lname">${l.name}<small>${l.blurb}</small></div>${TOPIC.questions.map((q, i) => [q, i]).filter(([q]) => q.level === l.id).map(([q, i]) => `<button class="qbtn" data-i="${i}">Q${i + 1} · ${q.title}</button>`).join('')}</div>`).join('')}
+      <p class="muted">Every question is open: start anywhere. They get harder from top to bottom.</p></div><div id="qbox"></div>`;
+    $$('.qbtn').forEach(b => { b.onclick = () => openQ(+b.dataset.i); });
+    openQ(TOPIC.questions.indexOf(curQ) >= 0 ? TOPIC.questions.indexOf(curQ) : 0, true);
+  } else {
+    M.innerHTML = `<div class="card gen"><b>Difficulty:</b> ${TOPIC.levels.map(l => `<button class="lvb" data-l="${l.id}">${l.name}</button>`).join('')}
+      <button class="primary" id="go">Generate question</button>
+      <span class="code" id="code"></span>
+      <span style="margin-left:auto"></span><input id="cin" placeholder="question code" aria-label="question code"><button id="cgo">Load</button></div>
+      <p class="muted">Each question is new: the circuit is drawn from the chosen level and the values are picked so that the answers come out as friendly numbers. The solution is worked out step by step, the same way as in the question bank. Share the code to give a classmate the same question.</p><div id="qbox"></div>`;
+    const mark = () => $$('.lvb').forEach(b => b.classList.toggle('on', b.dataset.l === genLevel));
+    $$('.lvb').forEach(b => { b.onclick = () => { genLevel = b.dataset.l; mark(); }; });
+    mark();
+    $('#go').onclick = () => gen(genLevel, Math.floor(Math.random() * 90000) + 10000);
+    $('#cgo').onclick = () => { const m = /^\s*([A-Za-z]+)-(\d+)\s*$/.exec($('#cin').value); const lv = m && TOPIC.levels.find(l => l.code.toLowerCase() === m[1].toLowerCase()); if (lv) { genLevel = lv.id; mark(); gen(lv.id, +m[2]); } else $('#code').textContent = 'Code not recognised (example: S-12345)'; };
+  }
+}
+function openQ(i, quiet) {
+  const q = TOPIC.questions[i];
+  $$('.qbtn').forEach(b => b.classList.toggle('on', +b.dataset.i === i));
+  renderQ($('#qbox'), q, `Question ${i + 1}: ${q.title}`);
+  if (!quiet) $('#qbox').scrollIntoView({ block: 'start', behavior: 'smooth' });
+}
+function gen(level, seed) {
+  const lv = TOPIC.levels.find(l => l.id === level);
+  let q;
+  try { q = generate(TOPIC, level, seed); } catch (e) { $('#qbox').innerHTML = `<p class="bad">Could not make a question this time. Click Generate again.</p>`; return; }
+  $('#code').textContent = `Code: ${lv.code}-${seed}`;
+  renderQ($('#qbox'), q, `Practice question (${lv.name})`);
+}
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || !$('#nx')) return;
+  if (e.key === 'ArrowRight') reveal(shown + 1); if (e.key === 'ArrowLeft') reveal(shown - 1);
+});
+$$('nav.tabs button').forEach(b => { b.onclick = () => setView(b.dataset.v); });
+setView('questions');
+
+</script>
+</body>
+</html>
