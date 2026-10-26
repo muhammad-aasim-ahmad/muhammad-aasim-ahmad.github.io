@@ -18,8 +18,6 @@ body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Segoe UI",sy
 header{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:5}
 h1{font-size:1.25rem;margin:0}
 h1 small{display:block;font-weight:400;color:var(--muted);font-size:.85rem}
-.home{display:inline-block;font-size:.85rem;color:var(--muted);text-decoration:none;margin-bottom:2px}
-.home:hover{color:var(--acc);text-decoration:underline}
 nav.tabs{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;flex-wrap:wrap}
 nav.tabs button{border:0;border-radius:0}
 button{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 14px;cursor:pointer}
@@ -63,10 +61,26 @@ details{margin:.6em 0}summary{cursor:pointer;color:var(--muted)}
 .try{background:var(--note);border-radius:9px;padding:8px 13px}
 .try label{display:inline-flex;gap:6px;align-items:center;margin:4px 14px 4px 0}
 .try input{width:7.5em;font:inherit;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+/* help modes and one-number-at-a-time checking */
+.modes{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin:.6em 0 .8em}
+.modes button{font-size:.9rem;padding:3px 12px}
+ol.steps>li.pend{border-left-style:dashed;border-left-color:var(--acc)}
+ol.steps>li.pend h3::after{content:" · your turn";color:var(--acc);font-size:.85rem}
+ol.steps>li.pend .eq,ol.steps>li.pend .note,ol.steps>li.pend details{display:none}
+ol.steps.own>li.pend>:not(h3){display:none}
+ol.steps>li.won h3::after{content:" ✓";color:var(--ok)}
+ol.steps>li.helped h3::after{content:" · with help";color:var(--muted);font-weight:400;font-size:.85rem}
+.stage{background:var(--note);border:2px solid var(--acc);border-radius:10px;padding:10px 14px;margin:12px 0}
+.stage .sq{font-weight:600;margin-bottom:6px}
+.srow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.srow label{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
+.srow input{width:8em;font:inherit;padding:4px 8px;border:2px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+.stage .warn{margin:.6em 0 .3em}
+.stage ul{margin:.4em 0;padding-left:1.3em}
 /* terms and variables */
 .term{border-radius:4px;padding:0 2px;transition:background .12s;cursor:default}
 .term.hl{background:var(--hl);box-shadow:0 0 0 2px var(--hl)}
-.var{font-weight:700;font-style:normal;border-radius:4px}
+.var{font-weight:600;font-style:italic;border-radius:4px}
 .var.hl{background:var(--hl)}
 .k0{color:var(--k0)}.k1{color:var(--k1)}.k2{color:var(--k2)}.k3{color:var(--k3)}.k4{color:var(--k4)}.kx{color:var(--kx)}
 /* circuit */
@@ -122,6 +136,100 @@ th{background:var(--note)}
 @media (max-width:600px){body{font-size:16px}main{padding:12px 12px 50px}header{padding:10px 12px}.card{padding:12px}.level .lname{min-width:100%}}
 footer{text-align:center;color:var(--muted);font-size:.85rem;padding:18px 16px 28px;border-top:1px solid var(--line)}
 
+
+/* ---------------------------------------------------------------- colour theme */
+:root{--on-acc:#fff;--hdr1:#1f7a8c;--hdr2:#5b3cc4;--warnline:#f08c00;
+  --lv0:#2f9e44;--lv1:#0c8599;--lv2:#1971c2;--lv3:#7048e8;--lv4:#e03131;
+  --t-setup:#1971c2;--t-equation:#e8590c;--t-algebra:#7048e8;--t-answer:#2f9e44;--t-check:#0c8599}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--on-acc:#10202a;--hdr1:#145866;--hdr2:#3d2a8a;--warnline:#ffa94d;
+  --lv0:#69db7c;--lv1:#3bc9db;--lv2:#74c0fc;--lv3:#b197fc;--lv4:#ff8787;
+  --t-setup:#74c0fc;--t-equation:#ffa94d;--t-algebra:#b197fc;--t-answer:#69db7c;--t-check:#3bc9db}}
+:root[data-theme="dark"]{--on-acc:#10202a;--hdr1:#145866;--hdr2:#3d2a8a;--warnline:#ffa94d;
+  --lv0:#69db7c;--lv1:#3bc9db;--lv2:#74c0fc;--lv3:#b197fc;--lv4:#ff8787;
+  --t-setup:#74c0fc;--t-equation:#ffa94d;--t-algebra:#b197fc;--t-answer:#69db7c;--t-check:#3bc9db}
+/* header band with the page icon; tabs as pills */
+header{background:linear-gradient(100deg,var(--hdr1),var(--hdr2));border-bottom:0;color:#fff}
+header h1{display:flex;align-items:center;gap:12px}
+header h1 small{color:rgba(255,255,255,.82)}
+.picon{flex:none;width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,.16);display:grid;place-items:center}
+.picon svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs{border:0;gap:6px;background:rgba(255,255,255,.14);padding:4px;border-radius:24px}
+nav.tabs button{background:transparent;color:#fff;border-radius:20px;border:0}
+nav.tabs button:hover{background:rgba(255,255,255,.18)}
+nav.tabs button.on{background:#fff;color:var(--hdr1)}
+button.on,button.primary{background:var(--acc);color:var(--on-acc);border-color:var(--acc)}
+/* difficulty levels: one colour each (data-lv = 0 … 4) */
+[data-lv="0"]{--lv:var(--lv0)}[data-lv="1"]{--lv:var(--lv1)}[data-lv="2"]{--lv:var(--lv2)}[data-lv="3"]{--lv:var(--lv3)}[data-lv="4"]{--lv:var(--lv4)}
+.level .lname{color:var(--lv);padding-left:10px;border-left:4px solid var(--lv)}
+.qbtn,.lvb{border-left:4px solid var(--lv,var(--line))}
+.qbtn:hover,.lvb:hover{background:color-mix(in srgb,var(--lv,var(--acc)) 10%,var(--card))}
+.qbtn.on,.lvb.on{background:var(--lv);border-color:var(--lv);color:var(--on-acc)}
+.chip{background:color-mix(in srgb,var(--lv,var(--acc)) 15%,var(--card));color:var(--lv,var(--acc))}
+/* steps: a numbered badge and an icon coloured by the kind of step */
+ol.steps>li.t-setup{--tc:var(--t-setup)}ol.steps>li.t-equation{--tc:var(--t-equation)}ol.steps>li.t-algebra{--tc:var(--t-algebra)}
+ol.steps>li.t-answer{--tc:var(--t-answer)}ol.steps>li.t-check{--tc:var(--t-check)}
+ol.steps>li{border-left:4px solid color-mix(in srgb,var(--tc,var(--line)) 40%,transparent);background:linear-gradient(90deg,color-mix(in srgb,var(--tc,var(--line)) 7%,transparent),transparent 60%);border-radius:0 8px 8px 0;padding-right:8px}
+ol.steps>li.new{border-left-color:var(--tc,var(--acc))}
+ol.steps>li h3{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+ol.steps>li h3::before{content:counter(st);display:inline-grid;place-items:center;min-width:1.65em;height:1.65em;border-radius:50%;background:var(--tc,var(--muted));color:var(--on-acc);font-size:.85rem;font-weight:700}
+.sico{width:17px;height:17px;fill:none;stroke:var(--tc,var(--muted));stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sty{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--tc,var(--muted))}
+ol.steps>li.pend{border-left-style:dashed;border-left-color:var(--tc,var(--acc))}
+/* other surfaces */
+.answer{background:color-mix(in srgb,var(--acc) 10%,var(--card));font-size:1.05rem}
+.warn{border-left:4px solid var(--warnline)}
+.note{border-left:4px solid color-mix(in srgb,var(--acc) 55%,transparent)}
+.try,.stage{background:color-mix(in srgb,var(--acc) 8%,var(--card))}
+.modes button.on{background:var(--acc);border-color:var(--acc)}
+.mgrid>.card{border-top:5px solid var(--mc,var(--acc))}
+.mgrid>.card:nth-child(5n+1){--mc:var(--lv2)}.mgrid>.card:nth-child(5n+2){--mc:var(--lv1)}.mgrid>.card:nth-child(5n+3){--mc:var(--lv3)}
+.mgrid>.card:nth-child(5n+4){--mc:var(--t-equation)}.mgrid>.card:nth-child(5n+5){--mc:var(--lv0)}
+.mgrid>.card>h2{color:var(--mc,var(--ink))}
+.card.levels{border-top:5px solid var(--acc)}
+
+/* ================================================================ course colour layer on top of the handover theme */
+:root{--shadow:0 1px 2px rgba(22,36,46,.06),0 6px 18px rgba(22,36,46,.07);--src-v:#ffe3e3;--src-i:#d0ebff;--src-d:#f3d9fa;--grid:rgba(91,107,118,.16);--glow1:rgba(31,122,140,.10);--glow2:rgba(91,60,196,.08)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.28);--src-v:#4a2328;--src-i:#1d3550;--src-d:#3d2347;--grid:rgba(159,176,187,.12);--glow1:rgba(95,211,192,.08);--glow2:rgba(151,117,250,.08)}}
+:root[data-theme="dark"]{--shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.28);--src-v:#4a2328;--src-i:#1d3550;--src-d:#3d2347;--grid:rgba(159,176,187,.12);--glow1:rgba(95,211,192,.08);--glow2:rgba(151,117,250,.08)}
+body{background:radial-gradient(900px 420px at 0 0,var(--glow1),transparent 70%),radial-gradient(900px 420px at 100% 0,var(--glow2),transparent 70%),var(--bg);background-attachment:fixed}
+.card{box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--line) 70%,transparent)}
+header{box-shadow:0 4px 14px rgba(0,0,0,.14)}
+header h1{font-size:1.3rem}
+/* levels: a tinted row per level with a numbered badge */
+.level{background:color-mix(in srgb,var(--lv,var(--acc)) 7%,var(--card));border-left:5px solid var(--lv,var(--acc));border-radius:10px;padding:8px 12px}
+.level .lname{display:flex;align-items:center;gap:10px;border-left:0;padding-left:0}
+.lnum{flex:none;display:inline-grid;place-items:center;width:1.9em;height:1.9em;border-radius:50%;background:var(--lv,var(--acc));color:var(--on-acc);font-weight:700;font-size:.9rem}
+.level .lname small{color:var(--muted)}
+.qbtn,.lvb{border:1.5px solid color-mix(in srgb,var(--lv,var(--acc)) 45%,var(--line));border-radius:20px;background:var(--card)}
+.qbtn.on,.lvb.on{background:var(--lv,var(--acc));border-color:var(--lv,var(--acc));color:var(--on-acc);box-shadow:0 2px 8px color-mix(in srgb,var(--lv,var(--acc)) 35%,transparent)}
+.grp h2{color:var(--hdr2)}
+.card.levels,.card.gen{border-top:0;padding-top:19px;background:linear-gradient(90deg,var(--hdr1),var(--hdr2)) top/100% 5px no-repeat,var(--card)}
+/* the question: a level-coloured top edge; the circuit on faint graph paper */
+.qcard{border-top:5px solid var(--lv,var(--acc))}
+.qhead h2{margin:0}
+.sticky>.card{border-top:5px solid color-mix(in srgb,var(--lv,var(--acc)) 55%,transparent);background-color:var(--card);background-image:radial-gradient(var(--grid) 1.1px,transparent 1.3px);background-size:20px 20px}
+.src.sv{fill:var(--src-v)}.src.si{fill:var(--src-i)}.src.sd{fill:var(--src-d)}
+.modes{background:color-mix(in srgb,var(--hdr2) 6%,var(--card));border-radius:24px;padding:5px 8px 5px 14px;width:fit-content;max-width:100%}
+.modes button{border-radius:20px}
+.modes button.on{background:linear-gradient(100deg,var(--hdr1),var(--hdr2));border-color:transparent;color:#fff}
+.stage{border-width:2px;border-color:var(--hdr2);box-shadow:var(--shadow)}
+.stage .sq b{color:var(--hdr2)}
+.srow input{font-size:1.05rem}
+.srow input:focus,.try input:focus,.gen input:focus{outline:3px solid color-mix(in srgb,var(--acc) 35%,transparent);border-color:var(--acc)}
+.ctl button.primary,#go{background:linear-gradient(100deg,var(--hdr1),var(--hdr2));border-color:transparent;color:#fff}
+.answer{border-color:var(--t-answer);background:color-mix(in srgb,var(--t-answer) 10%,var(--card))}
+.answer b:first-child{color:var(--t-answer)}
+.more{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.more button{border-color:var(--acc);color:var(--acc);border-radius:20px;font-weight:600}
+.mgrid>.card>h2{display:flex;align-items:center;gap:8px}
+.mgrid>.card>h2::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;background:var(--mc,var(--acc))}
+.mgrid>.card{background:linear-gradient(180deg,color-mix(in srgb,var(--mc,var(--acc)) 6%,var(--card)),var(--card) 140px)}
+th{background:color-mix(in srgb,var(--acc) 12%,var(--card))}
+.gbar .gb.on,.gbar .gpb.on{background:var(--hdr2);border-color:var(--hdr2);color:#fff}
+footer{border-top:0;position:relative}
+footer::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--hdr1),var(--hdr2))}
+@media (max-width:600px){.level{padding:8px}.modes{border-radius:12px}}
+
 /* time-domain labels until the circuit is changed to the phasor domain */
 svg.ckt text.pzl{display:none}
 svg.ckt.pd text.pzl{display:inline}
@@ -132,11 +240,34 @@ svg.ckt.td text.lab.val.tdl{font-size:18px}
 .gen label.tdopt input{width:auto}
 .try input{width:11em}
 
+/* phasor (Argand) diagram */
+svg.argand{display:block;width:100%;max-width:520px;height:auto;margin:6px auto 0}
+svg.argand text{font-family:"Segoe UI",system-ui,Arial,sans-serif;fill:var(--muted);font-size:14px}
+.argand .agrid{fill:none;stroke:var(--line);stroke-dasharray:3 5}
+.argand .aax{stroke:var(--muted);stroke-width:1.5;fill:none}
+.argand .aaxh{fill:var(--muted)}
+svg.argand text.aq{font-size:11.5px;opacity:.75}
+svg.argand text.alab{font-style:italic}
+svg.argand text.atick{font-size:12px}
+.argand .ph{stroke-width:3.5;stroke-linecap:round}
+.argand .arc{fill:none;stroke-width:1.6;stroke-dasharray:4 3}
+svg.argand text.aname{font-weight:700;font-size:15px;paint-order:stroke;stroke:var(--card);stroke-width:4px}
+.argand .ph.k1,.argand .arc.k1{stroke:var(--k1)}.argand .ah.k1,svg.argand text.k1{fill:var(--k1)}
+.argand .ph.k2,.argand .arc.k2{stroke:var(--k2)}.argand .ah.k2,svg.argand text.k2{fill:var(--k2)}
+.argand .ph.k3,.argand .arc.k3{stroke:var(--k3)}.argand .ah.k3,svg.argand text.k3{fill:var(--k3)}
+.argand .ph.k4,.argand .arc.k4{stroke:var(--k4)}.argand .ah.k4,svg.argand text.k4{fill:var(--k4)}
+
+a.home{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;font-weight:600;font-size:.9rem;text-decoration:none;white-space:nowrap;transition:background .15s}
+a.home:hover{background:rgba(255,255,255,.26)}
+a.home:focus-visible{outline:2px solid #fff;outline-offset:2px}
+a.home svg{width:16px;height:16px}
+header h1{margin-right:auto}
 </style>
 </head>
 <body>
 <header>
-  <div><a class="home" href="index.html">&larr; All topics</a><h1>Nodal Analysis with Phasors<small>Step by step, from one unknown node to the supernode, with dependent sources</small></h1></div>
+  <a class="home" href="index.html" aria-label="Back to all topics"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 10H3M9 4l-6 6 6 6"/></svg>All topics</a>
+  <h1><span class="picon"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 22h26M8 29V3"/><path d="M8 22L24 8" stroke-width="2.8"/><path d="M24 8l-6.5 1.6 4.9 4.9z" fill="#fff"/><path d="M14 22a6 6 0 0 0-1.6-4"/></svg></span><span>Nodal Analysis with Phasors<small>Step by step, from one unknown node to the supernode, with dependent sources</small></span></h1>
   <nav class="tabs" aria-label="Sections"><button data-v="method">How it works</button><button data-v="questions">Questions</button><button data-v="practice">Practice generator</button></nav>
 </header>
 <main></main>
@@ -726,6 +857,13 @@ function mna(net) {
   return r;
 }
 
+// ===================================================================== numbers the student works out (Guided / On my own)
+// Each step writer records here the numbers it produces, in order, with the step that shows them and the values a
+// student gets from a known mistake (checked and shown by html_common/stage.js).
+const cv = c => [C(c).re.val(), C(c).im.val()];
+function addStage(S, o) { (S.stg = S.stg || []).push({ kind: 'cx', step: S.length - 1, wrong: [], ...o }); }
+const wr = (val, why) => ({ val, why });
+
 // ===================================================================== first step: the phasor (frequency) domain
 function phasorStep(net, S) {
   const srcs = net.els.filter(e => e.fam === 'V' || e.fam === 'I');
@@ -737,6 +875,12 @@ function phasorStep(net, S) {
     net.els.filter(e => e.fam === 'C').forEach(e => { const cv = F(1).div(e.v.mul(w)); lines.push({ how: wrapT(e.id, `${e.name} = ${e.tlabel} (capacitor):`), eq: wrapT(e.id, `Z = 1/(jωC) = −j/(ωC) = −j/[(${w})(${fnum(cv)})] = −j/${fnum(F(w).mul(cv))} = <b>${cnum(e.Z)} Ω</b>`) }); });
     srcs.forEach(e => lines.push({ how: wrapT(e.id, `${e.name}:`), eq: wrapT(e.id, `${tdTxt(e.pol, w)} ${unit(e)} &nbsp; → &nbsp; <b>${polTxt(e.pol)} ${unit(e)}</b>`) }));
     S.push({ title: 'Change to the phasor domain', say: `Every source has the same ω = ${w} rad/s. Resistors stay as they are (Z = R). An inductor becomes Z = jωL, a capacitor Z = 1/(jωC) = −j/(ωC), and a source A cos(ωt + θ) becomes the phasor A∠θ. The circuit now shows the phasor values.`, lines, pd: true });
+    net.els.filter(e => e.fam === 'L' || e.fam === 'C').forEach(e => {
+      const X = Math.abs(e.Z.im.val()), isL = e.fam === 'L';
+      addStage(S, { html: wrapT(e.id, `Z of ${e.name}`), val: cv(e.Z), unit: 'Ω', wrong: isL
+        ? [wr([0, -X], 'An inductor has a <b>positive</b> j: Z = +jωL.'), wr([X, 0], 'Don\'t forget the j: an inductor\'s impedance is jωL.'), wr([0, 1 / X], 'Multiply: Z = jωL, not j/(ωL).')]
+        : [wr([0, X], 'A capacitor has a <b>negative</b> j: Z = 1/(jωC) = −j/(ωC), because 1/j = −j.'), wr([X, 0], 'Don\'t forget the j: a capacitor\'s impedance is −j/(ωC).'), wr([0, -1 / X], 'Divide: Z = 1/(jωC), not jωC.')] });
+    });
   }
   const conv = srcs.filter(e => e.pol && e.pol[1] !== 0);
   if (conv.length) {
@@ -745,6 +889,12 @@ function phasorStep(net, S) {
       return { how: wrapT(e.id, `${e.name} = ${polTxt(e.pol)} ${unit(e)}:`), eq: wrapT(e.id, `${m}(cos ${angTxt(a)} + j sin ${angTxt(a)}) = ${m}(${cnum(C(cs))}) = <b>${cnum(e.v)} ${unit(e)}</b>`) };
     });
     S.push({ title: 'Write the sources in rectangular form', say: 'Adding and subtracting is done in rectangular form a + jb. <b>Maths reminder:</b> A∠θ = A cos θ + jA sin θ.', lines: l2 });
+    conv.forEach(e => {
+      const [m, a] = e.pol, r = a * Math.PI / 180;
+      addStage(S, { html: wrapT(e.id, `${e.name} in rectangular form`), val: cv(e.v), unit: unit(e), wrong: [
+        wr([m * Math.sin(r), m * Math.cos(r)], 'cos and sin are swapped: A∠θ = A cos θ + jA sin θ (cos gives the real part).'),
+        wr([m * Math.cos(a), m * Math.sin(a)], 'Your calculator is in radians. Set it to degrees (DEG) and work it out again.')] });
+    });
   }
 }
 // last steps: polar form of every unknown (and the time-domain answer)
@@ -769,6 +919,13 @@ function polarStep(net, S, unknowns, vals, kind) {
     lines.push({ how, eq });
   });
   S.push({ title: net.w ? 'Polar form and back to the time domain' : 'Write the answers in polar form', say: '<b>Maths reminder:</b> a + jb = A∠θ with A = √(a² + b²) and θ = tan⁻¹(b/a). Check which quadrant the number is in: if the real part is negative, add or subtract 180°.' + (net.w ? ' A phasor A∠θ is the sinusoid A cos(ωt + θ).' : ''), lines });
+  unknowns.forEach(v => {
+    const c = vals[v]; if (c.z) return;
+    const a = c.re.val(), b = c.im.val(), wm = [wr(Math.abs(a) + Math.abs(b), 'Square both parts, add, then take the square root: √(a² + b²), not a + b.'), wr(a * a + b * b, 'Take the square root at the end: |' + VH(v) + '| = √(a² + b²).')];
+    addStage(S, { html: `|${VH(v)}|`, kind: 'real', val: c.mag(), unit, wrong: wm });
+    const wa = a < 0 && b !== 0 ? [wr(Math.atan(b / a) * 180 / Math.PI, `The real part is negative, so ${VH(v)} points to the left: add or subtract 180° from what tan⁻¹ gives.`)] : [];
+    addStage(S, { html: `angle of ${VH(v)}`, kind: 'deg', val: c.deg(), unit: '°', wrong: wa });
+  });
 }
 
 // ===================================================================== shared pipeline: constraints, tidy, solve
@@ -828,6 +985,8 @@ function pipeline(ctx) {
   // 5. solve
   const sol = solveStd(std, left.slice().sort(vcmp), meta);
   S.push({ title: std.length === 1 ? 'Solve the equation' : 'Solve the two equations', say: std.length === 1 ? 'One equation, one unknown.' : 'Two equations, two unknowns.', lines: sol.lines });
+  const unit = ctx.kind === 'nodal' ? 'V' : 'A';
+  left.slice().sort(vcmp).forEach(v => addStage(S, { html: VH(v), val: cv(sol.vals[v]), unit }));
   const vals = { ...ctx.known, ...sol.vals };
   // 6. back-substitute the isolated unknowns
   if (isol.length) {
@@ -843,6 +1002,7 @@ function pipeline(ctx) {
       lines.push({ how: `Use ${VH(w)} = ${leH(ex, true)}:`, eq: `${VH(w)} = ${shown}${mid !== shown ? ' = ' + mid : ''} = <b>${cnum(vals[w])}</b>` });
     });
     S.push({ title: 'Back-substitute', say: 'Put the answer into the rearranged equation to find the last unknown.', lines });
+    isol.slice().reverse().forEach(([w]) => addStage(S, { html: VH(w), val: cv(vals[w]), unit }));
   }
   return vals;
 }
@@ -893,6 +1053,7 @@ function nodalSteps(net, q) {
   const cons = net.els.filter(e => isV(e) && !(fixed(e.na) && fixed(e.nb)));
   S.push({ title: 'Which node voltages are already known?', say: kl.length ? 'A voltage source joined to the reference (or to a known node) fixes the voltage of the node at its other end.' : 'No voltage source is joined straight to the reference, so no node voltage is known yet.',
     lines: kl.concat([{ how: `Unknowns left: ${unknowns.length ? listJoin(unknowns.map(VH)) : 'none'}. We need <b>${unknowns.length} equation${unknowns.length === 1 ? '' : 's'}</b>.`, eq: '' }]) });
+  Object.keys(known).forEach(v => addStage(S, { html: VH(v), val: cv(known[v]), unit: 'V' }));
   if (unknowns.length > 2) throw Error('more than 2 unknowns');
   if (!unknowns.length) throw Error('no unknowns');
   // 3. supernodes
@@ -987,6 +1148,7 @@ function meshSteps(net, q) {
   const unknowns = mvars.filter(v => !(v in known));
   S.push({ title: 'Which mesh currents are already known?', say: kl.length ? 'A current source on the outside edge of a mesh carries only that mesh current, so it fixes it.' : 'No current source sits on an outside edge, so no mesh current is known yet.',
     lines: kl.concat([{ how: `Unknowns left: ${listJoin(unknowns.map(VH))}. We need <b>${unknowns.length} equation${unknowns.length === 1 ? '' : 's'}</b>.`, eq: '' }]) });
+  Object.keys(known).forEach(v => addStage(S, { html: VH(v), val: cv(known[v]), unit: 'A' }));
   if (unknowns.length > 2) throw Error('more than 2 unknowns');
   if (!unknowns.length) throw Error('no unknowns');
   // groups of meshes joined by a shared current source = supermesh
@@ -1046,7 +1208,7 @@ function results(net, q, S, vals, M, kind, X) {
   const ex = q.extras || [];
   const vOf = n => (n.gnd ? C(0) : vals[n.v]);
   const I = {};             // element current a→b, found by the steps
-  const lines = [];
+  const lines = [], cur = [];
   if (kind === 'nodal') {
     net.els.filter(isP).forEach(e => {
       let a = e.na, b = e.nb, word = e.dirWord;
@@ -1056,8 +1218,12 @@ function results(net, q, S, vals, M, kind, X) {
       const sym = b.gnd ? `${VH(a.v)}/${denH(e.Z)}` : `(${VH(a.v)} − ${VH(b.v)})/${denH(e.Z)}`;
       const num = b.gnd ? '' : `[${cnum(vOf(a))} − ${cP(vOf(b))}]/${denH(e.Z)} = `;
       lines.push({ how: wrapT(e.id, `${e.name} (${e.label}), reference direction ${word}:`), eq: wrapT(e.id, `${sym} = ${num}${cB(diff)}/${denH(e.Z)} = <b>${cans(i, 'A')}</b>`) });
+      const w = [wr(cv(diff.mul(e.Z)), 'Ohm\'s law: I = V ÷ Z. Divide by the impedance, do not multiply.')];
+      if (!e.Z.real) w.push(wr(cv(diff.div(e.Z.conj())), 'Check the sign of j after dividing: 1/j = −j, so dividing by jX gives −j/X.'));
+      cur.push({ html: wrapT(e.id, `current in ${e.name} (${word})`), val: cv(i), unit: 'A', wrong: w });
     });
     S.push({ title: 'Find the current in each element', say: 'Use I = (V<sub>tail</sub> − V<sub>head</sub>) ÷ Z with the node voltages, and divide in the same way as before (1/j = −j, or the conjugate).', lines });
+    cur.forEach(o => addStage(S, o));
   } else {
     net.els.forEach(e => {
       let le = X.iab(e); let word = e.dirWord;
@@ -1068,8 +1234,11 @@ function results(net, q, S, vals, M, kind, X) {
       if (!isP(e)) return;
       const shown = [...le.k].map(([v, c], k) => (k ? (c.sign() < 0 ? ' − ' : ' + ') : '') + cP(vals[v])).join('');
       lines.push({ how: wrapT(e.id, `${e.name} (${e.label})${le.k.size > 1 ? ', shared' : ''}, reference direction ${word}:`), eq: wrapT(e.id, `${leH(le)}${le.k.size > 1 ? ` = ${shown}` : ''} = <b>${cans(i, 'A')}</b>`) });
+      const w = le.k.size > 1 ? [wr(cv([...le.k.keys()].reduce((t, v) => t.add(vals[v]), C(0))), 'A shared element carries the <b>difference</b> of the two mesh currents, not the sum.')] : [];
+      cur.push({ html: wrapT(e.id, `current in ${e.name} (${word})`), val: cv(i), unit: 'A', wrong: w });
     });
     S.push({ title: 'Find the current in each element', say: 'An element on an outside edge carries one mesh current. A shared element carries the difference of the two mesh currents.', lines });
+    cur.forEach(o => addStage(S, o));
   }
   // the controlling quantity and the dependent source
   if (net.ctrl) {
@@ -1083,6 +1252,7 @@ function results(net, q, S, vals, M, kind, X) {
     else mid = `${prodH(d.ck, d.ex.at(vals))} = `;
     S.push({ title: 'Value of the dependent source', say: `Put the answers into the expression for ${ctrlH(net)}.`, lines: [{ how: '', eq: `${ctrlH(net)} = ${wrapT(net.ctrl.id, d.html)} = ${mid}<b>${cans(cv, net.ctrl.x === 'i' ? 'A' : 'V')}</b>` }].concat(dl) });
     answers.push({ v: 'x', html: ctrlH(net), val: cv, unit: net.ctrl.x === 'i' ? 'A' : 'V' });
+    addStage(S, { html: ctrlH(net), val: [cv.re.val(), cv.im.val()], unit: net.ctrl.x === 'i' ? 'A' : 'V' });
   }
   const ctrlV = net.ctrl ? X.ctrlDef.ex.scale(X.ctrlDef.ck.div(X.ctrlDef.den)).at(vals) : null;
   const srcVal = e => (isDep(e) ? e.v.mul(ctrlV) : e.v);
@@ -1110,6 +1280,7 @@ function results(net, q, S, vals, M, kind, X) {
         { how: '', eq: `This is the current through ${wrapT(e.id, elH(e))} from node ${n.num} towards ${other.gnd ? 'the reference' : `node ${other.num}`}.` + (is.sign() < 0 ? ` The minus sign means ${cnum(is.neg())} A flows the other way, from ${other.gnd ? 'the reference' : `node ${other.num}`} towards node ${n.num}.` : '') }];
       S.push({ title: `Current through ${elH(e)}`, say: "A voltage source's current has no formula of its own. Find it with KCL at one of its nodes, now that every other current there is known.", lines: l2 });
       answers.push({ v: 'is_' + e.id, html: `current through ${elH(e)}`, val: is, unit: 'A', hide: true });
+      addStage(S, { html: `current through ${elH(e)}`, val: [is.re.val(), is.im.val()], unit: 'A' });
     });
   } else {
     net.els.filter(isI).forEach(e => {
@@ -1137,6 +1308,7 @@ function results(net, q, S, vals, M, kind, X) {
         lines: [{ how: `KVL round mesh ${k} (voltage drops, clockwise):`, eq: parts.join(' ').replace(/^(<[^>]+>)?\+ /, '$1').replace(/^(<[^>]+>)?− /, '$1−') + ' = 0' },
           { how: 'Rearrange for V:', eq: `V = <b>${cans(vShow, 'V')}</b> &nbsp; (${end[0]} end minus ${end[1]} end)` }] });
       answers.push({ v: 'vs_' + e.id, html: `voltage across ${elH(e)}`, val: vShow, unit: 'V', hide: true });
+      addStage(S, { html: `voltage across ${elH(e)}`, val: [vShow.re.val(), vShow.im.val()], unit: 'V' });
     });
   }
   // complex power balance (rms phasors)
@@ -1162,6 +1334,7 @@ function results(net, q, S, vals, M, kind, X) {
     pl.push({ how: '<b>Balance:</b>', eq: `supplied: ${supL.map((x, i) => constH(x, i === 0)).join('')}${supL.length > 1 ? ' = ' + cnum(sup) : ''} VA<br>absorbed: ${absL.map((x, i) => constH(x, i === 0)).join('')} = ${cnum(abs)} VA <span class="ok">✓</span>` });
     S.push({ title: 'Complex power balance', say: 'The phasors are rms values, so S = V I* (I* is the conjugate: change the sign of its j part). An impedance absorbs S = |I|²Z: a resistor absorbs real power P, an inductor +Q, a capacitor −Q. A source supplies S = V I* with I leaving its + terminal (voltage source) or flowing in its arrow direction (current source). Total supplied = total absorbed, for P and for Q.', lines: pl });
     answers.push({ v: 'ps', html: 'total complex power supplied', val: sup, unit: 'VA', hide: true });
+    addStage(S, { html: 'total complex power supplied', val: [sup.re.val(), sup.im.val()], unit: 'VA' });
   }
   // check: put the answers back into the first written equations
   const chk = [];
@@ -1182,7 +1355,16 @@ function results(net, q, S, vals, M, kind, X) {
 function solveQ(q, kind) {
   const net = buildNet({ ...q.spec, mesh: kind === 'mesh' });
   const r = (kind === 'nodal' ? nodalSteps : meshSteps)(net, q);
-  r.net = net; return r;
+  r.net = net;
+  const dist = (st, x) => (st.kind === 'cx' ? Math.hypot(x[0] - st.val[0], x[1] - st.val[1]) / Math.max(Math.hypot(...st.val), Math.hypot(...x), 1e-9)
+    : st.kind === 'deg' ? Math.abs((((x - st.val) % 360) + 540) % 360 - 180) / 180 : Math.abs(x - st.val) / Math.max(Math.abs(st.val), Math.abs(x), 1e-12));
+  const fin = x => (Array.isArray(x) ? x.every(Number.isFinite) : Number.isFinite(x));
+  r.stages = (r.steps.stg || []).map(st => {            // a mistake value must never be mistaken for the right answer
+    const seen = [];
+    const wrong = st.wrong.filter(w => fin(w.val) && dist(st, w.val) > 0.03 && !seen.some(x => dist({ ...st, val: x }, w.val) < 0.01) && seen.push(w.val));
+    return { ...st, wrong };
+  });
+  return r;
 }
 
 // ===================================================================== SVG drawing
@@ -1214,7 +1396,7 @@ function svgNet(net, kind, opt = {}) {
     else if (e.fam === 'L') body = '<path class="wire" d="M-42,0 h3 a9,9 0 0 1 18,0 a9,9 0 0 1 18,0 a9,9 0 0 1 18,0 a9,9 0 0 1 18,0 h3"/>';
     else if (e.fam === 'C') body = '<path class="wire" d="M-12,0 h6 M-6,-20 V20 M6,-20 V20 M6,0 h6"/>';
     else {
-      body = isDep(e) ? '<path class="wire src" d="M-30,0 L0,-30 L30,0 L0,30 Z"/>' : '<circle class="wire src" r="28"/>';
+      body = isDep(e) ? '<path class="wire src sd" d="M-30,0 L0,-30 L30,0 L0,30 Z"/>' : `<circle class="wire src ${isI(e) ? 'si' : 'sv'}" r="28"/>`;   // sv / si / sd: tint by kind
       if (isI(e)) body += '<path class="wire" stroke-width="2.5" d="M15,0 H-8"/><path class="arrowhead" d="M-17,0 l10,-7 v14 z"/>';
     }
     let signs = '';
@@ -1287,6 +1469,34 @@ function svgNet(net, kind, opt = {}) {
   }
   return `<svg viewBox="0 0 ${net.W} ${net.H}" class="ckt${net.w ? ' td' : ''}" role="img" aria-label="Circuit diagram">${ul}${wr}${ov}${el}${lb}</svg>`;
 }
+// ===================================================================== phasor (Argand) diagram
+// pts: [{ name: 'V', sub: '1', k: 1, re, im }]: one arrow from 0 per phasor, in its node or mesh colour (class k1, k2 …),
+// with the angle arc measured from the positive real axis and the polar value as a label
+function argandSVG(pts) {
+  const W = 440, H = 290, cx = 220, cy = 145, R = 108;
+  const M = Math.max(...pts.map(p => Math.hypot(p.re, p.im)), 1e-9), s = R / M;
+  let g = `<circle cx="${cx}" cy="${cy}" r="${R / 2}" class="agrid"/><circle cx="${cx}" cy="${cy}" r="${R}" class="agrid"/>`;
+  g += `<path d="M${cx - R - 22},${cy}H${cx + R + 22}M${cx},${cy + R + 18}V${cy - R - 18}" class="aax"/>`;
+  g += `<path d="M${cx + R + 30},${cy}l-10,-5v10z" class="aaxh"/><path d="M${cx},${cy - R - 26}l-5,10h10z" class="aaxh"/>`;
+  g += `<text x="${cx + R + 6}" y="${cy + 20}" class="alab">real</text><text x="${cx + 10}" y="${cy - R - 12}" class="alab">j</text>`;
+  g += `<text x="${cx + R + 2}" y="${cy - 6}" text-anchor="end" class="atick">${magS(M)}</text>`;
+  const q = (x, y, t, end) => `<text x="${x}" y="${y}" text-anchor="${end ? 'end' : 'start'}" class="aq">${t}</text>`;
+  g += q(W - 6, 16, '1st quadrant', 1) + q(6, 16, '2nd: add 180°') + q(6, H - 8, '3rd: subtract 180°') + q(W - 6, H - 8, '4th quadrant', 1);
+  pts.forEach((p, i) => {
+    const m = Math.hypot(p.re, p.im); if (m < 1e-12) return;
+    const x = cx + p.re * s, y = cy - p.im * s, ph = Math.atan2(y - cy, x - cx), deg = Math.atan2(p.im, p.re) * 180 / Math.PI;
+    const r = 24 + 11 * i, a1 = -deg * Math.PI / 180;
+    g += `<path d="M${cx + r},${cy} A${r},${r} 0 0 ${deg > 0 ? 0 : 1} ${cx + r * Math.cos(a1)},${cy + r * Math.sin(a1)}" class="arc k${p.k}"/>`;
+    g += `<line x1="${cx}" y1="${cy}" x2="${x - 9 * Math.cos(ph)}" y2="${y - 9 * Math.sin(ph)}" class="ph k${p.k}"/>`;
+    const b = (d, o) => `${x - d * Math.cos(ph) + o * Math.sin(ph)},${y - d * Math.sin(ph) - o * Math.cos(ph)}`;
+    g += `<path d="M${x},${y}L${b(13, 6)}L${b(13, -6)}z" class="ah k${p.k}"/>`;
+    const lx = x + 12 * Math.cos(ph), ly = y + 12 * Math.sin(ph) + (Math.sin(ph) > 0.3 ? 12 : Math.sin(ph) < -0.3 ? -2 : 5);
+    g += `<text x="${lx}" y="${ly}" text-anchor="${x >= cx ? 'start' : 'end'}" class="aname k${p.k}">${p.name}${p.sub ? `<tspan baseline-shift="sub" font-size="11">${p.sub}</tspan>` : ''} = ${magS(m)}∠${angS(deg)}°</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" class="argand" role="img" aria-label="Phasor diagram">${g}</svg>`;
+}
+const argandPts = sol => sol.unknowns.map(v => ({ name: v[0].toUpperCase(), sub: v.slice(1), k: v.slice(1), re: sol.vals[v].re.val(), im: sol.vals[v].im.val() }));
+
 // which overlays to draw (supernode bubbles / supermesh outlines)
 function overlays(net, kind) {
   if (kind === 'nodal') {
@@ -1340,7 +1550,7 @@ function generate(topic, level, seed, td) {
   throw Error('could not generate a friendly question');
 }
 
-if (typeof module !== 'undefined') module.exports = { Fr, F, Cx, C, LE, solveLin, buildNet, mna, solveQ, svgNet, overlays, generate, friendly, fnum, cnum, cpol, cans, isV, isI, isP, polarC, autoPol };
+if (typeof module !== 'undefined') module.exports = { Fr, F, Cx, C, LE, solveLin, buildNet, mna, solveQ, svgNet, overlays, argandSVG, argandPts, generate, friendly, fnum, cnum, cpol, cans, isV, isI, isP, polarC, autoPol };
 
 </script>
 <script>
@@ -1405,10 +1615,11 @@ if (typeof module !== 'undefined') module.exports = { Fr, F, Cx, C, LE, solveLin
       <tr><td>inductor L</td><td>Z = jωL</td></tr>
       <tr><td>capacitor C</td><td>Z = 1/(jωC) = −j/(ωC)</td></tr></table>
       <p>Here ω = 2 rad/s: 1 H becomes j2 Ω and 0.5 F becomes −j1 Ω. Then use nodal analysis exactly as for DC, with Z in place of R.</p>` },
-    { title: 'Maths reminder – complex numbers',
+    { title: 'Maths reminder – complex numbers', argand: [{ name: 'A', k: 1, re: 3, im: 4 }, { name: 'B', k: 2, re: -3, im: 4 }],
       html: `<ul><li><b>j × j = −1</b>, so 1/j = −j and 1/(−j) = j. Example: V/(j4) = −j0.25V, &nbsp; V/(−j2) = j0.5V.</li>
       <li><b>Polar to rectangular:</b> A∠θ = A cos θ + jA sin θ. Example: 10∠53.13° = 6 + j8.</li>
       <li><b>Rectangular to polar:</b> a + jb has magnitude √(a² + b²) and angle tan⁻¹(b/a) (add 180° if a is negative). Example: 4 + j8 = 8.94∠63.4°.</li>
+      <li><b>The diagram:</b> A = 3 + j4 = 5∠53.1° lies in the 1st quadrant. B = −3 + j4 has a negative real part, so tan⁻¹(4 ÷ −3) = −53.1° points the wrong way: add 180° to get B = 5∠126.9°.</li>
       <li><b>Multiply</b> term by term: (2 + j)(3 − j2) = 6 − j4 + j3 − j²2 = 8 − j.</li>
       <li><b>Divide</b> by the conjugate: 20/(1 + j) = 20(1 − j)/[(1 + j)(1 − j)] = 20(1 − j)/2 = 10 − j10.</li></ul>` },
     { title: 'The recipe',
@@ -1494,6 +1705,190 @@ if (typeof module !== 'undefined') module.exports = { Fr, F, Cx, C, LE, solveLin
 </script>
 <script>
 'use strict';
+// Shared by the self-study pages (RL and RC Transients, Nodal and Mesh Analysis AC): reading typed answers, checking
+// them with hints for known mistakes, the step badges and icons, and the help modes (Watch / Guided / On my own) in
+// which the student works out one number at a time.  A page gives each question a list of "stages":
+//   { html, unit, kind: 'real' | 'cx' | 'deg', val (number, or [re, im] for 'cx'), step (index), wrong: [{ val, why }] }
+// and a reveal(n) that shows the first n steps.  Loaded before the page's shell.js, which defines $ and $$.
+
+// ---------------------------------------------------------------- reading a typed answer
+// real: 0.33, 330 ms, 330m, 1.5k, 2.4 kΩ, -24, 63.4°     complex: 4+j8, 4 + 8j, -j2, 8.94∠63.4, 8.94<63.4, 8.94@63.4
+const PFX = { G: 1e9, M: 1e6, k: 1e3, K: 1e3, m: 1e-3, u: 1e-6, 'µ': 1e-6, 'μ': 1e-6, n: 1e-9 };
+const UNITS = ['ohm', 'ohms', 'Ω', 'V', 'A', 's', 'F', 'H', 'J', 'W', 'VA', 'VAR', 'deg'];
+function parseNum(s) {
+  s = String(s).trim().replace(/[−–]/g, '-').replace(/,/g, '').replace(/\s+/g, '').replace(/°$/, '');
+  const m = /^([+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)(.*)$/.exec(s);
+  if (!m) return null;
+  const v = Number(m[1]), rest = m[2];
+  if (!rest || UNITS.includes(rest)) return v;
+  if (PFX[rest[0]] !== undefined && (rest.length === 1 || UNITS.includes(rest.slice(1)))) return v * PFX[rest[0]];
+  return null;
+}
+function parseCx(s) {
+  s = String(s).trim().replace(/[−–]/g, '-').replace(/\s+/g, '').replace(/°/g, '').replace(/(VA|VAR|[VAWΩ])$/i, '').replace(/i/g, 'j');
+  if (!s) return null;
+  const pm = /^(-?\d*\.?\d+)(?:∠|<|@|ang)(-?\d*\.?\d+)$/.exec(s);
+  if (pm) { const m = +pm[1], a = +pm[2] * Math.PI / 180; return [m * Math.cos(a), m * Math.sin(a)]; }
+  const toks = s.match(/[+-]?[^+-]+/g); if (!toks) return null;
+  let re = 0, im = 0;
+  for (const t of toks) {
+    if (t.includes('j')) { const n = t.replace('j', ''); const v = n === '' || n === '+' ? 1 : n === '-' ? -1 : Number(n); if (!Number.isFinite(v)) return null; im += v; }
+    else { const v = Number(t); if (!Number.isFinite(v)) return null; re += v; }
+  }
+  return [re, im];
+}
+const readIn = (st, s) => (st.kind === 'cx' ? parseCx(s) : parseNum(s));
+const angDiff = (a, b) => Math.abs((((a - b) % 360) + 540) % 360 - 180);
+
+// ---------------------------------------------------------------- checking it
+function isRight(st, v) {
+  if (v === null || v === undefined) return false;
+  if (st.kind === 'cx') { const [a, b] = st.val; return Math.hypot(v[0] - a, v[1] - b) <= Math.max(0.02, Math.hypot(a, b) * 0.01); }
+  if (st.kind === 'deg') return angDiff(v, st.val) <= 0.5;
+  return Math.abs(v - st.val) <= Math.max(1e-12, Math.abs(st.val) * 0.01, st.val === 0 ? 0.005 : 0);
+}
+// the hint for a wrong answer: a known mistake first, then the slips that can happen in any question
+function diagnose(st, v, all) {
+  const as = val => isRight({ ...st, val }, v);
+  for (const w of st.wrong || []) if (as(w.val)) return w.why;
+  const nearRight = val => isRight(st, val);      // a "slip" value that is really the right answer is never reported
+  const slip = (val, why) => (!nearRight(val) && as(val) ? why : null);
+  let h = null;
+  if (st.kind === 'cx') {
+    const [a, b] = st.val, m = Math.hypot(a, b);
+    if (m > 0) h = slip([a, -b], 'Right size, but the j part has the wrong sign. Check 1/j = −j, and the sign of each reactance (+j for L, −j for C).')
+      || slip([-a, -b], 'Right size, wrong sign: check the direction (tail minus head), or which end of the source is +.')
+      || slip([b, a], 'The real part and the j part are swapped.')
+      || slip([-b, a], 'Off by a factor of j: check where the j goes when you multiply or divide.')
+      || slip([b, -a], 'Off by a factor of −j: remember 1/j = −j.')
+      || (Math.abs(v[1]) < 1e-9 && Math.abs(b) > 1e-9 && Math.abs(v[0] - m) <= Math.max(0.02, m * 0.01) ? 'That is only the magnitude. Give the whole phasor: a + jb, or A∠θ.' : null);
+  } else if (st.kind === 'deg') {
+    const t = st.val;
+    h = slip(t + 180, 'Off by 180°: check which quadrant the phasor is in. When the real part is negative, add or subtract 180° from what tan⁻¹ gives.')
+      || (Math.abs(v - t * Math.PI / 180) < 0.01 && Math.abs(t) > 1 ? 'That is the angle in radians. Set your calculator to degrees (DEG).' : null)
+      || slip(90 - t, 'That is tan⁻¹(a ÷ b). The angle is tan⁻¹(b ÷ a): the j part goes on top.')
+      || slip(-t, 'Right size, wrong sign: a phasor below the real axis has a negative angle.');
+  } else if (st.val !== 0) {
+    for (const f of [1e3, 1e6, 1e9, 1e-3, 1e-6, 1e-9]) if (!h) h = slip(st.val * f, 'Right digits, wrong power of ten. Check the prefixes: k = 10³, m = 10⁻³, µ = 10⁻⁶ (kΩ × µF = ms). You can type the prefix too: 330 ms, 2.4k.');
+    h = h || slip(-st.val, 'Right size, wrong sign. Check the bracket [x(0<sup>+</sup>) − x(∞)], or which way the current flows.');
+  }
+  if (h) return h;
+  for (const o of all) if (o !== st && o.kind === st.kind && as(o.val) && !nearRight(o.val)) return `That is the value of ${o.html}. Which number does this box ask for?`;
+  return null;
+}
+
+// ---------------------------------------------------------------- step badges and icons
+// every step title of the three pages falls under one of these (test.js checks that none is left over)
+const STEP_TYPES = [
+  ['check', /^check|rising or falling|power balance/i],
+  ['setup', /^before the switch|just after|long after|after the second switching|redraw|reference node|draw the mesh|already known|spot the|phasor domain|rectangular form|how many time constants/i],
+  ['equation', /^kcl|^kvl|use the (voltage|current) source|controlling quantity|write the (response|second response|decay|charging)|put in the known/i],
+  ['algebra', /tidy|solve|back-substitute|rearrange|read the ruler|when does|make it reach/i],
+  ['answer', /value|time constant|current|voltage|polar form|energy|largest|choose|find|settl|charging time|how long|at t =/i],
+];
+const STEP_NAME = { setup: 'set-up', equation: 'equation', algebra: 'algebra', answer: 'answer', check: 'check' };
+function stepType(title) { const t = String(title).replace(/<[^>]+>/g, ''); const m = STEP_TYPES.find(([, r]) => r.test(t)); return m ? m[0] : null; }
+const ICON = {
+  setup: '<path d="M0 8h3l1.5-4 3 8 3-8 1.5 4H16"/>',
+  equation: '<path d="M3 5.5h10M3 10.5h10"/>',
+  algebra: '<path d="M3 13l1-4 7-7 3 3-7 7zM9.5 3.5l3 3"/>',
+  answer: '<circle cx="8" cy="8" r="6"/><circle cx="8" cy="8" r="2.2"/>',
+  check: '<path d="M2.5 8.5l3.5 3.5 7.5-8"/>',
+};
+const iconSVG = ty => `<svg class="sico" viewBox="0 0 16 16" aria-hidden="true">${ICON[ty]}</svg>`;
+function stepHTML(s, deCls = 'de') {
+  const lines = (s.lines || []).map(l => `<div class="line">${l.how ? `<div class="how">${l.how}</div>` : ''}${l.eq ? `<div class="eq">${l.eq}</div>` : ''}</div>`).join('');
+  const cap = h => h.replace(/^((?:<[^>]+>)*)([a-z])/, (m, t, c) => t + c.toUpperCase());
+  const ty = stepType(s.title) || 'answer';
+  return `<h3>${iconSVG(ty)}<span class="sty">${STEP_NAME[ty]}</span> ${s.title}</h3>${s.say ? `<p>${cap(s.say)}</p>` : ''}${lines}${s.note ? `<div class="note">${s.note}</div>` : ''}` +
+    (s.details ? `<details><summary>${s.details.title}</summary><div class="${deCls}">${s.details.html}</div></details>` : '');
+}
+function stepsHTML(steps, deCls) {
+  return `<ol class="steps${stg && mode === 'own' ? ' own' : ''}">${steps.map(s => `<li hidden class="t-${stepType(s.title) || 'answer'}">${stepHTML(s, deCls)}</li>`).join('')}</ol>`;
+}
+
+// ---------------------------------------------------------------- help modes
+const MODES = [{ id: 'watch', name: 'Watch', tip: 'See every step worked out for you.' },
+  { id: 'guided', name: 'Guided', tip: 'Each step tells you what to do; you work out the number.' },
+  { id: 'own', name: 'On my own', tip: 'Only the step titles: you do all the working.' }];
+let mode = 'guided', stg = null;
+try { const m = localStorage.getItem('eeeMode'); if (MODES.some(x => x.id === m)) mode = m; } catch (e) { /* storage blocked */ }
+const modeBarHTML = () => `<div class="modes"><span class="muted">How much help?</span>${MODES.map(m => `<button data-m="${m.id}" title="${m.tip}"${m.id === mode ? ' class="on"' : ''}>${m.name}</button>`).join('')}
+  <span class="muted">${MODES.find(m => m.id === mode).tip}</span></div>`;
+function bindModeBar(box, rerender) {
+  $$('.modes button', box).forEach(b => { b.onclick = () => {
+    mode = b.dataset.m; try { localStorage.setItem('eeeMode', mode); } catch (e) { /* storage blocked */ }
+    rerender();
+  }; });
+}
+
+// ---------------------------------------------------------------- one number at a time (Guided / On my own)
+// stage k asks for list[k]; the steps up to its step are "pending" (title shown, result hidden) until it is right.
+// hooks: reveal(n) shows the first n steps; restart() renders the question again; fmt(st) writes an answer.
+function stageStart(list, steps, hooks) {
+  stg = list.length && mode !== 'watch' ? { list, steps, i: 0, tries: 0, res: [], ...hooks } : null;
+  return !!stg;
+}
+const pendEnd = shown => (stg && stg.i < stg.list.length ? stg.list[stg.i].step + 1 : shown);
+// show the earned steps in full and the pending ones as titles (and, in Guided, their "how" text)
+function markSteps(shown) {
+  const li = $$('ol.steps>li'), upto = Math.max(shown, pendEnd(shown));
+  li.forEach((l, i) => { l.hidden = i >= upto; l.classList.toggle('pend', i >= shown); l.classList.toggle('new', i === shown - 1); });
+  return li;
+}
+function stepHint(st) {
+  const s = stg.steps[st.step], l = (s.lines || []).find(x => x.how);
+  return s.say || (l ? l.how : 'Look at the step title: what does it ask you to work out?');
+}
+const TYPE_TIP = { real: 'Type a number with or without a prefix and unit: 0.33, 330 ms, 2.4k, −24.', cx: 'Type rectangular form (4 + j8) or polar form (8.94∠63.4 or 8.94&lt;63.4).', deg: 'Type the angle in degrees: 63.4 or −116.6.' };
+function drawStage() {
+  const box = $('#stage'), A = stg.list, n = A.length;
+  if (stg.i >= n) {
+    const alone = stg.res.filter(r => r === 'alone').length;
+    box.innerHTML = `<b>${alone === n ? 'All done on your own <span class="ok">✓</span>' : `Done: ${alone} of ${n} on your own.`}</b>
+      <ul>${A.map((a, k) => `<li>${a.html} = ${stg.fmt(a)} &nbsp; ${stg.res[k] === 'alone' ? '<span class="ok">✓</span>' : '<span class="muted">✓ with help</span>'}</li>`).join('')}</ul>
+      ${alone < n ? '<p class="muted">Try another question and aim to get every number with no help.</p>' : ''}
+      <button id="sagain">Start this question again</button>`;
+    $('#sagain').onclick = () => stg.restart();
+    return;
+  }
+  const a = A[stg.i];
+  box.innerHTML = `<div class="sq">Number ${stg.i + 1} of ${n}: find <b>${a.html}</b></div>
+    <div class="srow"><label>${a.html} = <input id="sin" class="${a.kind}" autocomplete="off" spellcheck="false" aria-label="your answer"> ${a.unit}</label>
+      <button class="primary" id="sck">Check</button><button id="sshow" hidden>Show me this step</button></div>
+    <div id="shint"></div><div class="muted">${TYPE_TIP[a.kind || 'real']}</div>`;
+  const inp = $('#sin'), hint = $('#shint');
+  const check = () => {
+    if (!inp.value.trim()) return;
+    const v = readIn(a, inp.value);
+    if (v === null) { hint.innerHTML = `<div class="warn">That is not a number I can read. ${TYPE_TIP[a.kind || 'real']}</div>`; return; }
+    if (isRight(a, v)) { advance('alone'); return; }
+    stg.tries++;
+    const d = diagnose(a, v, A);
+    hint.innerHTML = `<div class="warn"><b>Not yet.</b> ${d || (mode === 'own' ? `Hint: ${stepHint(a)}` : 'Read what the step above tells you to do, then try once more.')}</div>`;
+    inp.style.borderColor = 'var(--bad)';
+    if (stg.tries >= 2) $('#sshow').hidden = false;
+  };
+  $('#sck').onclick = check;
+  inp.onkeydown = e => { if (e.key === 'Enter') check(); };
+  inp.oninput = () => { inp.style.borderColor = ''; };
+  $('#sshow').onclick = () => advance('help');
+}
+function advance(r) {
+  const A = stg.list, a = A[stg.i], li = $$('ol.steps>li');
+  stg.res[stg.i] = r; li[a.step].classList.add(r === 'alone' ? 'won' : 'helped');
+  stg.i++; stg.tries = 0;
+  stg.reveal(stg.i >= A.length ? li.length : a.step + 1);
+  drawStage();
+  ($('ol.steps>li.pend') || $('#stage')).scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  if ($('#sin')) $('#sin').focus({ preventScroll: true });
+}
+
+if (typeof module !== 'undefined') module.exports = { parseNum, parseCx, isRight, diagnose, stepType };
+
+</script>
+<script>
+'use strict';
 // Page shell: method view, question bank (every question open, in any order), practice generator,
 // and the two-way hover link between circuit elements and equation terms. Nothing here is timed.
 const $ = (s, r = document) => r.querySelector(s);
@@ -1533,28 +1928,11 @@ function autoText(q, sol) {
   if (ex.includes('power')) parts.push('The source values are rms phasors. Find the complex power of every element and show that the total supplied equals the total absorbed.');
   return parts.map(p => `<p>${p}</p>`).join('');
 }
-// read a complex number typed by a student: 4+j8, 4 + 8j, -j2, 8.94∠63.4, 8.94<63.4, 8.94@63.4
-function parseCx(s) {
-  s = String(s).trim().replace(/[−–]/g, '-').replace(/\s+/g, '').replace(/°/g, '').replace(/(VA|VAR|[VAWΩ])$/i, '').replace(/i/g, 'j');
-  if (!s) return null;
-  const pm = /^(-?\d*\.?\d+)(?:∠|<|@|ang)(-?\d*\.?\d+)$/.exec(s);
-  if (pm) { const m = +pm[1], a = +pm[2] * Math.PI / 180; return [m * Math.cos(a), m * Math.sin(a)]; }
-  const toks = s.match(/[+-]?[^+-]+/g); if (!toks) return null;
-  let re = 0, im = 0;
-  for (const t of toks) {
-    if (t.includes('j')) { const n = t.replace('j', ''); const v = n === '' || n === '+' ? 1 : n === '-' ? -1 : Number(n); if (!Number.isFinite(v)) return null; im += v; }
-    else { const v = Number(t); if (!Number.isFinite(v)) return null; re += v; }
-  }
-  return [re, im];
-}
-
 // ---------------------------------------------------------------- one question (fixed or generated)
-function stepHTML(s) {
-  const lines = (s.lines || []).map(l => `<div class="line">${l.how ? `<div class="how">${l.how}</div>` : ''}${l.eq ? `<div class="eq">${l.eq}</div>` : ''}</div>`).join('');
-  const cap = h => h.replace(/^((?:<[^>]+>)*)([a-z])/, (m, t, c) => t + c.toUpperCase());
-  return `<h3>${s.title}</h3>${s.say ? `<p>${cap(s.say)}</p>` : ''}${lines}${s.note ? `<div class="note">${s.note}</div>` : ''}` +
-    (s.details ? `<details><summary>${s.details.title}</summary><div class="eq">${s.details.html}</div></details>` : '');
-}
+// typed answers, help modes, step badges and the one-number-at-a-time stages come from html_common/stage.js
+const fmtNum = (re, im) => (Math.abs(im) < 1e-9 ? sf3(re) : `${Math.abs(re) < 1e-9 ? '' : sf3(re) + ' '}${im < 0 ? MINUS : Math.abs(re) < 1e-9 ? '' : '+'} j${sf3(Math.abs(im))}`.trim());
+const fmtStage = st => (st.kind === 'cx' ? `${fmtNum(st.val[0], st.val[1])} ${st.unit}` : st.kind === 'deg' ? `${angS(st.val)}°` : `${magS(st.val)} ${st.unit}`);
+const polarIdx = sol => sol.steps.findIndex(s => /polar form/i.test(s.title));
 function solve(q) {
   if (q.sol) return q.sol;
   q.sol = solveQ(q, KIND); return q.sol;
@@ -1565,29 +1943,38 @@ function answerList(q, sol) {
 }
 function renderQ(box, q, label) {
   const sol = solve(q); curQ = q; curSol = sol; shown = 0;
-  const lv = TOPIC.levels.find(l => l.id === q.level);
+  const lvi = TOPIC.levels.findIndex(l => l.id === q.level), lv = TOPIC.levels[lvi];
   const ans = answerList(q, sol);
   const tryable = ans.filter(a => !a.hide);
-  box.innerHTML = `<div class="qgrid scope">
+  const staged = stageStart(sol.stages, sol.steps, { reveal, restart: () => renderQ(box, q, label), fmt: fmtStage });
+  box.innerHTML = `<div class="qgrid scope" data-lv="${lvi}">
     <div class="sticky"><div class="card"><div id="cktbox"></div>
+      <div id="argwrap" hidden><p class="hint">Phasor diagram: each answer is an arrow from 0. Its length is the magnitude; its angle is measured from the positive real axis.</p><div id="argbox"></div></div>
       <p class="hint">Hover over (or tap) any element to light up every term it creates in the equations. Hover over a term to find its element. Coloured letters are ${KIND === 'nodal' ? 'node voltages' : 'mesh currents'}.</p></div></div>
-    <div class="card">
-      <div class="qhead"><span class="chip">${lv ? lv.name : ''}</span><h2>${label}</h2></div>
+    <div class="card qcard">
+      <div class="qhead"><span class="chip" data-lv="${lvi}">${lv ? lv.name : ''}</span><h2>${label}</h2></div>
       <div class="qtext">${autoText(q, sol)}</div>
-      ${tryable.length ? `<details class="try"><summary>Try it yourself first, then check your answers here</summary>
+      ${modeBarHTML()}
+      ${staged ? '' : tryable.length ? `<details class="try"><summary>Try it yourself first, then check your answers here</summary>
         <div class="muted">Type rectangular form (4 + j8) or polar form (8.94∠63.4 or 8.94&lt;63.4).</div>
         <div>${tryable.map((a, i) => `<label>${a.html} = <input data-i="${i}" autocomplete="off" spellcheck="false"> ${a.unit}</label>`).join('')}
         <button id="chk">Check</button> <span id="chkout"></span></div></details>` : ''}
-      <div class="ctl"><button class="primary" id="nx">Show next step</button><button id="all">Show all steps</button><button id="hide">Hide steps</button>
-        <span class="muted" id="cnt"></span></div>
-      <ol class="steps">${sol.steps.map(s => `<li hidden>${stepHTML(s)}</li>`).join('')}</ol>
+      ${staged ? '' : `<div class="ctl"><button class="primary" id="nx">Show next step</button><button id="all">Show all steps</button><button id="hide">Hide steps</button>
+        <span class="muted" id="cnt"></span></div>`}
+      ${stepsHTML(sol.steps, 'eq')}
+      ${staged ? '<div class="stage" id="stage" aria-live="polite"></div>' : ''}
       <div class="answer" id="ansbox" hidden><b>Answers:</b> ${ans.map(a => `${a.html} = <b>${cans(a.val, a.unit)}</b>`).join('; &nbsp; ')}</div>
       ${q.mistake ? `<div class="warn" id="mist" hidden><b>Common mistake:</b> ${q.mistake}</div>` : ''}
+      <div class="more"><button id="more">Practise more like this →</button><span class="muted">a new ${lv ? lv.name : ''} question, solved the same way</span></div>
     </div></div>`;
   $('#cktbox').innerHTML = svgNet(sol.net, KIND, overlays(sol.net, KIND));
-  $('#nx').onclick = () => reveal(shown + 1);
-  $('#all').onclick = () => reveal(sol.steps.length);
-  $('#hide').onclick = () => reveal(0);
+  bindModeBar(box, () => renderQ(box, q, label));
+  if (!staged) {
+    $('#nx').onclick = () => reveal(shown + 1);
+    $('#all').onclick = () => reveal(sol.steps.length);
+    $('#hide').onclick = () => reveal(0);
+  }
+  $('#more').onclick = () => { genLevel = q.level; setView('practice'); gen(genLevel, Math.floor(Math.random() * 90000) + 10000, genTd); };
   const ck = $('#chk');
   if (ck) ck.onclick = () => {
     let good = 0;
@@ -1599,22 +1986,27 @@ function renderQ(box, q, label) {
     $('#chkout').innerHTML = good === tryable.length ? '<span class="ok">All correct ✓</span>' : `<span class="bad">${good} of ${tryable.length} correct.</span> Open the steps to see where it goes wrong.`;
   };
   reveal(0);
+  if (staged) drawStage();
 }
 // the circuit is drawn once per question; later steps only switch on the node colours, the bubble and the phasor labels
 function drawCkt() {
-  const sol = curSol, upto = sol.steps.slice(0, shown), svg = $('#cktbox svg');
+  const sol = curSol, n = stg && mode === 'guided' ? Math.max(shown, pendEnd(shown)) : shown, upto = sol.steps.slice(0, n), svg = $('#cktbox svg');
+  const pi = polarIdx(sol), aw = $('#argwrap');                // the phasor diagram appears with the polar-form step
+  if (aw) { aw.hidden = pi < 0 || n <= pi; if (!aw.hidden && !$('#argbox').innerHTML) $('#argbox').innerHTML = argandSVG(argandPts(sol)); }
   svg.classList.toggle('colour', KIND === 'nodal' && upto.some(s => /name the nodes/i.test(s.title)));
   svg.classList.toggle('over', upto.some(s => /supernode|supermesh/i.test(s.title)));
   svg.classList.toggle('pd', upto.some(s => s.pd));
 }
 function reveal(n) {
-  const li = $$('ol.steps>li'); shown = Math.max(0, Math.min(li.length, n));
-  li.forEach((l, i) => { l.hidden = i >= shown; l.classList.toggle('new', i === shown - 1); });
-  $('#cnt').textContent = `${shown} of ${li.length} steps shown`;
-  $('#nx').disabled = shown >= li.length; $('#hide').disabled = shown === 0; $('#all').disabled = shown >= li.length;
+  shown = Math.max(0, Math.min($$('ol.steps>li').length, n));
+  const li = markSteps(shown);
+  if (!stg) {
+    $('#cnt').textContent = `${shown} of ${li.length} steps shown`;
+    $('#nx').disabled = shown >= li.length; $('#hide').disabled = shown === 0; $('#all').disabled = shown >= li.length;
+  }
   $('#ansbox').hidden = shown < li.length; const m = $('#mist'); if (m) m.hidden = shown < li.length;
   drawCkt();
-  if (n > 0 && li[shown - 1] && n === shown && n !== li.length) li[shown - 1].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  if (!stg && n > 0 && li[shown - 1] && n === shown && n !== li.length) li[shown - 1].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
 
 // ---------------------------------------------------------------- views
@@ -1623,15 +2015,15 @@ function setView(v) {
   $$('nav.tabs button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
   const M = $('main');
   if (v === 'method') {
-    M.innerHTML = `<div class="mgrid">${TOPIC.method.map((s, i) => `<div class="card scope"><h2>${s.title}</h2>${s.spec ? `<div class="mc" data-i="${i}"></div>` : ''}${s.html}</div>`).join('')}</div>`;
+    M.innerHTML = `<div class="mgrid">${TOPIC.method.map((s, i) => `<div class="card scope"><h2>${s.title}</h2>${s.spec ? `<div class="mc" data-i="${i}"></div>` : ''}${s.argand ? argandSVG(s.argand) : ''}${s.html}</div>`).join('')}</div>`;
     $$('.mc').forEach(d => { const s = TOPIC.method[+d.dataset.i]; const net = buildNet({ ...s.spec, mesh: KIND === 'mesh' }); d.innerHTML = svgNet(net, KIND, overlays(net, KIND)); const svg = $('svg', d); if (KIND === 'nodal') svg.classList.add('colour'); if (s.over) svg.classList.add('over'); if (s.pd) svg.classList.add('pd'); });
   } else if (v === 'questions') {
-    M.innerHTML = `<div class="card levels">${TOPIC.levels.map(l => `<div class="level"><div class="lname">${l.name}<small>${l.blurb}</small></div>${TOPIC.questions.map((q, i) => [q, i]).filter(([q]) => q.level === l.id).map(([q, i]) => `<button class="qbtn" data-i="${i}">Q${i + 1} · ${q.title}</button>`).join('')}</div>`).join('')}
+    M.innerHTML = `<div class="card levels">${TOPIC.levels.map((l, li) => `<div class="level" data-lv="${li}"><div class="lname"><span class="lnum">${li + 1}</span><span>${l.name}<small>${l.blurb}</small></span></div>${TOPIC.questions.map((q, i) => [q, i]).filter(([q]) => q.level === l.id).map(([q, i]) => `<button class="qbtn" data-i="${i}">Q${i + 1} · ${q.title}</button>`).join('')}</div>`).join('')}
       <p class="muted">Every question is open: start anywhere. They get harder from top to bottom.</p></div><div id="qbox"></div>`;
     $$('.qbtn').forEach(b => { b.onclick = () => openQ(+b.dataset.i); });
     openQ(TOPIC.questions.indexOf(curQ) >= 0 ? TOPIC.questions.indexOf(curQ) : 0, true);
   } else {
-    M.innerHTML = `<div class="card gen"><b>Difficulty:</b> ${TOPIC.levels.map(l => `<button class="lvb" data-l="${l.id}">${l.name}</button>`).join('')}
+    M.innerHTML = `<div class="card gen"><b>Difficulty:</b> ${TOPIC.levels.map((l, li) => `<button class="lvb" data-lv="${li}" data-l="${l.id}" title="${l.blurb}">${l.name}</button>`).join('')}
       <label class="tdopt"><input type="checkbox" id="tdo"${genTd ? ' checked' : ''}> start in the time domain</label>
       <button class="primary" id="go">Generate question</button>
       <span class="code" id="code"></span>

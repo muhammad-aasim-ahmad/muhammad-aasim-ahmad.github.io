@@ -4,82 +4,149 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Circuit Analysis</title>
-<meta name="description" content="Interactive, step-by-step practice for nodal and mesh analysis of DC and AC (phasor) circuits.">
+<meta name="description" content="Interactive, step-by-step practice for nodal and mesh analysis, circuit theorems, phasors and RL/RC transients.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f4f6f8;--card:#fff;--ink:#16242e;--muted:#5b6b76;--line:#d5dbe1;--note:#eef4fb;--acc:#1f7a8c;--k1:#d9480f;--k2:#1565c0}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12171c;--card:#1b232b;--ink:#e8eef2;--muted:#9fb0bb;--line:#35424d;--note:#222e3a;--acc:#5fd3c0;--k1:#ff9e5e;--k2:#6cb6ff}}
-:root[data-theme="dark"]{--bg:#12171c;--card:#1b232b;--ink:#e8eef2;--muted:#9fb0bb;--line:#35424d;--note:#222e3a;--acc:#5fd3c0;--k1:#ff9e5e;--k2:#6cb6ff}
+:root{--bg:#f3f6fb;--card:#fff;--ink:#0f1f3d;--muted:#56657a;--soft:#7a879a;--line:#dde3ec;--shadow:0 1px 2px rgba(15,31,61,.05),0 8px 24px rgba(15,31,61,.07);
+  --blue:#1565c0;--orange:#e8590c;--green:#2b8a3e;--purple:#7048e8;--on:#fff;
+  --hero1:#1565c0;--hero2:#7048e8;--hero3:#0c8599;--tint:.07}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f141b;--card:#18202a;--ink:#e8eef5;--muted:#a3b1c2;--soft:#8193a8;--line:#2d3947;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.3);
+  --blue:#5aa6ff;--orange:#ff9050;--green:#5fcf78;--purple:#a58bff;--on:#0c1420;
+  --hero1:#123f78;--hero2:#3d2a8a;--hero3:#0b5a66;--tint:.12}}
+:root[data-theme="dark"]{--bg:#0f141b;--card:#18202a;--ink:#e8eef5;--muted:#a3b1c2;--soft:#8193a8;--line:#2d3947;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.3);
+  --blue:#5aa6ff;--orange:#ff9050;--green:#5fcf78;--purple:#a58bff;--on:#0c1420;
+  --hero1:#123f78;--hero2:#3d2a8a;--hero3:#0b5a66;--tint:.12}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Segoe UI",system-ui,-apple-system,Arial,sans-serif;min-height:100vh;display:flex;flex-direction:column}
-header{padding:12px 20px;border-bottom:1px solid var(--line);background:var(--card)}
-h1{font-size:1.25rem;margin:0}
-h1 small{display:block;font-weight:400;color:var(--muted);font-size:.85rem}
-main{width:100%;max-width:1100px;margin:0 auto;padding:24px 20px 50px;flex:1}
-.intro{margin:0 0 18px;color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
-a.topic{display:flex;flex-direction:column;gap:6px;color:inherit;text-decoration:none;border-top:4px solid var(--c);transition:border-color .15s,box-shadow .15s,transform .15s}
-a.topic:hover,a.topic:focus-visible{border-color:var(--c);box-shadow:0 6px 18px rgba(0,0,0,.08);transform:translateY(-2px);outline:none}
-a.topic.nodal{--c:var(--k2)}
-a.topic.mesh{--c:var(--k1)}
-h2{font-size:1.3rem;margin:0}
-h2.group{font-size:.95rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:26px 0 10px}
-h2.group:first-of-type{margin-top:0}
-.sub{color:var(--muted);font-size:.92rem;margin:0}
-p{margin:.3em 0}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
-.chip{display:inline-block;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:20px;background:var(--note);color:var(--acc);letter-spacing:.02em;text-transform:uppercase}
-.inc{font-size:.88rem;color:var(--muted)}
-.go{margin-top:auto;padding-top:8px;font-weight:600;color:var(--c)}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Plus Jakarta Sans","Segoe UI",system-ui,-apple-system,Arial,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* top bar */
+.top{background:var(--card);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;height:60px}
+.logo{color:var(--blue);flex:none}
+.brand{font-weight:800;font-size:1.15rem;letter-spacing:-.01em;color:var(--ink);text-decoration:none}
+
+/* hero */
+.hero{position:relative;overflow:hidden;color:#fff;background:linear-gradient(120deg,var(--hero1) 0%,var(--hero2) 55%,var(--hero3) 100%)}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);background-size:28px 28px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 60%);mask-image:linear-gradient(90deg,transparent,#000 60%)}
+.hero .wrap{position:relative;padding-top:32px;padding-bottom:34px}
+.hero h1{margin:0 0 8px;font-size:clamp(1.7rem,4vw,2.4rem);font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.hero p{margin:0;max-width:640px;font-size:1.02rem;opacity:.92}
+.hero .wave{position:absolute;right:24px;top:50%;transform:translateY(-50%);width:300px;opacity:.35}
+
+main{flex:1;padding:30px 0 56px}
+h2.group{display:flex;align-items:center;gap:10px;font-size:1.45rem;font-weight:800;letter-spacing:-.01em;margin:8px 0 16px}
+h2.group::after{content:"";flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--line),transparent)}
+section+section{margin-top:34px}
+
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+
+a.card{--c:var(--blue);position:relative;display:flex;flex-direction:column;background:linear-gradient(180deg,color-mix(in srgb,var(--c) calc(var(--tint)*100%),var(--card)) 0%,var(--card) 55%);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:12px;padding:24px 26px 26px;color:inherit;text-decoration:none;box-shadow:var(--shadow);transition:transform .18s,box-shadow .18s,border-color .18s}
+a.card:hover,a.card:focus-visible{transform:translateY(-3px);box-shadow:0 2px 4px rgba(15,31,61,.06),0 16px 36px color-mix(in srgb,var(--c) 22%,transparent);border-color:color-mix(in srgb,var(--c) 45%,var(--line));border-top-color:var(--c);outline:none}
+a.card.blue{--c:var(--blue)}a.card.orange{--c:var(--orange)}a.card.green{--c:var(--green)}a.card.purple{--c:var(--purple)}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.card h3{margin:0;font-size:1.45rem;font-weight:800;letter-spacing:-.015em;line-height:1.2}
+.icon{flex:none;width:64px;height:64px;color:var(--c)}
+.desc{margin:12px 0 6px;color:var(--muted)}
+.meta{margin:0;font-size:.88rem;color:var(--soft)}
+.btn{align-self:flex-start;margin-top:auto;display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:8px;background:var(--c);color:var(--on);font-weight:700;font-size:1rem;white-space:nowrap;box-shadow:0 4px 12px color-mix(in srgb,var(--c) 30%,transparent);transition:gap .18s}
+.spacer{height:20px}
+a.card:hover .btn{gap:14px}
+.btn svg{width:18px;height:18px}
+
 footer{text-align:center;color:var(--muted);font-size:.85rem;padding:18px 16px 28px;border-top:1px solid var(--line)}
-@media (max-width:600px){body{font-size:16px}main{padding:16px 16px 40px}header{padding:10px 16px}.card{padding:14px 16px}}
-@media (prefers-reduced-motion:reduce){a.topic{transition:none}a.topic:hover{transform:none}}
+
+@media (max-width:1060px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero .wave{display:none}}
+@media (max-width:640px){body{font-size:16px}.wrap{padding:0 16px}.grid{grid-template-columns:1fr}a.card{padding:20px 18px 22px}.card h3{font-size:1.3rem}.icon{width:54px;height:54px}.hero .wrap{padding-top:28px;padding-bottom:30px}}
+@media (prefers-reduced-motion:reduce){a.card,.btn{transition:none}a.card:hover{transform:none}}
 </style>
 </head>
 <body>
-<header>
-  <h1>Circuit Analysis<small>Interactive, step-by-step practice</small></h1>
-</header>
-<main>
-  <p class="intro">Choose a method for DC or AC circuits. Each page explains the method, works through graded questions step by step, and generates new practice circuits. Everything runs in your browser.</p>
-  <h2 class="group">DC circuits</h2>
-  <div class="grid">
-    <a class="card topic nodal" href="nodal-analysis.html">
-      <h2>Nodal Analysis</h2>
-      <p class="sub">From one unknown node to the supernode, with dependent sources</p>
-      <p>Unknowns are <b>node voltages</b>. Write <b>KCL</b> at each node that is not already known.</p>
-      <div class="chips"><span class="chip">Warm-up</span><span class="chip">Standard</span><span class="chip">Dependent sources</span><span class="chip">Supernode</span><span class="chip">Challenge</span></div>
-      <p class="inc">How it works · Questions · Practice generator</p>
-      <span class="go">Open Nodal Analysis &rarr;</span>
-    </a>
-    <a class="card topic mesh" href="mesh-analysis.html">
-      <h2>Mesh Analysis</h2>
-      <p class="sub">From one loop to the supermesh, with dependent sources</p>
-      <p>Unknowns are <b>mesh currents</b>. Write <b>KVL</b> around each mesh whose current is not already known.</p>
-      <div class="chips"><span class="chip">Warm-up</span><span class="chip">Standard</span><span class="chip">Dependent sources</span><span class="chip">Supermesh</span><span class="chip">Challenge</span></div>
-      <p class="inc">How it works · Questions · Practice generator</p>
-      <span class="go">Open Mesh Analysis &rarr;</span>
-    </a>
+<header class="top">
+  <div class="wrap">
+    <svg class="logo" width="46" height="20" viewBox="0 0 46 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="4" cy="10" r="3"/><path d="M7 10h6l2.5-6 4 12 4-12 4 12 2.5-6h5"/><circle cx="42" cy="10" r="3"/></svg>
+    <a class="brand" href="./">Circuit Analysis</a>
   </div>
-  <h2 class="group">AC circuits (phasors)</h2>
-  <div class="grid">
-    <a class="card topic nodal" href="nodal-analysis-ac.html">
-      <h2>Nodal Analysis with Phasors</h2>
-      <p class="sub">From one unknown node to the supernode, with dependent sources</p>
-      <p>Unknowns are <b>phasor node voltages</b>. Write <b>KCL</b> at each unknown node using <b>impedances</b>.</p>
-      <div class="chips"><span class="chip">Warm-up</span><span class="chip">Standard</span><span class="chip">Dependent sources</span><span class="chip">Supernode</span><span class="chip">Challenge</span></div>
-      <p class="inc">How it works · Questions · Practice generator</p>
-      <span class="go">Open Nodal Analysis (AC) &rarr;</span>
-    </a>
-    <a class="card topic mesh" href="mesh-analysis-ac.html">
-      <h2>Mesh Analysis with Phasors</h2>
-      <p class="sub">From one loop to the supermesh, with dependent sources</p>
-      <p>Unknowns are <b>phasor mesh currents</b>. Write <b>KVL</b> around each unknown mesh using <b>impedances</b>.</p>
-      <div class="chips"><span class="chip">Warm-up</span><span class="chip">Standard</span><span class="chip">Dependent sources</span><span class="chip">Supermesh</span><span class="chip">Challenge</span></div>
-      <p class="inc">How it works · Questions · Practice generator</p>
-      <span class="go">Open Mesh Analysis (AC) &rarr;</span>
-    </a>
+</header>
+
+<div class="hero">
+  <svg class="wave" viewBox="0 0 300 100" fill="none" stroke="#fff" stroke-width="2.5" aria-hidden="true"><path d="M0 50 C25 0 50 0 75 50 S125 100 150 50 S200 0 225 50 S275 100 300 50"/><path d="M0 50h300" stroke-dasharray="4 6" stroke-width="1.5"/></svg>
+  <div class="wrap">
+    <h1>Learn circuits, one step at a time</h1>
+    <p>Interactive, step-by-step practice for DC and AC circuits.</p>
+  </div>
+</div>
+
+<main>
+  <div class="wrap">
+    <section>
+      <h2 class="group">DC circuits</h2>
+      <div class="grid">
+        <a class="card blue" href="nodal-analysis.html">
+          <div class="head"><h3>Nodal Analysis</h3>
+            <svg class="icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="32" cy="10" r="5"/><path d="M32 15v21"/><circle cx="32" cy="40" r="4"/><circle cx="10" cy="40" r="5"/><circle cx="54" cy="40" r="5"/><path d="M15 40h13M36 40h13"/></svg>
+          </div>
+          <p class="desc">Find unknown node voltages using Kirchhoff's Current Law.</p>
+          <p class="meta">5 guided levels · Includes supernodes</p>
+          <div class="spacer"></div>
+          <span class="btn">Start nodal analysis <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h14M11 4l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card orange" href="mesh-analysis.html">
+          <div class="head"><h3>Mesh Analysis</h3>
+            <svg class="icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M32 8a24 24 0 0 1 23 17"/><path d="M56 32a24 24 0 0 1-17 23"/><path d="M32 56A24 24 0 0 1 9 39"/><path d="M8 32A24 24 0 0 1 25 9"/><path d="M50 22l5 3 2-6M42 56l-3-1 1-5M14 42l-5-3-2 6M22 8l3 1-1 5"/></svg>
+          </div>
+          <p class="desc">Find unknown mesh currents using Kirchhoff's Voltage Law.</p>
+          <p class="meta">5 guided levels · Includes supermeshes</p>
+          <div class="spacer"></div>
+          <span class="btn">Start mesh analysis <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h14M11 4l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card green" href="circuit-theorems.html">
+          <div class="head"><h3>Circuit Theorems</h3>
+            <svg class="icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="32" r="4"/><path d="M10 32h8l3-9 5 18 5-18 5 18 5-18 3 9h8"/><circle cx="58" cy="32" r="4"/></svg>
+          </div>
+          <p class="desc">Use superposition, source transformation, and Thevenin's and Norton's theorems to simplify circuits.</p>
+          <p class="meta">Superposition · Thevenin · Norton</p>
+          <div class="spacer"></div>
+          <span class="btn">Start circuit theorems <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h14M11 4l6 6-6 6"/></svg></span>
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="group">AC circuits &amp; transient response</h2>
+      <div class="grid">
+        <a class="card blue" href="nodal-analysis-ac.html">
+          <div class="head"><h3>Nodal Analysis with Phasors</h3>
+            <svg class="icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="32" cy="16" r="11"/><path d="M25 17c2.5-6 4.5-6 7 0s4.5 6 7 0"/><path d="M32 27v9"/><circle cx="32" cy="40" r="4"/><circle cx="10" cy="40" r="5"/><circle cx="54" cy="40" r="5"/><path d="M15 40h13M36 40h13"/></svg>
+          </div>
+          <p class="desc">Solve AC node voltages using phasors and impedances.</p>
+          <p class="meta">5 guided levels · Complex numbers</p>
+          <div class="spacer"></div>
+          <span class="btn">Start AC nodal analysis <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h14M11 4l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card orange" href="mesh-analysis-ac.html">
+          <div class="head"><h3>Mesh Analysis with Phasors</h3>
+            <svg class="icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M32 8a24 24 0 0 1 23 17"/><path d="M56 32a24 24 0 0 1-17 23"/><path d="M32 56A24 24 0 0 1 9 39"/><path d="M8 32A24 24 0 0 1 25 9"/><path d="M50 22l5 3 2-6M42 56l-3-1 1-5M14 42l-5-3-2 6M22 8l3 1-1 5"/><path d="M21 33c3.5-8 7.5-8 11 0s7.5 8 11 0"/></svg>
+          </div>
+          <p class="desc">Solve AC mesh currents using phasors and impedances.</p>
+          <p class="meta">5 guided levels · Complex numbers</p>
+          <div class="spacer"></div>
+          <span class="btn">Start AC mesh analysis <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h14M11 4l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card purple" href="rl-and-rc-transients.html">
+          <div class="head"><h3>RL and RC Transient Response</h3>
+            <svg class="icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 6v48h48"/><path d="M5 11l5-5 5 5M53 49l5 5-5 5"/><path d="M10 54C18 26 28 18 54 16"/></svg>
+          </div>
+          <p class="desc">Solve first-order RL and RC circuits using the transient response.</p>
+          <p class="meta">First-order circuits · Transient response</p>
+          <div class="spacer"></div>
+          <span class="btn">Start transient response <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h14M11 4l6 6-6 6"/></svg></span>
+        </a>
+      </div>
+    </section>
   </div>
 </main>
 <footer>Developed by Muhammad 'Aasim Asyafi'ie bin Ahmad, 2026</footer>

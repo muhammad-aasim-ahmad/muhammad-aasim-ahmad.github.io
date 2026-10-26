@@ -1,0 +1,1794 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RL and RC Transients</title>
+<meta name="description" content="First-order RC and RL transients step by step: initial and final values, the time constant, the response formula, with a question bank and a practice generator.">
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--ink:#16242e;--muted:#5b6b76;--line:#d5dbe1;--hl:#ffe08a;--ok:#2e7d32;--bad:#c62828;--note:#eef4fb;--warn:#fff4e5;
+  --k0:#7d8a94;--k1:#d9480f;--k2:#1565c0;--k3:#2b8a3e;--k4:#8d6e00;--kx:#ae3ec9;--sup:#c2255c;--acc:#1f7a8c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12171c;--card:#1b232b;--ink:#e8eef2;--muted:#9fb0bb;--line:#35424d;--hl:#6b5a14;--ok:#7ee787;--bad:#ff7b72;--note:#222e3a;--warn:#3a2f1c;
+  --k0:#8c99a3;--k1:#ff9e5e;--k2:#6cb6ff;--k3:#69db7c;--k4:#e3c04d;--kx:#e599f7;--sup:#f783ac;--acc:#5fd3c0}}
+:root[data-theme="dark"]{--bg:#12171c;--card:#1b232b;--ink:#e8eef2;--muted:#9fb0bb;--line:#35424d;--hl:#6b5a14;--ok:#7ee787;--bad:#ff7b72;--note:#222e3a;--warn:#3a2f1c;
+  --k0:#8c99a3;--k1:#ff9e5e;--k2:#6cb6ff;--k3:#69db7c;--k4:#e3c04d;--kx:#e599f7;--sup:#f783ac;--acc:#5fd3c0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:5}
+h1{font-size:1.25rem;margin:0}
+h1 small{display:block;font-weight:400;color:var(--muted);font-size:.85rem}
+nav.tabs{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;flex-wrap:wrap}
+nav.tabs button{border:0;border-radius:0}
+button{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 14px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button:disabled{opacity:.4;cursor:default}
+button.on,button.primary{background:var(--ink);color:var(--card);border-color:var(--ink)}
+main{max-width:1500px;margin:auto;padding:16px 20px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+h2{font-size:1.2rem;margin:.1em 0 .4em}
+h3{font-size:1.02rem;margin:0 0 .25em}
+p{margin:.45em 0}
+.muted{color:var(--muted);font-size:.92rem}
+.note{background:var(--note);border-radius:9px;padding:9px 13px;margin:.7em 0;font-size:.95rem}
+.warn{background:var(--warn);border-radius:9px;padding:9px 13px;margin:.7em 0;font-size:.95rem}
+.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}
+/* level strip */
+.levels{display:grid;gap:10px;margin-bottom:16px}
+.level{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.level .lname{font-weight:600;min-width:11em}
+.level .lname small{display:block;font-weight:400;color:var(--muted);font-size:.82rem}
+.qbtn{font-size:.92rem;padding:4px 11px}
+/* question layout */
+.qgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:16px;align-items:start}
+@media (max-width:1000px){.qgrid{grid-template-columns:1fr}}
+.sticky{position:sticky;top:76px}
+@media (max-width:1000px){header{position:static}.sticky{top:0;z-index:3}.sticky .card{padding:6px 8px;box-shadow:0 4px 10px rgba(0,0,0,.12)}.sticky .hint{display:none}svg.ckt{max-height:36vh}}
+.qhead{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.chip{display:inline-block;font-size:.78rem;font-weight:600;padding:2px 9px;border-radius:20px;background:var(--note);color:var(--acc);letter-spacing:.02em;text-transform:uppercase}
+.qtext{margin:.6em 0 .8em}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.8em 0}
+ol.steps{list-style:none;padding:0;margin:0;counter-reset:st}
+ol.steps>li{border-left:3px solid var(--line);padding:6px 0 8px 14px;margin:0 0 10px;counter-increment:st}
+ol.steps>li h3::before{content:"Step " counter(st) " · ";color:var(--muted);font-weight:600}
+ol.steps>li.new{border-left-color:var(--acc)}
+.line{margin:.45em 0}
+.how{font-size:.86rem;color:var(--muted)}
+.eq{font-size:1.07rem;padding:3px 10px;border-left:3px solid var(--line);margin-top:2px;font-variant-numeric:tabular-nums;overflow-x:auto}
+.eq:empty{display:none}
+details{margin:.6em 0}summary{cursor:pointer;color:var(--muted)}
+.answer{border:2px solid var(--acc);border-radius:10px;padding:8px 14px;margin:12px 0}
+.try{background:var(--note);border-radius:9px;padding:8px 13px}
+.try label{display:inline-flex;gap:6px;align-items:center;margin:4px 14px 4px 0}
+.try input{width:7.5em;font:inherit;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+/* help modes and one-number-at-a-time checking */
+.modes{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin:.6em 0 .8em}
+.modes button{font-size:.9rem;padding:3px 12px}
+ol.steps>li.pend{border-left-style:dashed;border-left-color:var(--acc)}
+ol.steps>li.pend h3::after{content:" · your turn";color:var(--acc);font-size:.85rem}
+ol.steps>li.pend .eq,ol.steps>li.pend .note,ol.steps>li.pend details{display:none}
+ol.steps.own>li.pend>:not(h3){display:none}
+ol.steps>li.won h3::after{content:" ✓";color:var(--ok)}
+ol.steps>li.helped h3::after{content:" · with help";color:var(--muted);font-weight:400;font-size:.85rem}
+.stage{background:var(--note);border:2px solid var(--acc);border-radius:10px;padding:10px 14px;margin:12px 0}
+.stage .sq{font-weight:600;margin-bottom:6px}
+.srow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.srow label{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
+.srow input{width:8em;font:inherit;padding:4px 8px;border:2px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+.stage .warn{margin:.6em 0 .3em}
+.stage ul{margin:.4em 0;padding-left:1.3em}
+/* terms and variables */
+.term{border-radius:4px;padding:0 2px;transition:background .12s;cursor:default}
+.term.hl{background:var(--hl);box-shadow:0 0 0 2px var(--hl)}
+.var{font-weight:600;font-style:italic;border-radius:4px}
+.var.hl{background:var(--hl)}
+.k0{color:var(--k0)}.k1{color:var(--k1)}.k2{color:var(--k2)}.k3{color:var(--k3)}.k4{color:var(--k4)}.kx{color:var(--kx)}
+/* circuit */
+svg.ckt{display:block;width:100%;height:auto;max-height:70vh;touch-action:manipulation}
+svg.ckt text{font-family:"Segoe UI",system-ui,Arial,sans-serif;fill:var(--ink)}
+.wire{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.src{fill:var(--card)}
+.arrowhead{fill:var(--ink)}
+.sign{stroke:var(--ink);stroke-width:2.5;fill:none}
+.dot{fill:var(--ink)}
+.ul{stroke-width:14;stroke-linecap:round;opacity:0;transition:opacity .15s}
+svg.colour .ul{opacity:.35}
+svg.colour .ul.hl{opacity:.8}
+.ul.k0{stroke:var(--k0)}.ul.k1{stroke:var(--k1)}.ul.k2{stroke:var(--k2)}.ul.k3{stroke:var(--k3)}.ul.k4{stroke:var(--k4)}
+.lab{font-size:23px}
+.lab.nm{font-weight:600}
+.lab.val{fill:var(--muted)}
+svg.ckt text.lab.dep{fill:var(--kx);font-weight:600}
+svg.ckt text.lab.muted{fill:var(--muted);font-size:19px}
+svg.ckt text.lab.nl{font-weight:700;font-size:25px}
+svg.ckt text.k1{fill:var(--k1)}svg.ckt text.k2{fill:var(--k2)}svg.ckt text.k3{fill:var(--k3)}svg.ckt text.k4{fill:var(--k4)}
+.ndot.k1{fill:var(--k1)}.ndot.k2{fill:var(--k2)}.ndot.k3{fill:var(--k3)}.ndot.k4{fill:var(--k4)}
+.nlab.hl .ndot{r:11}
+.halo{fill:var(--hl);opacity:0;transition:opacity .12s}
+g.el{cursor:pointer}
+g.el.hl .halo{opacity:1}
+.ctrl .cline{stroke:var(--kx);stroke-width:2.5}
+.ctrl .chead{fill:var(--kx)}
+.ctrl .csign{stroke:var(--kx);stroke-width:2.5;fill:none}
+svg.ckt text.lab.cx{fill:var(--kx);font-weight:700}
+.ctrl.hl .cline,.ctrl.hl .csign{stroke-width:5}
+.loop .lp{fill:none;stroke-width:2.5;stroke-dasharray:3 6;stroke-linecap:round}
+.loop.k1 .lp{stroke:var(--k1)}.loop.k2 .lp{stroke:var(--k2)}.loop.k3 .lp{stroke:var(--k3)}
+.loop.k1 .lph{fill:var(--k1)}.loop.k2 .lph{fill:var(--k2)}.loop.k3 .lph{fill:var(--k3)}
+svg.ckt .loop.k1 text{fill:var(--k1)}svg.ckt .loop.k2 text{fill:var(--k2)}svg.ckt .loop.k3 text{fill:var(--k3)}
+.lab.ml{font-size:30px;font-weight:700;font-style:italic}
+.loop.hl .lp{stroke-width:5;stroke-dasharray:none}
+.loop{cursor:pointer}
+.bubble{fill:var(--sup);fill-opacity:.06;stroke:var(--sup);stroke-width:2.5;stroke-dasharray:8 6;display:none}
+svg.ckt text.lab.sup{fill:var(--sup);font-weight:600;display:none}
+svg.over .bubble,svg.over text.lab.sup{display:inline}
+/* method page */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,430px),1fr));gap:16px}
+.mgrid .card ol,.mgrid .card ul{padding-left:1.3em;margin:.4em 0}
+.recipe{counter-reset:r}
+table{border-collapse:collapse;width:100%;font-size:.95rem;margin:.6em 0}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+th{background:var(--note)}
+.gen{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.gen .code{font-family:Consolas,monospace;font-size:.9rem;color:var(--muted)}
+.gen input{width:9em;font:inherit;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+.hint{font-size:.88rem;color:var(--muted);margin:.4em 0 0}
+@media (max-width:600px){body{font-size:16px}main{padding:12px 12px 50px}header{padding:10px 12px}.card{padding:12px}.level .lname{min-width:100%}}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:18px 16px 28px;border-top:1px solid var(--line)}
+
+
+/* ---------------------------------------------------------------- colour theme */
+:root{--on-acc:#fff;--hdr1:#1f7a8c;--hdr2:#5b3cc4;--warnline:#f08c00;
+  --lv0:#2f9e44;--lv1:#0c8599;--lv2:#1971c2;--lv3:#7048e8;--lv4:#e03131;
+  --t-setup:#1971c2;--t-equation:#e8590c;--t-algebra:#7048e8;--t-answer:#2f9e44;--t-check:#0c8599}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--on-acc:#10202a;--hdr1:#145866;--hdr2:#3d2a8a;--warnline:#ffa94d;
+  --lv0:#69db7c;--lv1:#3bc9db;--lv2:#74c0fc;--lv3:#b197fc;--lv4:#ff8787;
+  --t-setup:#74c0fc;--t-equation:#ffa94d;--t-algebra:#b197fc;--t-answer:#69db7c;--t-check:#3bc9db}}
+:root[data-theme="dark"]{--on-acc:#10202a;--hdr1:#145866;--hdr2:#3d2a8a;--warnline:#ffa94d;
+  --lv0:#69db7c;--lv1:#3bc9db;--lv2:#74c0fc;--lv3:#b197fc;--lv4:#ff8787;
+  --t-setup:#74c0fc;--t-equation:#ffa94d;--t-algebra:#b197fc;--t-answer:#69db7c;--t-check:#3bc9db}
+/* header band with the page icon; tabs as pills */
+header{background:linear-gradient(100deg,var(--hdr1),var(--hdr2));border-bottom:0;color:#fff}
+header h1{display:flex;align-items:center;gap:12px}
+header h1 small{color:rgba(255,255,255,.82)}
+.picon{flex:none;width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,.16);display:grid;place-items:center}
+.picon svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs{border:0;gap:6px;background:rgba(255,255,255,.14);padding:4px;border-radius:24px}
+nav.tabs button{background:transparent;color:#fff;border-radius:20px;border:0}
+nav.tabs button:hover{background:rgba(255,255,255,.18)}
+nav.tabs button.on{background:#fff;color:var(--hdr1)}
+button.on,button.primary{background:var(--acc);color:var(--on-acc);border-color:var(--acc)}
+/* difficulty levels: one colour each (data-lv = 0 … 4) */
+[data-lv="0"]{--lv:var(--lv0)}[data-lv="1"]{--lv:var(--lv1)}[data-lv="2"]{--lv:var(--lv2)}[data-lv="3"]{--lv:var(--lv3)}[data-lv="4"]{--lv:var(--lv4)}
+.level .lname{color:var(--lv);padding-left:10px;border-left:4px solid var(--lv)}
+.qbtn,.lvb{border-left:4px solid var(--lv,var(--line))}
+.qbtn:hover,.lvb:hover{background:color-mix(in srgb,var(--lv,var(--acc)) 10%,var(--card))}
+.qbtn.on,.lvb.on{background:var(--lv);border-color:var(--lv);color:var(--on-acc)}
+.chip{background:color-mix(in srgb,var(--lv,var(--acc)) 15%,var(--card));color:var(--lv,var(--acc))}
+/* steps: a numbered badge and an icon coloured by the kind of step */
+ol.steps>li.t-setup{--tc:var(--t-setup)}ol.steps>li.t-equation{--tc:var(--t-equation)}ol.steps>li.t-algebra{--tc:var(--t-algebra)}
+ol.steps>li.t-answer{--tc:var(--t-answer)}ol.steps>li.t-check{--tc:var(--t-check)}
+ol.steps>li{border-left:4px solid color-mix(in srgb,var(--tc,var(--line)) 40%,transparent);background:linear-gradient(90deg,color-mix(in srgb,var(--tc,var(--line)) 7%,transparent),transparent 60%);border-radius:0 8px 8px 0;padding-right:8px}
+ol.steps>li.new{border-left-color:var(--tc,var(--acc))}
+ol.steps>li h3{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+ol.steps>li h3::before{content:counter(st);display:inline-grid;place-items:center;min-width:1.65em;height:1.65em;border-radius:50%;background:var(--tc,var(--muted));color:var(--on-acc);font-size:.85rem;font-weight:700}
+.sico{width:17px;height:17px;fill:none;stroke:var(--tc,var(--muted));stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sty{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--tc,var(--muted))}
+ol.steps>li.pend{border-left-style:dashed;border-left-color:var(--tc,var(--acc))}
+/* other surfaces */
+.answer{background:color-mix(in srgb,var(--acc) 10%,var(--card));font-size:1.05rem}
+.warn{border-left:4px solid var(--warnline)}
+.note{border-left:4px solid color-mix(in srgb,var(--acc) 55%,transparent)}
+.try,.stage{background:color-mix(in srgb,var(--acc) 8%,var(--card))}
+.modes button.on{background:var(--acc);border-color:var(--acc)}
+.mgrid>.card{border-top:5px solid var(--mc,var(--acc))}
+.mgrid>.card:nth-child(5n+1){--mc:var(--lv2)}.mgrid>.card:nth-child(5n+2){--mc:var(--lv1)}.mgrid>.card:nth-child(5n+3){--mc:var(--lv3)}
+.mgrid>.card:nth-child(5n+4){--mc:var(--t-equation)}.mgrid>.card:nth-child(5n+5){--mc:var(--lv0)}
+.mgrid>.card>h2{color:var(--mc,var(--ink))}
+.card.levels{border-top:5px solid var(--acc)}
+
+/* ================================================================ course colour layer on top of the handover theme */
+:root{--shadow:0 1px 2px rgba(22,36,46,.06),0 6px 18px rgba(22,36,46,.07);--src-v:#ffe3e3;--src-i:#d0ebff;--src-d:#f3d9fa;--grid:rgba(91,107,118,.16);--glow1:rgba(31,122,140,.10);--glow2:rgba(91,60,196,.08)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.28);--src-v:#4a2328;--src-i:#1d3550;--src-d:#3d2347;--grid:rgba(159,176,187,.12);--glow1:rgba(95,211,192,.08);--glow2:rgba(151,117,250,.08)}}
+:root[data-theme="dark"]{--shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.28);--src-v:#4a2328;--src-i:#1d3550;--src-d:#3d2347;--grid:rgba(159,176,187,.12);--glow1:rgba(95,211,192,.08);--glow2:rgba(151,117,250,.08)}
+body{background:radial-gradient(900px 420px at 0 0,var(--glow1),transparent 70%),radial-gradient(900px 420px at 100% 0,var(--glow2),transparent 70%),var(--bg);background-attachment:fixed}
+.card{box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--line) 70%,transparent)}
+header{box-shadow:0 4px 14px rgba(0,0,0,.14)}
+header h1{font-size:1.3rem}
+/* levels: a tinted row per level with a numbered badge */
+.level{background:color-mix(in srgb,var(--lv,var(--acc)) 7%,var(--card));border-left:5px solid var(--lv,var(--acc));border-radius:10px;padding:8px 12px}
+.level .lname{display:flex;align-items:center;gap:10px;border-left:0;padding-left:0}
+.lnum{flex:none;display:inline-grid;place-items:center;width:1.9em;height:1.9em;border-radius:50%;background:var(--lv,var(--acc));color:var(--on-acc);font-weight:700;font-size:.9rem}
+.level .lname small{color:var(--muted)}
+.qbtn,.lvb{border:1.5px solid color-mix(in srgb,var(--lv,var(--acc)) 45%,var(--line));border-radius:20px;background:var(--card)}
+.qbtn.on,.lvb.on{background:var(--lv,var(--acc));border-color:var(--lv,var(--acc));color:var(--on-acc);box-shadow:0 2px 8px color-mix(in srgb,var(--lv,var(--acc)) 35%,transparent)}
+.grp h2{color:var(--hdr2)}
+.card.levels,.card.gen{border-top:0;padding-top:19px;background:linear-gradient(90deg,var(--hdr1),var(--hdr2)) top/100% 5px no-repeat,var(--card)}
+/* the question: a level-coloured top edge; the circuit on faint graph paper */
+.qcard{border-top:5px solid var(--lv,var(--acc))}
+.qhead h2{margin:0}
+.sticky>.card{border-top:5px solid color-mix(in srgb,var(--lv,var(--acc)) 55%,transparent);background-color:var(--card);background-image:radial-gradient(var(--grid) 1.1px,transparent 1.3px);background-size:20px 20px}
+.src.sv{fill:var(--src-v)}.src.si{fill:var(--src-i)}.src.sd{fill:var(--src-d)}
+.modes{background:color-mix(in srgb,var(--hdr2) 6%,var(--card));border-radius:24px;padding:5px 8px 5px 14px;width:fit-content;max-width:100%}
+.modes button{border-radius:20px}
+.modes button.on{background:linear-gradient(100deg,var(--hdr1),var(--hdr2));border-color:transparent;color:#fff}
+.stage{border-width:2px;border-color:var(--hdr2);box-shadow:var(--shadow)}
+.stage .sq b{color:var(--hdr2)}
+.srow input{font-size:1.05rem}
+.srow input:focus,.try input:focus,.gen input:focus{outline:3px solid color-mix(in srgb,var(--acc) 35%,transparent);border-color:var(--acc)}
+.ctl button.primary,#go{background:linear-gradient(100deg,var(--hdr1),var(--hdr2));border-color:transparent;color:#fff}
+.answer{border-color:var(--t-answer);background:color-mix(in srgb,var(--t-answer) 10%,var(--card))}
+.answer b:first-child{color:var(--t-answer)}
+.more{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.more button{border-color:var(--acc);color:var(--acc);border-radius:20px;font-weight:600}
+.mgrid>.card>h2{display:flex;align-items:center;gap:8px}
+.mgrid>.card>h2::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;background:var(--mc,var(--acc))}
+.mgrid>.card{background:linear-gradient(180deg,color-mix(in srgb,var(--mc,var(--acc)) 6%,var(--card)),var(--card) 140px)}
+th{background:color-mix(in srgb,var(--acc) 12%,var(--card))}
+.gbar .gb.on,.gbar .gpb.on{background:var(--hdr2);border-color:var(--hdr2);color:#fff}
+footer{border-top:0;position:relative}
+footer::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--hdr1),var(--hdr2))}
+@media (max-width:600px){.level{padding:8px}.modes{border-radius:12px}}
+
+/* transients: circuit states */
+svg.ckt .off{opacity:.25}
+svg.ckt .tdot{fill:var(--card);stroke:var(--ink);stroke-width:2.5}
+svg.ckt .blade{stroke-width:3.5}
+svg.ckt text.lab.sw{fill:var(--muted);font-size:18px}
+svg.ckt text.lab.q{fill:var(--acc);font-weight:700}
+svg.ckt text.lab.look{fill:var(--k3);font-weight:700}
+svg.ckt text.lab.val{font-size:21px}
+.qarr,.act{fill:none;stroke:var(--acc);stroke-width:2.5}
+.qarrh,.acth{fill:var(--acc)}
+.look{fill:none;stroke:var(--k3);stroke-width:3}
+.lookh{fill:var(--k3)}
+.vtabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.vtabs button{font-size:.88rem;padding:3px 10px}
+/* response plot and ruler */
+svg.plot{display:block;width:100%;height:auto;margin-top:8px;touch-action:none;user-select:none}
+svg.plot text{font-family:"Segoe UI",system-ui,Arial,sans-serif}
+.plot .grid{stroke:var(--line);stroke-width:1}
+.plot .axis{stroke:var(--ink);stroke-width:1.5}
+.plot .tick{fill:var(--muted);font-size:14px}
+.plot .taul{stroke:var(--k3);stroke-width:1;stroke-dasharray:3 4;opacity:.7}
+.plot .taut{fill:var(--k3);font-size:13px;font-weight:600}
+.plot .final{stroke:var(--k2);stroke-width:2;stroke-dasharray:8 5}
+.plot .finalt{fill:var(--k2);font-size:14px;font-weight:600}
+.plot .tan{stroke:var(--k3);stroke-width:1.5;stroke-dasharray:2 4}
+.plot .curve{fill:none;stroke:var(--acc);stroke-width:3.5;stroke-linejoin:round}
+.plot .p0{fill:var(--k1)}.plot .p0t{fill:var(--k1);font-size:14px;font-weight:600}
+.plot .mk{fill:var(--card);stroke:var(--kx);stroke-width:3}.plot .mkt{fill:var(--kx);font-size:14px;font-weight:600}
+.plot .cur{stroke:var(--ink);stroke-width:1.5}
+.plot .curd{fill:var(--ink)}
+.plot .curt{fill:var(--ink);font-size:15px;font-weight:600;paint-order:stroke;stroke:var(--card);stroke-width:5px}
+.plot .bar{fill:var(--k2);opacity:.55}.plot .bar.hi{fill:var(--k1);opacity:.9}
+.plot .tank{fill:none;stroke:var(--ink);stroke-width:3}.plot .water{fill:var(--k2);opacity:.45}.plot .pipe{stroke:var(--ink);stroke-width:8}
+.plot .wheel{fill:none;stroke:var(--ink);stroke-width:8}.plot .hub{fill:var(--ink)}.plot .spoke{stroke:var(--ink);stroke-width:3}
+.plotph{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:1px dashed var(--line);border-radius:9px;padding:10px 12px;margin-top:10px}
+.slider{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted)}
+.slider input{flex:1;min-width:0}
+.sliders{display:grid;gap:4px}
+.sliders label{display:grid;grid-template-columns:4.5em 1fr 4em;align-items:center;gap:8px}
+.de{font-size:.95rem;padding:6px 10px;border-left:3px solid var(--k3);line-height:1.7}
+p.how{font-size:.86rem;color:var(--muted);margin:.5em 0 .1em}
+.more{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:.4em 0 .8em}
+.fbox{border:2px solid var(--acc);border-radius:9px;padding:4px 9px;font-size:.9rem;font-weight:600}
+.farr{color:var(--muted)}
+.k1,.k2,.k3{font-weight:600}
+[hidden]{display:none !important}
+@media (max-width:1000px){.sticky{position:static}svg.ckt{max-height:42vh}}
+
+a.home{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;font-weight:600;font-size:.9rem;text-decoration:none;white-space:nowrap;transition:background .15s}
+a.home:hover{background:rgba(255,255,255,.26)}
+a.home:focus-visible{outline:2px solid #fff;outline-offset:2px}
+a.home svg{width:16px;height:16px}
+header h1{margin-right:auto}
+</style>
+</head>
+<body>
+<header>
+  <a class="home" href="index.html" aria-label="Back to all topics"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 10H3M9 4l-6 6 6 6"/></svg>All topics</a>
+  <h1><span class="picon"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 27V5M4 27h24"/><path d="M4 7c4 0 6 17 22 18" stroke-width="2.8"/></svg></span><span>RL and RC Transients<small>Step by step, from one time constant to two switchings and design problems</small></span></h1>
+  <nav class="tabs" aria-label="Sections"><button data-v="method">How it works</button><button data-v="questions">Questions</button><button data-v="practice">Practice generator</button></nav>
+</header>
+<main></main>
+<footer>Developed by Muhammad 'Aasim Asyafi'ie bin Ahmad, 2026</footer>
+<script>
+'use strict';
+// Transient engine for first-order RC and RL circuits.
+// A circuit is a ladder: shunt items (sources, resistors, the capacitor or inductor) joined by series items
+// (resistors, switches) along the top rail, all returning along the bottom rail.  Switches change position at t = 0
+// and, optionally, again at t = t0.  What the capacitor or inductor sees is reduced to a Thevenin equivalent, and every
+// step of the three-number method is written out with a plain-language "how" line above each equation.
+
+// ---------------------------------------------------------------- numbers
+const MINUS = '−';
+function sf(x, n = 3) {
+  if (!Number.isFinite(x)) return '∞';
+  if (Math.abs(x) < 1e-12) return '0';
+  let s = String(Number(x.toPrecision(n)));
+  if (/e/.test(s)) { const p = Math.floor(Math.log10(Math.abs(x))); s = Number(x.toPrecision(n)).toFixed(Math.min(20, Math.max(0, n - 1 - p))).replace(/\.?0+$/, ''); }
+  return s.replace('-', MINUS);
+}
+const PRE = [[1e6, 'M', 6], [1e3, 'k', 3], [1, '', 0], [1e-3, 'm', -3], [1e-6, 'µ', -6], [1e-9, 'n', -9]];
+function pref(x) {
+  const a = Math.abs(x);
+  if (a === 0 || (a >= 0.1 - 1e-12 && a < 1000)) return PRE[2];
+  for (const p of PRE) if (a >= p[0] * 0.9995) return p;
+  return PRE[PRE.length - 1];
+}
+function si(x, unit, n = 3) { const p = pref(x); return `${sf(x / p[0], n)} ${p[1]}${unit}`; }
+function pw(x, n = 4) { const p = pref(x); return p[2] ? `(${sf(x / p[0], n)} × 10<sup>${sf(p[2])}</sup>)` : sf(x, n); }
+const near = (a, b, r = 1e-9) => Math.abs(a - b) <= r * Math.max(1, Math.abs(a), Math.abs(b));
+const fits3 = x => x === 0 || Math.abs(Number(x.toPrecision(3)) - x) <= 1e-9 * Math.abs(x);   // shown exactly with 3 significant figures
+function nice(x, dec = 2) { if (x === 0) return true; const m = Math.abs(x / pref(x)[0]); return Math.abs(m * 10 ** dec - Math.round(m * 10 ** dec)) < 1e-6; }
+const listJoin = a => (a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]);
+const UNIT = { R: 'Ω', Rs: 'Ω', Rp: 'Ω', V: 'V', I: 'A', C: 'F', L: 'H', Cp: 'F', Ls: 'H' };
+const SUBU = { 0: '₀', 1: '₁', 2: '₂', 3: '₃', 4: '₄', 5: '₅', 6: '₆', 7: '₇', 8: '₈', 9: '₉', s: 'ₛ', x: 'ₓ', h: 'ₕ' };
+const uni = (b, s) => b + String(s).split('').map(c => SUBU[c] || c).join('');
+const T = (id, h) => (id ? `<span class="term" data-el="${id}">${h}</span>` : h);
+const ex = e => `e<sup>${e}</sup>`;
+const RTH = 'R<sub>Th</sub>', VTH = 'V<sub>Th</sub>', TAU = 'τ';
+const SUP0 = '0<sup>+</sup>', SUPM = '0<sup>−</sup>';
+
+// ---------------------------------------------------------------- building a circuit
+// spec: { left: [...items far -> near], E: {t:'C'|'L', v}, right: [...] (with spdt), spdt: 'LR' | 'LRR' | ..., t0, ic }
+// item: {t:'V'|'I'|'Rs'|'Rp'|'S'|'Ls'|'Cp', v, sw: 'open'|'close'|[1,0,0], n: custom name}
+const SHUNT = new Set(['V', 'I', 'Rp', 'Cp', 'E']);
+function swArr(sw, nph) {
+  if (sw === undefined) return null;
+  const a = sw === 'open' ? [1, 0] : sw === 'close' ? [0, 1] : sw.slice();
+  while (a.length < nph) a.push(a[a.length - 1]);
+  return a;
+}
+function buildNet(spec) {
+  const left = spec.left.map(o => ({ ...o, side: 'L' })), right = (spec.right || []).map(o => ({ ...o, side: 'R' }));
+  const nph = spec.t0 || spec.t0K ? 3 : 2;
+  const E = spec.E ? { t: 'E', et: spec.E.t, v: spec.E.v, side: 'E', id: spec.E.t, html: spec.E.t, svg: spec.E.t, n: spec.E.n, hide: spec.E.hide } : null;
+  if (E && spec.E.n) { E.html = spec.E.n.html; E.svg = spec.E.n.svg; }
+  const spdt = spec.spdt ? swArr(spec.spdt.split(''), nph) : null;
+  // names, in drawing order
+  const draw = E ? [...left, E, ...right.slice().reverse()] : [...left];
+  let nR = 0; const nV = draw.filter(o => o.t === 'V').length, nS = draw.filter(o => o.t === 'S').length + (spdt ? 1 : 0);
+  let kV = 0, kS = 0;
+  for (const o of draw) {
+    if (o === E) continue;
+    if (o.t === 'Rs' || o.t === 'Rp') { nR++; o.id = 'R' + nR; o.html = `R<sub>${nR}</sub>`; o.svg = uni('R', nR); }
+    else if (o.t === 'V') { kV++; o.id = nV > 1 ? 'V' + kV : 'Vs'; o.html = nV > 1 ? `V<sub>${kV}</sub>` : 'V<sub>s</sub>'; o.svg = nV > 1 ? uni('V', kV) : 'Vₛ'; }
+    else if (o.t === 'I') { o.id = 'Is'; o.html = 'I<sub>s</sub>'; o.svg = 'Iₛ'; }
+    else if (o.t === 'S') { kS++; o.id = nS > 1 ? 'S' + kS : 'S'; o.html = nS > 1 ? `S<sub>${kS}</sub>` : 'S'; o.svg = nS > 1 ? uni('S', kS) : 'S'; }
+    else if (o.t === 'Ls') { o.id = 'L'; o.html = 'L'; o.svg = 'L'; }
+    else if (o.t === 'Cp') { o.id = 'C'; o.html = 'C'; o.svg = 'C'; }
+    if (o.n) { o.html = o.n.html; o.svg = o.n.svg; }
+    if (o.sw !== undefined) o.swa = swArr(o.sw, nph);
+  }
+  const net = { left, right, E, spdt, nph, t0: spec.t0 || 0, ic: spec.ic, draw, spec };
+  if (spdt) net.spdtId = nS > 1 ? 'S' + (kS + 1) : 'S', net.spdtSvg = nS > 1 ? uni('S', kS + 1) : 'S';
+  layout(net);
+  return net;
+}
+const closed = (o, ph) => (o.swa ? !!o.swa[ph] : true);
+const sideAt = (net, ph) => (net.spdt ? net.spdt[ph] : 'L');
+const itemsAt = (net, ph) => (sideAt(net, ph) === 'L' ? net.left : net.right);
+const valH = o => si(o.v, UNIT[o.t] || (o.et === 'C' ? 'F' : 'H'));
+
+// ---------------------------------------------------------------- what the energy element sees in one phase
+// eff: the items that matter, far -> near, starting at the last source or open switch
+function effective(net, ph) {
+  let eff = [];
+  for (const o of itemsAt(net, ph)) {
+    if (o.t === 'S') { if (!closed(o, ph)) eff = [{ ...o, t: 'cut' }]; continue; }
+    if (o.swa && !closed(o, ph)) continue;
+    if (o.t === 'V' || o.t === 'I') eff = [o];
+    else eff.push(o);
+  }
+  return eff;
+}
+function reduce(eff) {
+  let st = { k: 'none' };
+  for (const o of eff) {
+    if (o.t === 'cut') st = { k: 'none' };
+    else if (o.t === 'V') st = { k: 'th', V: o.v, R: 0 };
+    else if (o.t === 'I') st = { k: 'no', I: o.v };
+    else if (o.t === 'Rs') st = st.k === 'th' ? { k: 'th', V: st.V, R: st.R + o.v } : st;
+    else if (o.t === 'Rp') st = st.k === 'none' ? { k: 'th', V: 0, R: o.v } : st.k === 'no' ? { k: 'th', V: st.I * o.v, R: o.v } : st.R === 0 ? st : { k: 'th', V: st.V * o.v / (st.R + o.v), R: st.R * o.v / (st.R + o.v) };
+  }
+  return st;
+}
+function analyse(net, ph) {
+  const eff = effective(net, ph), st = reduce(eff), isC = net.E.et === 'C';
+  let x;
+  if (isC) x = st.k === 'th' ? st.V : undefined;
+  else x = st.k === 'th' ? (st.R > 0 ? st.V / st.R : undefined) : st.k === 'none' ? 0 : st.I;
+  return { ph, eff, st, x };
+}
+
+// ---------------------------------------------------------------- narration of a reduction
+// resistances are shown in one unit (the prefix of the largest one) so that sums read "2 + 6 = 8 kΩ"
+function rUnit(eff) { const m = Math.max(1e-30, ...eff.filter(o => o.t === 'Rs' || o.t === 'Rp').map(o => o.v)); return pref(m); }
+const rn = (x, u) => sf(x / u[0], 4);
+const ru = (x, u) => `${rn(x, u)} ${u[1]}Ω`;
+function rLines(eff, ename) {
+  const u = rUnit(eff), L = [];
+  let r = Infinity;
+  const first = eff[0];
+  if (!first) { L.push({ how: `Nothing is connected to ${ename}.`, eq: '' }); return { lines: L, R: Infinity }; }
+  if (first.t === 'V') { r = 0; L.push({ how: `Kill the source ${T(first.id, first.html)}: a voltage source becomes a <b>wire</b> (0 V, 0 Ω).`, eq: '' }); }
+  else if (first.t === 'I') { L.push({ how: `Kill the source ${T(first.id, first.html)}: a current source becomes a <b>gap</b> (0 A).`, eq: '' }); }
+  else if (first.t === 'cut') { L.push({ how: `The open switch ${T(first.id, first.html)} cuts off everything on its far side.`, eq: '' }); }
+  const rs = eff.filter(o => o.t === 'Rs' || o.t === 'Rp');
+  if (rs.length === 1 && ((r === 0 && rs[0].t === 'Rs') || (r === Infinity && rs[0].t === 'Rp'))) {
+    const o = rs[0];
+    L.push({ how: `Only ${T(o.id, o.html)} is left between the terminals of ${ename}.`, eq: `${RTH} = ${T(o.id, valH(o))}` });
+    return { lines: L, R: o.v };
+  }
+  for (const o of eff) {
+    const nm = T(o.id, o.html), v = T(o.id, rn(o.v, u));
+    if (o.t === 'Rs') {
+      if (r === Infinity) L.push({ how: `${nm} leads only to a gap, so it carries no current and does not count.`, eq: '' });
+      else if (r === 0) { r = o.v; L.push({ how: `${nm} is in series with the dead source (a wire).`, eq: `R = ${v} ${u[1]}Ω` }); }
+      else { const p = r; r += o.v; L.push({ how: `${nm} is in series: <b>add</b> it.`, eq: `R = ${rn(p, u)} + ${v} = ${ru(r, u)}` }); }
+    } else if (o.t === 'Rp') {
+      if (r === Infinity) { r = o.v; L.push({ how: `${nm} is the first resistor across the terminals.`, eq: `R = ${v} ${u[1]}Ω` }); }
+      else if (r === 0) L.push({ how: `${nm} sits straight across the dead source (a wire), so it is shorted out and does not count.`, eq: '' });
+      else { const p = r; r = p * o.v / (p + o.v); L.push({ how: `${nm} is in <b>parallel</b> with that: product over sum.`, eq: `R = ${rn(p, u)} ∥ ${v} = (${rn(p, u)} × ${v}) / (${rn(p, u)} + ${v}) = ${ru(r, u)}` }); }
+    }
+  }
+  if (Number.isFinite(r)) L.push({ how: `This is the resistance seen by ${ename}.`, eq: `${RTH} = ${ru(r, u)}` });
+  return { lines: L, R: r };
+}
+// value of v_C (C a gap) or i_L (L a wire) in a settled circuit
+function dcLines(eff, isC, xn, when) {
+  const L = [], types = eff.map(o => o.t).join(' '), u = rUnit(eff);
+  const src = eff[0], rs = eff.filter(o => o.t === 'Rs'), sumR = rs.reduce((a, o) => a + o.v, 0);
+  const sumH = rs.length > 1 ? `(${rs.map(o => T(o.id, rn(o.v, u))).join(' + ')})` : rs.length ? T(rs[0].id, rn(rs[0].v, u)) : '';
+  const st = reduce(eff), res = analyse0(st, isC), uu = `${u[1]}Ω`;
+  const out = (how, eq) => L.push({ how, eq });
+  const fin = val => `${xn}(${when}) = ${val}`;
+  if (!eff.length || src.t === 'cut' || (src.t !== 'V' && src.t !== 'I')) {
+    if (isC) out(`No source is connected, so nothing can hold a voltage across the capacitor in the long run.`, fin('0 V'));
+    else out(`No source drives the inductor, so in the long run no current flows.`, fin('0 A'));
+    return { lines: L, x: isC ? (eff.length ? 0 : undefined) : 0 };
+  }
+  if (/^V( Rs)*$/.test(types)) {
+    if (isC) out(`With the capacitor a gap no current flows anywhere, so no voltage is lost across ${rs.length ? listJoin(rs.map(o => T(o.id, o.html))) : 'the wires'}: the capacitor gets the whole source voltage.`, fin(T(src.id, si(src.v, 'V'))));
+    else out(`One loop: the source drives current through ${listJoin(rs.map(o => T(o.id, o.html)))} and the inductor (a wire). Ohm's law:`, `${xn}(${when}) = ${T(src.id, sf(src.v, 4))} V / ${sumH} ${uu}${rs.length > 1 ? ` = ${sf(src.v, 4)} V / ${ru(sumR, u)}` : ''} = ${si(res, 'A')}`);
+    return { lines: L, x: res };
+  }
+  if (/^V( Rs)+ Rp( Rs)*$/.test(types)) {
+    const rp = eff.find(o => o.t === 'Rp'), pre = eff.slice(0, eff.indexOf(rp)).filter(o => o.t === 'Rs'), post = eff.slice(eff.indexOf(rp) + 1);
+    const sp = pre.reduce((a, o) => a + o.v, 0), spH = pre.length > 1 ? `(${pre.map(o => T(o.id, rn(o.v, u))).join(' + ')})` : T(pre[0].id, rn(pre[0].v, u));
+    if (isC) {
+      out(`With the capacitor a gap, ${post.length ? `no current flows in ${listJoin(post.map(o => T(o.id, o.html)))}, so ` : ''}the capacitor has the same voltage as ${T(rp.id, rp.html)}. ${listJoin(pre.map(o => T(o.id, o.html)))} and ${T(rp.id, rp.html)} share the source voltage: a <b>voltage divider</b>.`,
+        `${xn}(${when}) = ${T(src.id, sf(src.v, 4))} × ${T(rp.id, rn(rp.v, u))} / (${pre.length > 1 ? pre.map(o => T(o.id, rn(o.v, u))).join(' + ') : T(pre[0].id, rn(pre[0].v, u))} + ${T(rp.id, rn(rp.v, u))}) = ${si(res, 'V')}`);
+      return { lines: L, x: res };
+    }
+    if (!post.length) {
+      out(`The inductor (a wire) is connected straight across ${T(rp.id, rp.html)}, so ${T(rp.id, rp.html)} is <b>shorted out</b>: all the current goes through the inductor.`, '');
+      out(`One loop through ${listJoin(pre.map(o => T(o.id, o.html)))} and the wire. Ohm's law:`, `${xn}(${when}) = ${T(src.id, sf(src.v, 4))} V / ${spH} ${uu} = ${si(res, 'A')}`);
+      return { lines: L, x: res };
+    }
+  }
+  if (/^I Rp( Rs)*$/.test(types)) {
+    const rp = eff[1];
+    if (isC) { out(`With the capacitor a gap, all of ${T(src.id, src.html)} flows through ${T(rp.id, rp.html)}${rs.length ? ` (none through ${listJoin(rs.map(o => T(o.id, o.html)))})` : ''}, and the capacitor has the voltage of ${T(rp.id, rp.html)}. Ohm's law:`, `${xn}(${when}) = ${T(src.id, sf(src.v, 4))} A × ${T(rp.id, rn(rp.v, u))} ${uu} = ${si(res, 'V')}`); return { lines: L, x: res }; }
+    if (rs.length) { out(`${T(src.id, src.html)} splits between ${T(rp.id, rp.html)} and the inductor branch (${listJoin(rs.map(o => T(o.id, o.html)))} + a wire). <b>Current divider</b>: the share in one branch = total × (other branch) / (sum of both).`, `${xn}(${when}) = ${T(src.id, sf(src.v, 4))} × ${T(rp.id, rn(rp.v, u))} / (${T(rp.id, rn(rp.v, u))} + ${rs.length > 1 ? rs.map(o => T(o.id, rn(o.v, u))).join(' + ') : T(rs[0].id, rn(rs[0].v, u))}) = ${si(res, 'A')}`); return { lines: L, x: res }; }
+    out(`The inductor (a wire) shorts ${T(rp.id, rp.html)}, so all of ${T(src.id, src.html)} flows through the inductor.`, `${xn}(${when}) = ${si(res, 'A')}`); return { lines: L, x: res };
+  }
+  // general case: build the Thevenin equivalent one element at a time
+  out(`Replace everything that ${isC ? 'the capacitor' : 'the inductor'} sees by its <b>Thevenin equivalent</b>, working from the source towards ${isC ? 'C' : 'L'}.`, '');
+  let s = null;
+  for (const o of eff) {
+    const nm = T(o.id, o.html);
+    if (o.t === 'V') { s = { V: o.v, R: 0 }; out(`Start at ${nm}: ${si(o.v, 'V')} behind 0 Ω.`, ''); }
+    else if (o.t === 'I') { s = { I: o.v }; out(`Start at ${nm}: ${si(o.v, 'A')}.`, ''); }
+    else if (o.t === 'Rs') { if (s.I !== undefined) { out(`${nm} is in series with a current source: it changes nothing.`, ''); continue; } const p = s.R; s.R += o.v; out(`${nm} in series: the voltage stays ${si(s.V, 'V')}, the resistance becomes ${rn(p, u)} + ${T(o.id, rn(o.v, u))} = ${ru(s.R, u)}.`, ''); }
+    else if (o.t === 'Rp') {
+      if (s.I !== undefined) { s = { V: s.I * o.v, R: o.v }; out(`${nm} across the current source: <b>source transformation</b>, V = ${sf(s.V / o.v, 4)} × ${T(o.id, rn(o.v, u))} = ${si(s.V, 'V')} behind ${ru(o.v, u)}.`, ''); }
+      else if (s.R === 0) out(`${nm} sits across the source: it does not change the voltage.`, '');
+      else { const V = s.V * o.v / (s.R + o.v), R = s.R * o.v / (s.R + o.v); out(`${nm} across: <b>voltage divider</b> for the voltage, <b>parallel</b> for the resistance.`, `V = ${sf(s.V, 4)} × ${T(o.id, rn(o.v, u))} / (${rn(s.R, u)} + ${T(o.id, rn(o.v, u))}) = ${si(V, 'V')}, &nbsp; R = ${rn(s.R, u)} ∥ ${T(o.id, rn(o.v, u))} = ${ru(R, u)}`); s = { V, R }; }
+    }
+  }
+  if (isC) out(`The capacitor is a gap: no current flows through ${RTH}, so the capacitor gets ${VTH}.`, `${xn}(${when}) = ${VTH} = ${si(res, 'V')}`);
+  else out(`The inductor is a wire across the Thevenin equivalent:`, `${xn}(${when}) = ${VTH} / ${RTH} = ${sf(st.V, 4)} V / ${ru(st.R, u)} = ${si(res, 'A')}`);
+  return { lines: L, x: res };
+}
+function analyse0(st, isC) { return isC ? (st.k === 'th' ? st.V : undefined) : st.k === 'th' ? (st.R > 0 ? st.V / st.R : undefined) : st.k === 'none' ? 0 : st.I; }
+
+// ---------------------------------------------------------------- response formula helpers
+const kNice = tau => { const k = 1 / tau; return Math.abs(k * 10 - Math.round(k * 10)) < 1e-6 * Math.max(1, k) && k <= 100000; };
+function expo(tau, t0 = 0) {
+  const tv = t0 ? `(t ${MINUS} ${sf(t0, 4)})` : 't', k = 1 / tau;
+  if (kNice(tau)) return `${MINUS}${near(k, 1) ? '' : sf(k, 6)}${tv}`;
+  return `${MINUS}${tv}/${sf(tau, 4)}`;
+}
+// A + B e^(...): "18 + 12 e", "15 − 10 e", "4(1 − e)", "18 e"
+function respH(x0, xf, tau, t0 = 0) {
+  const e = ex(expo(tau, t0)), B = x0 - xf;
+  if (near(xf, 0, 1e-12)) return `${sf(x0, 4)} ${e}`;
+  if (near(x0, 0, 1e-12)) return `${sf(xf, 4)}(1 ${MINUS} ${e})`;
+  return `${sf(xf, 4)} ${B < 0 ? MINUS : '+'} ${sf(Math.abs(B), 4)} ${e}`;
+}
+const fx = (x0, xf, tau, t) => xf + (x0 - xf) * Math.exp(-t / tau);
+const pctTxt = k => `${sf(100 * Math.exp(-k), 3)} %`;
+
+// ---------------------------------------------------------------- known mistakes
+// Every answer carries `wrong`: values a student gets from a known mistake, each with the hint to show
+// (checked and shown by html_common/stage.js).
+const wr = (val, why) => ({ val, why });
+const rel = (a, b, r) => Math.abs(a - b) <= r * Math.max(Math.abs(a), Math.abs(b), 1e-15);
+// x(t) at one time: the usual slips
+function atWrongs(x0, xf, tau, t, t0) {
+  const k = (t - t0) / tau, B = x0 - xf, w = [
+    wr(xf + B * Math.exp(-tau / (t - t0)), 'The power is −t/τ: time on top, τ underneath.'),
+    wr(xf + B * Math.exp(k), `The power must be negative, ${ex('−t/τ')}: the exponential shrinks as time goes on.`)];
+  if (!near(x0, 0) && !near(xf, 0)) w.push(wr(xf * (1 - Math.exp(-k)), `x(∞)(1 − ${ex('−t/τ')}) is only for a curve that starts from 0. Use x(∞) + [x(${SUP0}) − x(∞)] ${ex('−t/τ')}.`));
+  if (!near(x0, 0) && !near(xf, 0)) w.push(wr(x0 * Math.exp(-k), `x(${SUP0}) ${ex('−t/τ')} is only for a curve that decays to 0. Use x(∞) + [x(${SUP0}) − x(∞)] ${ex('−t/τ')}.`));
+  if (t0) w.push(wr(xf + B * Math.exp(-t / tau), `The clock restarts at the second switching: put (t − ${sf(t0, 4)}) in the power, not t.`));
+  return w;
+}
+
+// ---------------------------------------------------------------- solving a circuit question
+function solveCkt(q) {
+  const net = buildNet(q.ckt), E = net.E, isC = E.et === 'C', unit = isC ? 'V' : 'A';
+  const xn = isC ? 'v<sub>C</sub>' : 'i<sub>L</sub>', ename = isC ? 'the capacitor' : 'the inductor';
+  const on = isC ? 'gap' : 'wire';
+  const Eh = T(E.id, E.html), Ev = T(E.id, valH(E));
+  const A = [0, 1, 2].slice(0, net.nph).map(k => analyse(net, k));
+  const steps = [], answers = [], ask = q.ask = { ...(q.ask || {}) };
+  // ---- before
+  let x0;
+  if (net.ic !== undefined) {
+    x0 = net.ic;
+    steps.push({ title: 'Before the switch (t &lt; 0)', view: 'orig', say: '',
+      lines: [{ how: `The question gives the starting value directly${near(x0, 0) ? (isC ? ' (an uncharged capacitor has no voltage)' : ' (no current before the switch)') : ''}.`, eq: `${xn}(${SUPM}) = ${si(x0, unit)}` }] });
+  } else {
+    const d = dcLines(A[0].eff, isC, xn, SUPM);
+    if (d.x === undefined || !Number.isFinite(d.x)) throw Error('no settled value before switching');
+    x0 = d.x;
+    steps.push({ title: 'Before the switch (t &lt; 0)', view: 'pre',
+      say: `the switch has been in this position for a long time, so everything has settled (DC).`,
+      lines: [{ how: isC ? 'Settled DC: the voltage no longer changes, so i = C dv/dt = 0. The capacitor is a <b>gap</b> (open circuit).' : 'Settled DC: the current no longer changes, so v = L di/dt = 0. The inductor is a <b>wire</b> (short circuit).', eq: '' }, ...d.lines] });
+  }
+  // ---- 0+
+  steps.push({ title: `Just after the switch (t = ${SUP0})`, view: 'zero',
+    lines: [{ how: isC ? 'A capacitor voltage cannot jump: that would need an infinite current. So the voltage just after equals the voltage just before.' : 'An inductor current cannot jump: that would need an infinite voltage. So the current just after equals the current just before.', eq: `${xn}(${SUP0}) = ${xn}(${SUPM}) = <b class="k1">${si(x0, unit)}</b>` }],
+    note: `In the picture ${ename} is drawn as a ${isC ? 'voltage' : 'current'} source of ${si(x0, unit)}: that is what it looks like to the rest of the circuit at the instant t = ${SUP0}.` });
+  const i0 = steps.length - 1;
+  // ---- final value
+  const d1 = dcLines(A[1].eff, isC, xn, '∞');
+  if (d1.x === undefined || !Number.isFinite(d1.x)) throw Error('no final value');
+  const xf = d1.x;
+  steps.push({ title: 'Long after the switch (t → ∞)', view: 'post',
+    say: `the new circuit settles again, so ${ename} is a ${on} once more.`, lines: d1.lines });
+  const iInf = steps.length - 1;
+  // ---- time constant
+  const r1 = rLines(A[1].eff, ename);
+  if (!(r1.R > 0 && Number.isFinite(r1.R))) throw Error('bad Thevenin resistance');
+  const tau = isC ? r1.R * E.v : E.v / r1.R;
+  if (ask.atK) ask.at = ask.atK * tau;                       // generated questions give times as multiples of τ
+  if (ask.whenK) { ask.when = xf + (x0 - xf) * ask.whenK; if (!fits3(ask.when)) throw Error('unfriendly target value'); }
+  if (q.ckt.t0K) net.t0 = q.ckt.t0K * tau;
+  steps.push({ title: 'Time constant', view: 'th',
+    say: `use the circuit <b>after</b> the switch. Remove ${ename}, kill the sources and look into the two terminals where it was.`,
+    lines: [...r1.lines, isC ? { how: 'For a capacitor τ = R<sub>Th</sub> C. Write the prefixes as powers of ten.', eq: `τ = ${RTH} C = ${pw(r1.R)} × ${T(E.id, pw(E.v))} = <b class="k3">${si(tau, 's')}</b>` }
+      : { how: 'For an inductor τ = L / R<sub>Th</sub> (L on top: a bigger inductor is slower).', eq: `τ = L / ${RTH} = ${T(E.id, pw(E.v))} / ${pw(r1.R)} = <b class="k3">${si(tau, 's')}</b>` }] });
+  const iTau = steps.length - 1;
+  // ---- formula
+  const B = x0 - xf, kx = 1 / tau;
+  const flines = [
+    { how: 'The general first-order response (the same for every RC and RL circuit):', eq: `${xn}(t) = <span class="k2">${xn}(∞)</span> + [<span class="k1">${xn}(${SUP0})</span> ${MINUS} <span class="k2">${xn}(∞)</span>] ${ex(`${MINUS}t/<span class="k3">τ</span>`)}` },
+    { how: 'Put in the three numbers.', eq: `${xn}(t) = <span class="k2">${sf(xf, 4)}</span> + [<span class="k1">${sf(x0, 4)}</span> ${MINUS} <span class="k2">${sf(xf, 4)}</span>] ${ex(`${MINUS}t/<span class="k3">${sf(tau, 4)}</span>`)}` },
+    { how: `Work out the bracket: ${sf(x0, 4)} ${MINUS} ${sf(xf, 4)} = ${sf(B, 4)}${kNice(tau) ? `, and write t/${sf(tau, 4)} as ${sf(kx, 6)}t (because 1/${sf(tau, 4)} = ${sf(kx, 6)})` : ''}.`, eq: `${xn}(t) = <b>${respH(x0, xf, tau)} ${unit}</b> &nbsp; for t &gt; 0` }];
+  const fstep = { title: 'Write the response', plot: true, lines: flines,
+    note: `Check: at t = 0, ${ex('0')} = 1 gives ${sf(xf, 4)} + (${sf(B, 4)}) = ${sf(x0, 4)} ✓. As t → ∞, the exponential → 0 and leaves ${sf(xf, 4)} ✓. ${Math.abs(B) > 0 ? (B < 0 ? `It <b>rises</b> from ${si(x0, unit)} to ${si(xf, unit)}.` : `It <b>falls</b> from ${si(x0, unit)} to ${si(xf, unit)}.`) : ''} After 5τ = ${si(5 * tau, 's')} it has practically settled.` };
+  if (q.de) fstep.details = deDetails(isC, A[1].st, E, tau, x0, xf, xn);
+  steps.push(fstep);
+  // known mistakes for the three numbers
+  const isR = o => o.t === 'Rs' || o.t === 'Rp', sumR = eff => eff.filter(isR).reduce((a, o) => a + o.v, 0);
+  const srcV = eff => (eff[0] && eff[0].t === 'V' ? eff[0].v : undefined);
+  const tauOf = R => (isC ? R * E.v : E.v / R), allR = net.draw.filter(isR).reduce((a, o) => a + o.v, 0);
+  const w0 = [wr(xf, `That is the final value (t → ∞). Just after the switch ${xn} still has its value from before the switch: it cannot jump.`)];
+  if (!near(x0, 0)) w0.push(wr(0, `It does not start from zero. ${xn} cannot jump, so just after the switch it still has the value it had just before.`));
+  if (net.ic === undefined) {
+    const e0 = A[0].eff, s0 = srcV(e0);
+    if (s0 !== undefined && isC && e0.some(o => o.t === 'Rp')) w0.push(wr(s0, 'That is the whole source voltage. Before the switch the capacitor sits across one resistor of a divider, so it only gets that resistor\'s share.'));
+    if (s0 !== undefined && !isC && sumR(e0) > 0) w0.push(wr(s0 / sumR(e0), 'That sends the current through every resistor. Before the switch the inductor is a wire: it shorts out any resistor connected straight across it.'));
+  }
+  const wf = [wr(x0, `That is the starting value. Long after the switch the new circuit has settled: ${isC ? 'C is a gap' : 'L is a wire'} again.`)], e1 = A[1].eff, s1 = srcV(e1);
+  if (s1 !== undefined && isC) wf.push(wr(s1, 'That is the whole source voltage. A resistor across the capacitor forms a voltage divider, so the capacitor only gets that resistor\'s share.'));
+  if (s1 !== undefined && !isC && sumR(e1) > 0) wf.push(wr(s1 / sumR(e1), 'That treats every resistor as being in series. In the long run the inductor is a wire and shorts out any resistor straight across it.'));
+  const wt = isC ? [wr(r1.R, `That is ${RTH} alone. Multiply by C: τ = ${RTH} C.`)]
+    : [wr(r1.R / E.v, `That is R/L. For an inductor L goes on top: τ = L / ${RTH}.`), wr(r1.R * E.v, `That is L × R. For an inductor τ = L / ${RTH}.`)];
+  const r0R = rLines(A[0].eff, ename).R;
+  if (r0R > 0 && Number.isFinite(r0R) && !near(r0R, r1.R)) wt.push(wr(tauOf(r0R), 'That uses the circuit before the switch. τ belongs to the circuit <b>after</b> the switch.'));
+  wt.push(wr(tauOf(allR), `That adds every resistor in the drawing. Use only what is still connected after the switch, with the sources killed, combined as seen from the terminals of ${isC ? 'C' : 'L'}.`));
+  answers.push({ key: 'x0', html: `${xn}(${SUP0})`, val: x0, unit, step: i0, wrong: w0 }, { key: 'xf', html: `${xn}(∞)`, val: xf, unit, step: iInf, wrong: wf }, { key: 'tau', html: 'τ', val: tau, unit: 's', step: iTau, wrong: wt });
+  const f1 = t => fx(x0, xf, tau, t);
+  const last = () => steps.length - 1;
+  const marks = [];
+  // ---- extra parts for the first interval
+  if (ask.at !== undefined) { const s = atStep(xn, x0, xf, tau, ask.at, unit, 0); steps.push(s.step); answers.push({ key: 'at', html: `${xn}(${si(ask.at, 's')})`, val: s.val, unit, step: last(), wrong: atWrongs(x0, xf, tau, ask.at, 0) }); marks.push({ t: ask.at, x: s.val }); }
+  if (ask.when !== undefined) { const s = whenStep(xn, x0, xf, tau, ask.when, unit); steps.push(s.step); if (s.val !== undefined) { answers.push({ key: 'when', html: `t when ${xn} = ${si(ask.when, unit)}`, val: s.val, unit: 's', step: last(), wrong: s.wrong }); marks.push({ t: s.val, x: ask.when }); } }
+  let other = null;
+  if (ask.other || ask.peak) { other = otherStep(isC, xn, x0, xf, tau, E, r1.R, !!ask.other); if (ask.other) { steps.push(other.step); answers.push({ key: 'other0', html: `${other.name}(${SUP0})`, val: other.at0, unit: other.unit, step: last(), wrong: other.wrong }); } }
+  if (ask.peak) {
+    steps.push({ title: `Largest ${isC ? 'capacitor current' : 'inductor voltage'}`, lines: [
+      ...(ask.other ? [] : other.step.lines),
+      { how: `The exponential is largest at t = ${SUP0} (${ex('0')} = 1), so the biggest ${isC ? 'current' : 'voltage'} is at the switching instant.`, eq: `${other.name}(${SUP0}) = ${si(other.at0, other.unit)}` },
+      { how: isC ? `Quick check: at ${SUP0} the capacitor is a ${si(x0, 'V')} source, so the current is (${VTH} ${MINUS} ${sf(x0, 4)}) / ${RTH}.` : `Quick check: at ${SUP0} the inductor is a ${si(x0, 'A')} source pushing current through ${RTH}.`, eq: '' }],
+      note: isC ? 'A large capacitor discharging through a small resistance gives a short, very large pulse of current: this is how a camera flash works.' : 'A large inductor current forced through a large resistance gives a huge voltage spike: this is how a car ignition coil makes a spark (and why switches across coils arc).' });
+    answers.push({ key: 'peak', html: `largest |${other.name}|`, val: Math.abs(other.at0), unit: other.unit, step: last(), wrong: other.wrong.map(w => wr(Math.abs(w.val), w.why)) });
+  }
+  if (ask.energy) {
+    const w = 0.5 * E.v * x0 * x0;
+    steps.push({ title: 'Stored energy at t = 0', lines: [{ how: isC ? 'Energy stored in a capacitor: w = ½ C v².' : 'Energy stored in an inductor: w = ½ L i².', eq: `w = ½ × ${Ev} × (${si(x0, unit)})² = ½ × ${pw(E.v)} × ${sf(x0 * x0, 4)} = <b>${si(w, 'J')}</b>` }],
+      note: near(xf, 0) ? `All of this energy ends up as heat in the resistance as ${xn} decays to zero.` : '' });
+    answers.push({ key: 'energy', html: 'w(0)', val: w, unit: 'J', step: last(), wrong: [wr(2 * w, `Don't forget the ½: w = ½ ${isC ? 'C v²' : 'L i²'}.`), wr(0.5 * E.v * x0, `Square the ${isC ? 'voltage' : 'current'}: w = ½ ${isC ? 'C v²' : 'L i²'}.`)] });
+  }
+  if (ask.five) { steps.push({ title: 'How long until it has settled?', lines: [{ how: 'After 5 time constants only 0.7 % of the change is left: treat the transient as finished.', eq: `5τ = 5 × ${si(tau, 's')} = <b>${si(5 * tau, 's')}</b>` }] }); answers.push({ key: 'five', html: '5τ', val: 5 * tau, unit: 's', step: last(), wrong: [wr(tau, 'That is one time constant. The transient is over after 5τ.')] }); }
+  if (ask.charge5) {
+    const r0 = rLines(A[0].eff, ename), t5 = 5 * (isC ? r0.R * E.v : E.v / r0.R);
+    steps.push({ title: 'Charging time before the switch', view: 'pre', lines: [{ how: `Before t = 0 the ${isC ? 'capacitor' : 'inductor'} charges through the first circuit. Its resistance (sources killed):`, eq: '' }, ...r0.lines,
+      { how: '5 time constants of that circuit:', eq: `t<sub>charge</sub> = 5 × ${isC ? `${RTH} C = 5 × ${pw(r0.R)} × ${pw(E.v)}` : `L/${RTH} = 5 × ${pw(E.v)}/${pw(r0.R)}`} = <b>${si(t5, 's')}</b>` }] });
+    answers.push({ key: 'charge5', html: 't<sub>charge</sub>', val: t5, unit: 's', step: last(), wrong: [wr(5 * tau, 'That is 5τ of the circuit after the switch. The charging happens before the switch, through the first circuit.'), wr(t5 / 5, 'That is one time constant of the charging circuit. Full charge takes 5τ.')] });
+  }
+  if (ask.maxR !== undefined) {
+    const st = A[1].st, Ip = ask.maxR, Rx = st.V / Ip - st.R;
+    steps.push({ title: 'Largest extra series resistance', lines: [
+      { how: `Adding R<sub>x</sub> in series changes the <b>final</b> current to ${VTH} / (${RTH} + R<sub>x</sub>). The current only ever climbs <b>towards</b> its final value, so the threshold is reached only if the final value is at least ${si(Ip, 'A')}.`, eq: `${sf(st.V, 4)} / (${sf(st.R, 4)} + R<sub>x</sub>) ≥ ${sf(Ip, 4)}` },
+      { how: `Multiply both sides by (${sf(st.R, 4)} + R<sub>x</sub>), then divide both sides by ${sf(Ip, 4)}.`, eq: `${sf(st.R, 4)} + R<sub>x</sub> ≤ ${sf(st.V, 4)} / ${sf(Ip, 4)} = ${sf(st.V / Ip, 4)}` },
+      { how: `Subtract ${sf(st.R, 4)} from both sides.`, eq: `R<sub>x</sub> ≤ <b>${si(Rx, 'Ω')}</b>` }],
+      note: `Any larger R<sub>x</sub> and the current levels off below ${si(Ip, 'A')}: it never gets there, however long you wait.` });
+    answers.push({ key: 'maxR', html: 'largest R<sub>x</sub>', val: Rx, unit: 'Ω', step: last(), wrong: [wr(st.V / Ip, `That is the whole resistance allowed in the loop. Subtract the ${sf(st.R, 4)} Ω already there to get the extra R<sub>x</sub>.`)] });
+  }
+  // ---- second switching
+  const segs = [{ from: 0, x0, xf, tau }];
+  if (net.nph === 3) {
+    const t0 = net.t0, xt = f1(t0);
+    const sa = atStep(xn, x0, xf, tau, t0, unit, 0).step;
+    sa.title = `Value at the second switching (t = ${si(t0, 's')})`;
+    sa.lines[0].how = `The first formula holds only until t = ${si(t0, 's')}. Put t = ${sf(t0, 4)} into it, power first.`;
+    sa.lines.push({ how: `${isC ? 'The capacitor voltage' : 'The inductor current'} cannot jump, so this is the starting value of the second interval.`, eq: `${xn}(${sf(t0, 4)}<sup>+</sup>) = ${si(xt, unit, 4)}` });
+    steps.push(sa);
+    const iSa = steps.length - 1;
+    const d2 = dcLines(A[2].eff, isC, xn, '∞');
+    if (d2.x === undefined) throw Error('no final value in the second interval');
+    steps.push({ title: `After the second switching: final value`, view: 'post2', lines: [...d2.lines] });
+    const r2 = rLines(A[2].eff, ename);
+    if (!(r2.R > 0 && Number.isFinite(r2.R))) throw Error('bad second resistance');
+    const tau2 = isC ? r2.R * E.v : E.v / r2.R;
+    if (ask.at2K) ask.at2 = t0 + ask.at2K * tau2;
+    const iT2 = steps.length;
+    steps.push({ title: 'Second time constant', view: 'th2', lines: [...r2.lines, { how: isC ? 'τ₂ = R<sub>Th</sub> C' : 'τ₂ = L / R<sub>Th</sub>', eq: `τ₂ = ${isC ? `${pw(r2.R)} × ${pw(E.v)}` : `${pw(E.v)} / ${pw(r2.R)}`} = <b>${si(tau2, 's')}</b>` }] });
+    steps.push({ title: 'Write the second response', plot: true, lines: [
+      { how: `Same formula, but the clock restarts at t = ${sf(t0, 4)}: replace t by (t ${MINUS} ${sf(t0, 4)}).`, eq: `${xn}(t) = ${xn}(∞) + [${xn}(${sf(t0, 4)}) ${MINUS} ${xn}(∞)] ${ex(`${MINUS}(t ${MINUS} ${sf(t0, 4)})/τ₂`)}` },
+      { how: 'Put in the numbers and tidy.', eq: `${xn}(t) = <b>${respH(xt, d2.x, tau2, t0)} ${unit}</b> &nbsp; for t &gt; ${sf(t0, 4)} s` }],
+      note: `Check: at t = ${sf(t0, 4)} s the exponential is ${ex('0')} = 1 and the formula gives ${si(xt, unit, 4)}, the same as the end of the first interval ✓.` });
+    answers.push({ key: 'xt0', html: `${xn}(${si(t0, 's')})`, val: xt, unit, step: iSa, wrong: atWrongs(x0, xf, tau, t0, 0) },
+      { key: 'tau2', html: 'τ₂', val: tau2, unit: 's', step: iT2, wrong: [wr(tau, 'That is τ of the first interval. τ₂ comes from the circuit after the second switching.'), wr(tauOf(allR), 'That adds every resistor in the drawing. Use only what is connected after the second switching, sources killed.')] });
+    segs[0].to = t0; segs.push({ from: t0, x0: xt, xf: d2.x, tau: tau2 });
+    if (ask.at2 !== undefined) { const s = atStep(xn, xt, d2.x, tau2, ask.at2, unit, t0); steps.push(s.step); answers.push({ key: 'at2', html: `${xn}(${si(ask.at2, 's')})`, val: s.val, unit, step: last(), wrong: atWrongs(xt, d2.x, tau2, ask.at2, t0) }); marks.push({ t: ask.at2, x: s.val }); }
+  }
+  const views = ['orig', ...(net.ic === undefined ? ['pre'] : []), 'zero', 'post', 'th', ...(net.nph === 3 ? ['post2', 'th2'] : [])];
+  return { net, steps, answers, views, plot: { segs, pre: x0, name: xn, unit, marks, other }, xn, isC };
+}
+function atStep(xn, x0, xf, tau, t, unit, t0) {
+  const k = (t - t0) / tau, e = Math.exp(-k), val = fx(x0, xf, tau, t - t0), B = x0 - xf;
+  const tt = t0 ? `(${sf(t, 4)} ${MINUS} ${sf(t0, 4)})` : sf(t, 4);
+  const lines = [
+    { how: `Put t = ${si(t, 's')} into the formula. Do the power first: ${t0 ? `time since the second switching ÷ τ` : 't ÷ τ'}.`, eq: `${t0 ? `(t ${MINUS} ${sf(t0, 4)})` : 't'}/τ = ${tt}/${sf(tau, 4)} = ${sf(k, 4)}` },
+    { how: `Calculator: e<sup>x</sup> (often SHIFT ln) of ${MINUS}${sf(k, 4)}.`, eq: `${ex(`${MINUS}${sf(k, 4)}`)} = ${sf(e, 4)}` }];
+  if (near(xf, 0)) lines.push({ how: `Multiply by ${sf(x0, 4)}.`, eq: `${xn} = ${sf(x0, 4)} × ${sf(e, 4)} = <b>${si(val, unit)}</b>` });
+  else lines.push({ how: `Multiply by ${sf(B, 4)}, then add ${sf(xf, 4)}.`, eq: `${xn} = ${sf(xf, 4)} + (${sf(B, 4)}) × ${sf(e, 4)} = ${sf(xf, 4)} ${B * e < 0 ? MINUS : '+'} ${sf(Math.abs(B * e), 4)} = <b>${si(val, unit)}</b>` });
+  let note = '';
+  if (Math.abs(k - Math.round(k)) < 1e-9 && k >= 1 && k <= 5) note = `Ruler check: t is ${Math.round(k)}τ, so ${pctTxt(k)} of the change is left and ${sf(100 - 100 * Math.exp(-k), 3)} % is done.`;
+  return { val, step: { title: `Value at t = ${si(t, 's')}`, lines, note } };
+}
+function whenStep(xn, x0, xf, tau, X, unit) {
+  const B = x0 - xf, r = (X - xf) / B;
+  if (!(r > 0 && r < 1)) return { step: { title: `When does ${xn} reach ${si(X, unit)}?`, lines: [{ how: `${xn} moves from ${si(x0, unit)} towards ${si(xf, unit)} and never passes it. ${si(X, unit)} is not between these two values, so it is <b>never</b> reached.`, eq: '' }] } };
+  const t = -tau * Math.log(r), E1 = ex(expo(tau)), pn = x => (x < 0 ? `(${sf(x, 4)})` : sf(x, 4)), lines = [{ how: `Set the formula equal to ${si(X, unit)}.`, eq: `${respH(x0, xf, tau)} = ${sf(X, 4)}` }];
+  if (!near(xf, 0)) lines.push({ how: `Subtract ${sf(xf, 4)} from both sides.`, eq: `${sf(B, 4)} ${E1} = ${sf(X, 4)} ${MINUS} ${sf(xf, 4)} = ${sf(X - xf, 4)}` });
+  lines.push({ how: `Divide both sides by ${sf(B, 4)}.`, eq: `${E1} = ${pn(X - xf)} / ${pn(B)} = ${sf(r, 4)}` },
+    { how: 'Take ln of both sides: ln undoes e, so the power comes down.', eq: `${expo(tau)} = ln(${sf(r, 4)}) = ${sf(Math.log(r), 4)}` },
+    kNice(tau) && !near(1 / tau, 1) ? { how: `Divide both sides by ${MINUS}${sf(1 / tau, 6)}: the two minus signs cancel.`, eq: `t = ${sf(-Math.log(r), 4)} / ${sf(1 / tau, 6)} = <b>${si(t, 's')}</b>` }
+      : { how: `Multiply both sides by ${MINUS}${sf(tau, 4)}: the two minus signs cancel.`, eq: `t = ${sf(tau, 4)} × ${sf(-Math.log(r), 4)} = <b>${si(t, 's')}</b>` });
+  const wrong = [wr(-tau * Math.log10(r), 'Use ln (the natural log), not log: ln undoes e.'), wr(-Math.log(r) / tau, 'Multiply by τ, do not divide: t = −τ × ln(fraction left).')];
+  if (r !== 0.5) wrong.push(wr(-tau * Math.log(1 - r), `Check the fraction. ${ex('−t/τ')} is the part of the change still LEFT: (x − x(∞)) / (x(${SUP0}) − x(∞)).`));
+  return { val: t, wrong, step: { title: `When does ${xn} reach ${si(X, unit)}?`, lines, note: `Sense check: t = ${sf(t / tau, 3)}τ. ${sf(100 * r, 3)} % of the change is still left at that moment.` } };
+}
+function otherStep(isC, xn, x0, xf, tau, E, R, full) {
+  const B = x0 - xf, c = isC ? -E.v * B / tau : -E.v * B / tau, name = isC ? 'i<sub>C</sub>' : 'v<sub>L</sub>', unit = isC ? 'A' : 'V';
+  const law = isC ? `i<sub>C</sub> = C dv<sub>C</sub>/dt` : `v<sub>L</sub> = L di<sub>L</sub>/dt`;
+  const lines = [
+    { how: `${isC ? 'Capacitor current' : 'Inductor voltage'} from the element law (passive sign: ${isC ? 'current into the + end' : '+ end where the current enters'}).`, eq: law },
+    { how: `Differentiate ${xn}(t). The constant ${sf(xf, 4)} has zero slope; the derivative of ${ex(`${MINUS}t/τ`)} is ${MINUS}(1/τ) ${ex(`${MINUS}t/τ`)}.`, eq: `d${xn}/dt = ${sf(B, 4)} × (${MINUS}1/${sf(tau, 4)}) ${ex(expo(tau))} = ${sf(-B / tau, 4)} ${ex(expo(tau))}` },
+    { how: `Multiply by ${isC ? 'C' : 'L'} = ${T(E.id, valH(E))}.`, eq: `${name}(t) = ${pw(E.v)} × ${sf(-B / tau, 4)} ${ex(expo(tau))} = <b>${si(c, unit)} ${ex(expo(tau))}</b>` }];
+  const wrong = [wr(-B / tau, `Multiply by ${isC ? 'C' : 'L'} as well: ${law}.`), wr(-E.v * B, 'Differentiating the exponential brings down a factor of 1/τ: do not forget it.')];
+  return { name, unit, at0: c, coef: c, wrong, step: { title: isC ? 'Capacitor current' : 'Inductor voltage', lines,
+    note: isC ? `Check: ${name}(${SUP0}) = (${VTH} ${MINUS} v<sub>C</sub>(${SUP0})) / ${RTH} = (${sf(xf, 4)} ${MINUS} ${sf(x0, 4)}) / ${pw(R)} = ${si(c, unit)} ✓. Unlike the voltage, the current <b>can</b> jump at t = 0.` : `Check: v<sub>L</sub>(${SUP0}) = ${RTH} × (i(∞) ${MINUS} i(${SUP0})) = ${pw(R)} × (${sf(xf, 4)} ${MINUS} ${sf(x0, 4)}) = ${si(c, unit)} ✓. Unlike the current, the voltage <b>can</b> jump at t = 0.` } };
+}
+function deDetails(isC, st, E, tau, x0, xf, xn) {
+  const V = sf(st.V, 4), R = pw(st.R), Ev = pw(E.v);
+  const h = isC
+    ? `For t &gt; 0 the capacitor sees ${VTH} = ${V} V behind ${RTH} = ${si(st.R, 'Ω')}. The current through ${RTH} into the capacitor is (${VTH} ${MINUS} v)/${RTH}, and it equals C dv/dt:<br>
+       &nbsp; C dv/dt = (${V} ${MINUS} v) / ${R}<br>
+       Multiply both sides by ${RTH} and move v to the left (${RTH}C = τ = ${sf(tau, 4)} s):<br>
+       &nbsp; ${sf(tau, 4)} dv/dt + v = ${V}<br>
+       Put u = v ${MINUS} ${V} (the distance still to go). Then du/dt = dv/dt and the equation becomes ${sf(tau, 4)} du/dt = ${MINUS}u.<br>
+       Separate: du/u = ${MINUS}dt/${sf(tau, 4)}. Integrate both sides: ln u = ${MINUS}t/${sf(tau, 4)} + constant, so u = u(0) ${ex(`${MINUS}t/${sf(tau, 4)}`)}.<br>
+       With u(0) = ${sf(x0, 4)} ${MINUS} ${V} = ${sf(x0 - st.V, 4)}: &nbsp; v = ${V} + (${sf(x0 - st.V, 4)}) ${ex(`${MINUS}t/${sf(tau, 4)}`)}, the same as the three-number formula.`
+    : `For t &gt; 0 the inductor sees ${VTH} = ${V} V behind ${RTH} = ${si(st.R, 'Ω')}. KVL round the loop: ${VTH} = ${RTH} i + L di/dt:<br>
+       &nbsp; ${Ev} di/dt + ${R} i = ${V}<br>
+       Divide both sides by ${RTH} (L/${RTH} = τ = ${sf(tau, 4)} s, ${VTH}/${RTH} = ${sf(st.V / st.R, 4)} A):<br>
+       &nbsp; ${sf(tau, 4)} di/dt + i = ${sf(st.V / st.R, 4)}<br>
+       Put u = i ${MINUS} ${sf(st.V / st.R, 4)}. Then ${sf(tau, 4)} du/dt = ${MINUS}u; separate du/u = ${MINUS}dt/${sf(tau, 4)} and integrate: u = u(0) ${ex(`${MINUS}t/${sf(tau, 4)}`)}.<br>
+       With u(0) = ${sf(x0, 4)} ${MINUS} ${sf(xf, 4)} = ${sf(x0 - xf, 4)}: &nbsp; i = ${sf(xf, 4)} + (${sf(x0 - xf, 4)}) ${ex(`${MINUS}t/${sf(tau, 4)}`)}, the same as the three-number formula.`;
+  return { title: 'Where does this come from? (the differential equation)', html: h };
+}
+
+// ---------------------------------------------------------------- non-circuit question kinds
+const KINDS = {
+  // time constant from R and C or L (optionally 5τ)
+  tau(q) {
+    const isC = q.el === 'C', tau = isC ? q.R * q.v : q.v / q.R;
+    const ckt = { left: [{ t: 'Rp', v: q.R }], E: { t: q.el, v: q.v } };
+    const steps = [{ title: 'Time constant', lines: [isC
+      ? { how: 'For an RC circuit τ = RC. Write each prefix as a power of ten, multiply the numbers, then add the powers.', eq: `τ = RC = ${T('R1', pw(q.R))} × ${T('C', pw(q.v))} = <b>${si(tau, 's')}</b>` }
+      : { how: 'For an RL circuit τ = L/R (L on top).', eq: `τ = L/R = ${T('L', pw(q.v))} / ${T('R1', pw(q.R))} = <b>${si(tau, 's')}</b>` }],
+      note: isC ? 'Units: ohms × farads = seconds. Handy pairs: k × µ = m, k × m = 1, M × µ = 1.' : 'Units: henries ÷ ohms = seconds.' }];
+    const answers = [{ html: 'τ', val: tau, unit: 's', step: 0, wrong: isC ? [wr(q.R, 'That is R alone. Multiply by C: τ = RC.')] : [wr(q.R / q.v, 'That is R/L. For an inductor L goes on top: τ = L/R.'), wr(q.R * q.v, 'That is L × R. For an inductor τ = L/R.')] }];
+    if (q.five) { steps.push({ title: 'Settling time', lines: [{ how: 'After 5τ only 0.7 % of the change is left: the transient is over.', eq: `5τ = 5 × ${si(tau, 's')} = <b>${si(5 * tau, 's')}</b>` }] }); answers.push({ html: '5τ', val: 5 * tau, unit: 's', step: 1, wrong: [wr(tau, 'That is one time constant. The transient is over after 5τ.')] }); }
+    return { text: q.text || `<p>R = ${si(q.R, 'Ω')} and ${q.el} = ${si(q.v, isC ? 'F' : 'H')}. Find the time constant τ${q.five ? ' and the time for the transient to die out (5τ)' : ''}.</p>`, steps, answers, ckt,
+      plot: { segs: [{ from: 0, x0: 1, xf: 0, tau }], pre: 1, name: 'fraction left', unit: '', marks: [], norm: true } };
+  },
+  // decay or growth ruler, t = nτ
+  ruler(q) {
+    const k = q.n, left = Math.exp(-k), grow = q.mode === 'grow', val = grow ? q.X * (1 - left) : q.X * left, u = q.unit || 'V';
+    const xn = q.sym || (u === 'V' ? 'v' : 'i');
+    const steps = [
+      { title: 'How many time constants?', lines: [{ how: 't ÷ τ tells you how far along the ruler you are.', eq: `t/τ = ${si(q.t, 's')} / ${si(q.tau, 's')} = ${sf(k, 4)}` }] },
+      { title: 'Read the ruler', visual: { ruler: grow ? 'grow' : 'decay', hi: k }, lines: [grow
+        ? { how: `Growing towards ${si(q.X, u)}: after ${k}τ, ${sf(100 * (1 - left), 3)} % of the way is done.`, eq: `${xn}(${si(q.t, 's')}) = ${sf(q.X, 4)} × ${sf(1 - left, 3)} = <b>${si(val, u)}</b>` }
+        : { how: `Decaying from ${si(q.X, u)}: after ${k}τ, ${sf(100 * left, 3)} % is left.`, eq: `${xn}(${si(q.t, 's')}) = ${sf(q.X, 4)} × ${sf(left, 3)} = <b>${si(val, u)}</b>` }],
+        note: `Calculator check: ${grow ? `${sf(q.X, 4)}(1 ${MINUS} ${ex(`${MINUS}${k}`)})` : `${sf(q.X, 4)} ${ex(`${MINUS}${k}`)}`} = ${si(val, u, 4)}.` }];
+    return { text: q.text, steps, answers: [{ html: `${xn}(${si(q.t, 's')})`, val, unit: u, step: 1, wrong: [
+      wr(grow ? q.X * left : q.X * (1 - left), grow ? 'That is the decay column. A growth counts what is DONE: 63.2 %, 86.5 %, 95.0 % …' : 'That is the growth column. A decay counts what is LEFT: 36.8 %, 13.5 %, 4.98 % …'),
+      wr(grow ? q.X * (1 - 0.5 ** k) : q.X * 0.5 ** k, 'Each time constant leaves 36.8 % of the change, not half.')] }], visual: { ruler: grow ? 'grow' : 'decay', hi: 0 },
+      plot: { segs: [{ from: 0, x0: grow ? 0 : q.X, xf: grow ? q.X : 0, tau: q.tau }], pre: grow ? 0 : q.X, name: xn, unit: u, marks: [{ t: q.t, x: val }] } };
+  },
+  // read x(0), x(inf), tau from A + B e^(-kt)
+  read(q) {
+    const x0 = q.A + q.B, tau = 1 / q.k, u = q.unit, xn = q.sym;
+    const eH = `${sf(q.A, 4)} ${q.B < 0 ? MINUS : '+'} ${sf(Math.abs(q.B), 4)} ${ex(`${MINUS}${near(q.k, 1) ? '' : sf(q.k, 4)}t`)}`;
+    const steps = [
+      { title: 'Initial value', lines: [{ how: `Put t = 0. Any number to the power 0 is 1, so ${ex('0')} = 1.`, eq: `${xn}(0) = ${sf(q.A, 4)} ${q.B < 0 ? MINUS : '+'} ${sf(Math.abs(q.B), 4)} × 1 = <b>${si(x0, u)}</b>` }] },
+      { title: 'Final value', lines: [{ how: `Let t → ∞. ${ex(`${MINUS}big`)} → 0, so the exponential term disappears.`, eq: `${xn}(∞) = ${sf(q.A, 4)} ${q.B < 0 ? MINUS : '+'} ${sf(Math.abs(q.B), 4)} × 0 = <b>${si(q.A, u)}</b>` }] },
+      { title: 'Time constant', lines: [{ how: `Compare ${ex(`${MINUS}${sf(q.k, 4)}t`)} with ${ex(`${MINUS}t/τ`)}: the number multiplying t is 1/τ.`, eq: `1/τ = ${sf(q.k, 4)} &nbsp; → &nbsp; τ = 1/${sf(q.k, 4)} = <b>${si(tau, 's')}</b>` }] },
+      { title: 'Rising or falling?', lines: [{ how: `It starts at ${si(x0, u)} and ends at ${si(q.A, u)}.`, eq: q.A > x0 ? `rising: ${u === 'V' ? '<b>charging</b>' : '<b>growing</b>'}` : `falling: ${u === 'V' ? '<b>discharging</b>' : '<b>decaying</b>'}` }] }];
+    return { text: q.text || `<p>${xn}(t) = ${eH} ${u}. State the initial value, the final value and the time constant. Is it rising or falling?</p>`, steps,
+      answers: [{ html: `${xn}(0)`, val: x0, unit: u, step: 0, wrong: [wr(q.A, `At t = 0, ${ex('0')} = 1, not 0: keep the second term.`)] },
+        { html: `${xn}(∞)`, val: q.A, unit: u, step: 1, wrong: [wr(x0, `That is the value at t = 0. As t → ∞ the exponential → 0.`)] },
+        { html: 'τ', val: tau, unit: 's', step: 2, wrong: [wr(q.k, 'The number in front of t is 1/τ, so τ = 1 ÷ that number.')] }],
+      plot: { segs: [{ from: 0, x0, xf: q.A, tau }], pre: x0, name: xn, unit: u, marks: [], hideUntil: 1 } };
+  },
+  // evaluate X e^(-t/tau) at given times
+  evalx(q) {
+    const u = q.unit, xn = q.sym, steps = [], answers = [], marks = [];
+    q.times.forEach(t => {
+      const k = t / q.tau, e = Math.exp(-k), v = q.X * e;
+      steps.push({ title: `At t = ${si(t, 's')}`, lines: [{ how: 'Work out the power first: t ÷ τ.', eq: `t/τ = ${sf(t, 4)}/${sf(q.tau, 4)} = ${sf(k, 4)}` },
+        { how: `Calculator: e<sup>x</sup> of ${MINUS}${sf(k, 4)}, then multiply by ${sf(q.X, 4)}.`, eq: `${xn}(${si(t, 's')}) = ${sf(q.X, 4)} ${ex(`${MINUS}${sf(k, 4)}`)} = ${sf(q.X, 4)} × ${sf(e, 4)} = <b>${si(v, u)}</b>` }],
+        note: Math.abs(k - Math.round(k)) < 1e-9 && k >= 1 ? `Ruler check: ${Math.round(k)}τ leaves ${pctTxt(k)} of ${si(q.X, u)}.` : '' });
+      answers.push({ html: `${xn}(${si(t, 's')})`, val: v, unit: u, step: steps.length - 1, wrong: [wr(q.X * Math.exp(-q.tau / t), 'The power is −t/τ: time on top, τ underneath.'), wr(q.X * (1 - e), 'That is the growth form. This is a decay: x(0) × e<sup>−t/τ</sup>.')] }); marks.push({ t, x: v });
+    });
+    return { text: q.text || `<p>${xn}(t) = ${sf(q.X, 4)} ${ex(`${MINUS}t/${sf(q.tau, 4)}`)} ${u}. Find ${listJoin(q.times.map(t => `${xn} at t = ${si(t, 's')}`))}.</p>`, steps, answers,
+      plot: { segs: [{ from: 0, x0: q.X, xf: 0, tau: q.tau }], pre: q.X, name: xn, unit: u, marks } };
+  },
+  // DC steady state of a circuit with both an L (series) and a C (across R2)
+  dc2(q) {
+    const ckt = { left: [{ t: 'V', v: q.V }, { t: 'Rs', v: q.R1 }, { t: 'Ls', v: q.L }, { t: 'Cp', v: q.C }, { t: 'Rp', v: q.R2 }], E: null };
+    const i = q.V / (q.R1 + q.R2), vc = i * q.R2;
+    const steps = [{ title: 'Redraw for DC steady state', view: 'pre', lines: [
+      { how: 'After a long time nothing changes any more. A capacitor then carries no current (i = C dv/dt = 0): replace it by a <b>gap</b>.', eq: `${T('C', 'C')} → gap (open circuit)` },
+      { how: 'An inductor then has no voltage (v = L di/dt = 0): replace it by a <b>wire</b>.', eq: `${T('L', 'L')} → wire (short circuit)` },
+      { how: 'What is left: the source, R<sub>1</sub>, a wire and R<sub>2</sub> in one loop (the gap takes no current).', eq: '' }] }];
+    const answers = [];
+    if (q.values) {
+      steps.push({ title: 'Inductor current', lines: [{ how: `One loop: ${T('Vs', 'V<sub>s</sub>')} drives current through ${T('R1', 'R<sub>1</sub>')}, the wire and ${T('R2', 'R<sub>2</sub>')}.`, eq: `i<sub>L</sub> = ${T('Vs', sf(q.V, 4))} / (${T('R1', sf(q.R1, 4))} + ${T('R2', sf(q.R2, 4))}) = <b>${si(i, 'A')}</b>` }] });
+      steps.push({ title: 'Capacitor voltage', lines: [{ how: `The capacitor is connected across ${T('R2', 'R<sub>2</sub>')} (the same two nodes), so it has the voltage of R<sub>2</sub>. Ohm's law:`, eq: `v<sub>C</sub> = i × ${T('R2', 'R<sub>2</sub>')} = ${sf(i, 4)} × ${sf(q.R2, 4)} = <b>${si(vc, 'V')}</b>` }] });
+      steps.push({ title: 'Just after a switching at t = 0', lines: [{ how: 'v<sub>C</sub> and i<sub>L</sub> cannot jump, so these settled values are also the values at t = 0<sup>+</sup>.', eq: `i<sub>L</sub>(${SUP0}) = ${si(i, 'A')}, &nbsp; v<sub>C</sub>(${SUP0}) = ${si(vc, 'V')}` }] });
+      answers.push({ html: `i<sub>L</sub>(${SUP0})`, val: i, unit: 'A', step: 1, wrong: [wr(q.V / q.R1, 'R<sub>2</sub> is still in the loop: the gap replaces the capacitor, not R<sub>2</sub>.')] },
+        { html: `v<sub>C</sub>(${SUP0})`, val: vc, unit: 'V', step: 2, wrong: [wr(q.V, 'That is the whole source voltage. The capacitor sits across R<sub>2</sub> only, so it gets R<sub>2</sub>\'s share.'), wr(i * q.R1, 'That is the voltage across R<sub>1</sub>. The capacitor is connected across R<sub>2</sub>.')] });
+    }
+    return { text: q.text, steps, answers, ckt, views: ['orig', 'pre'] };
+  },
+  // find C (or L) from a measured decay
+  measure(q) {
+    const isC = q.el === 'C', u = isC ? 'V' : 'A', xn = isC ? 'v' : 'i', r = q.Xm / q.X0, tau = -q.tm / Math.log(r), val = isC ? tau / q.R : tau * q.R;
+    const steps = [
+      { title: 'Write the decay with τ unknown', lines: [{ how: 'Source-free decay: x(t) = x(0) e<sup>−t/τ</sup>. Put in the measured point.', eq: `${sf(q.X0, 4)} ${ex(`${MINUS}${sf(q.tm, 4)}/τ`)} = ${sf(q.Xm, 4)}` },
+        { how: `Divide both sides by ${sf(q.X0, 4)}.`, eq: `${ex(`${MINUS}${sf(q.tm, 4)}/τ`)} = ${sf(r, 4)}` }] },
+      { title: 'Solve for τ with ln', lines: [{ how: 'Take ln of both sides: the power comes down.', eq: `${MINUS}${sf(q.tm, 4)}/τ = ln(${sf(r, 4)}) = ${sf(Math.log(r), 4)}` },
+        { how: `Multiply both sides by τ, then divide both sides by ${sf(Math.log(r), 4)}.`, eq: `τ = ${MINUS}${sf(q.tm, 4)} / (${sf(Math.log(r), 4)}) = <b>${si(tau, 's')}</b>` }],
+        note: `Keep the signs: ln of a number below 1 is negative, and the two minus signs cancel to give a positive τ.` },
+      { title: `Find ${q.el}`, lines: [isC ? { how: 'τ = RC, so divide τ by R.', eq: `C = τ/R = ${pw(tau)} / ${T('R1', pw(q.R))} = <b>${si(val, 'F')}</b>` } : { how: 'τ = L/R, so multiply τ by R.', eq: `L = τR = ${pw(tau)} × ${T('R1', pw(q.R))} = <b>${si(val, 'H')}</b>` }],
+        note: `Sense check: ${sf(100 * r, 3)} % is left after ${sf(q.tm / tau, 3)}τ.` }];
+    return { text: q.text, steps, answers: [{ html: 'τ', val: tau, unit: 's', step: 1, wrong: [wr(-q.tm / Math.log10(r), 'Use ln (the natural log), not log: ln undoes e.'), wr(-q.tm * Math.log(r), 'Divide, do not multiply: τ = −t ÷ ln(fraction left).')] },
+      { html: q.el, val, unit: isC ? 'F' : 'H', step: 2, wrong: [isC ? wr(tau * q.R, 'τ = RC, so C = τ ÷ R (divide).') : wr(tau / q.R, 'τ = L/R, so L = τ × R (multiply).')] }],
+      ckt: { left: [{ t: 'Rp', v: q.R, sw: 'close' }], E: { t: q.el, v: val, n: { html: `${q.el} = ?`, svg: q.el }, hide: true }, ic: q.X0 }, views: ['orig'],
+      plot: { segs: [{ from: 0, x0: q.X0, xf: 0, tau }], pre: q.X0, name: xn, unit: u, marks: [{ t: q.tm, x: q.Xm }] } };
+  },
+  // RC delay: choose R so that v_C reaches Vf at time td
+  design(q) {
+    const r = 1 - q.Vf / q.V, tau = -q.td / Math.log(r), R = tau / q.C;
+    const steps = [
+      { title: 'Write the charging response', lines: [{ how: `Uncharged capacitor, final value ${si(q.V, 'V')} (C a gap, no current):`, eq: `v<sub>C</sub>(t) = ${sf(q.V, 4)}(1 ${MINUS} ${ex(`${MINUS}t/τ`)})` }] },
+      { title: `Make it reach ${si(q.Vf, 'V')} at t = ${si(q.td, 's')}`, lines: [
+        { how: 'Put in the target point.', eq: `${sf(q.V, 4)}(1 ${MINUS} ${ex(`${MINUS}${sf(q.td, 4)}/τ`)}) = ${sf(q.Vf, 4)}` },
+        { how: `Divide both sides by ${sf(q.V, 4)}.`, eq: `1 ${MINUS} ${ex(`${MINUS}${sf(q.td, 4)}/τ`)} = ${sf(q.Vf / q.V, 4)}` },
+        { how: 'Move the exponential to one side, the numbers to the other.', eq: `${ex(`${MINUS}${sf(q.td, 4)}/τ`)} = 1 ${MINUS} ${sf(q.Vf / q.V, 4)} = ${sf(r, 4)}` },
+        { how: 'Take ln of both sides.', eq: `${MINUS}${sf(q.td, 4)}/τ = ln(${sf(r, 4)}) = ${sf(Math.log(r), 4)}` },
+        { how: 'Rearrange for τ.', eq: `τ = ${sf(q.td, 4)} / ${sf(-Math.log(r), 4)} = <b>${si(tau, 's')}</b>` }] },
+      { title: 'Choose R', lines: [{ how: 'τ = RC, so R = τ/C.', eq: `R = ${pw(tau)} / ${T('C', pw(q.C))} = <b>${si(R, 'Ω')}</b>` }],
+        note: `The lamp can fire only because ${si(q.Vf, 'V')} is below the final value ${si(q.V, 'V')}. If the firing voltage were above ${si(q.V, 'V')}, no choice of R would work.` }];
+    return { text: q.text, steps, answers: [{ html: 'τ', val: tau, unit: 's', step: 1, wrong: [wr(q.td, `${si(q.td, 's')} is the delay, not τ: the lamp fires part-way up the curve. Find τ with ln.`), wr(-q.td / Math.log(q.Vf / q.V), `${ex('−t/τ')} is the part still LEFT: 1 − ${sf(q.Vf, 4)}/${sf(q.V, 4)}, not ${sf(q.Vf, 4)}/${sf(q.V, 4)}.`)] },
+      { html: 'R', val: R, unit: 'Ω', step: 2, wrong: [wr(q.td / q.C, 'That uses the delay as τ. Find τ first with ln, then R = τ ÷ C.'), wr(tau * q.C, 'τ = RC, so R = τ ÷ C (divide).')] }],
+      ckt: { left: [{ t: 'V', v: q.V }, { t: 'S', sw: 'close' }, { t: 'Rs', v: R, n: { html: 'R = ?', svg: 'R' }, hide: true }], E: { t: 'C', v: q.C }, ic: 0 }, views: ['orig'],
+      plot: { segs: [{ from: 0, x0: 0, xf: q.V, tau }], pre: 0, name: 'v<sub>C</sub>', unit: 'V', marks: [{ t: q.td, x: q.Vf }] } };
+  },
+};
+
+// ---------------------------------------------------------------- question text for circuit questions
+function swText(net) {
+  const s = [];
+  const ev = a => { const out = []; for (let k = 1; k < a.length; k++) if (a[k] !== a[k - 1]) out.push(k); return out; };
+  const at = k => (k === 1 ? 't = 0' : `t = ${si(net.t0, 's')}`);
+  for (const o of net.draw) {
+    if (!o.swa) continue;
+    const nm = o.t === 'S' ? `Switch ${o.html}` : `The switch in series with ${o.html}`;
+    const e = ev(o.swa);
+    if (!e.length) continue;
+    const verb = k => (o.swa[k] ? 'closes' : 'opens');
+    s.push(`${nm} has been ${o.swa[0] ? 'closed' : 'open'} for a long time; it ${e.map(k => `${verb(k)} at ${at(k)}`).join(' and ')}.`);
+  }
+  if (net.spdt) {
+    const e = ev(net.spdt), pos = c => (c === 'L' ? '1' : '2');
+    s.push(`Switch ${net.spdtId === 'S' ? 'S' : net.spdtId} has been in position ${pos(net.spdt[0])} for a long time; it moves to position ${e.map(k => `${pos(net.spdt[k])} at ${at(k)}`).join(' and ')}.`);
+  }
+  return s;
+}
+function autoText(q, sol) {
+  if (q.text) return q.text;
+  const net = sol.net, isC = sol.isC, xn = sol.xn, ask = q.ask || {}, parts = [];
+  if (q.story) parts.push(q.story);
+  parts.push(...swText(net));
+  if (net.ic !== undefined && !q.noic) parts.push(isC ? (near(net.ic, 0) ? 'The capacitor is uncharged before t = 0.' : `The capacitor already holds ${si(net.ic, 'V')} at t = 0.`) : (near(net.ic, 0) ? 'No current flows in the inductor before t = 0.' : `The inductor carries ${si(net.ic, 'A')} at t = 0.`));
+  const want = [`${xn}(t) for t &gt; 0${net.nph === 3 ? ` (both intervals)` : ''}`];
+  if (ask.at !== undefined) want.push(`the value of ${xn} at t = ${si(ask.at, 's')}`);
+  if (ask.at2 !== undefined) want.push(`the value of ${xn} at t = ${si(ask.at2, 's')}`);
+  if (ask.when !== undefined) want.push(`the time at which ${xn} = ${si(ask.when, sol.isC ? 'V' : 'A')}`);
+  if (ask.other) want.push(isC ? 'the capacitor current i<sub>C</sub>(t) (flowing into the + end)' : 'the inductor voltage v<sub>L</sub>(t) (+ at the top)');
+  if (ask.peak) want.push(isC ? 'the largest capacitor current' : 'the largest inductor voltage');
+  if (ask.energy) want.push(`the energy stored in ${isC ? 'the capacitor' : 'the inductor'} at t = 0`);
+  if (ask.five) want.push('how long the transient lasts (5τ)');
+  if (ask.charge5) want.push('how long the first circuit takes to charge it fully (5τ of that circuit)');
+  if (ask.maxR !== undefined) want.push(`the largest extra series resistance R<sub>x</sub> that still lets the current reach ${si(ask.maxR, 'A')}`);
+  parts.push(`Find ${listJoin(want)}.`);
+  return parts.map(p => `<p>${p}</p>`).join('');
+}
+
+// ---------------------------------------------------------------- top-level solve
+function solveQ(q) {
+  if (q.sol) return q.sol;
+  let s;
+  if (q.kind === 'ckt') { s = solveCkt(q); s.text = autoText(q, s); s.ckt = q.ckt; }
+  else { s = KINDS[q.kind](q); if (s.ckt) { s.net = buildNet(s.ckt); s.views = s.views || ['orig']; } }
+  s.steps.forEach(st => { st.lines = (st.lines || []).filter(l => l.how || l.eq); });
+  const lastStep = s.steps.length - 1;
+  s.answers.forEach(a => {                 // a mistake value must never be mistaken for the right answer
+    if (!(a.step >= 0 && a.step <= lastStep)) a.step = lastStep;
+    const seen = [];
+    a.wrong = (a.wrong || []).filter(w => Number.isFinite(w.val) && !rel(w.val, a.val, 0.03) && !seen.some(x => rel(x, w.val, 0.01)) && seen.push(w.val));
+  });
+  return s;
+}
+
+// ---------------------------------------------------------------- layout and drawing
+const TY = 100, BY = 330;
+function layout(net) {
+  let cur = 130, last = null;
+  for (const o of net.draw) {
+    const sh = SHUNT.has(o.t);
+    if (sh) {
+      if (last === 'shunt' || last === 'spdt') cur += o === net.E ? 175 : last === 'spdt' ? 90 : 130;
+      if (o === net.E && net.spdt) cur += last === 'shunt' ? 0 : 60;
+      o.x = cur; o.la = o.ra = cur; last = 'shunt';
+      if (o === net.E && net.spdt) { cur += 60; last = 'spdt'; }
+    } else {
+      if (last === 'spdt') cur += 10;
+      o.la = cur; o.ra = cur + 130; o.x = cur + 65; cur += 130; last = 'series';
+    }
+  }
+  net.W = cur + (last === 'shunt' ? 190 : 40);
+  net.H = BY + 60;
+}
+// which items still matter in a phase (greyed out otherwise)
+function liveSet(net, ph, kill) {
+  const live = new Set([net.E]), side = sideAt(net, ph);
+  const walk = arr => {               // arr is near -> far
+    for (const o of arr) {
+      if (o.t === 'S' && !closed(o, ph)) { live.add(o); return; }
+      if (o.swa && !closed(o, ph)) { live.add({ swOf: o }); continue; }
+      live.add(o);
+      if (kill && o.t === 'V') return;
+    }
+  };
+  const arr = (side === 'L' ? net.left : net.right).slice().reverse();
+  walk(arr);
+  // series resistors beyond the last live return path (shunt) carry no current: grey them too
+  let lastSh = -1;
+  arr.forEach((o, i) => { if (live.has(o) && (o.t === 'V' || o.t === 'I' || o.t === 'Rp')) lastSh = i; });
+  arr.forEach((o, i) => { if (i > lastSh && o.t === 'Rs') live.delete(o); });
+  return live;
+}
+const R_BODY = '<path class="wire" d="M-42,0 l6,-10 l12,20 l12,-20 l12,20 l12,-20 l12,20 l6,-10"/>';
+const L_BODY = '<path class="wire" d="M-42,0 h3 a9,9 0 0 1 18,0 a9,9 0 0 1 18,0 a9,9 0 0 1 18,0 a9,9 0 0 1 18,0 h3"/>';
+const C_BODY = '<path class="wire" d="M-12,0 h6 M-6,-20 V20 M6,-20 V20 M6,0 h6"/>';
+const HALF = { R: 42, L: 42, C: 12, V: 28, I: 28 };
+// view: { ph, mode: 'orig'|'pre'|'zero'|'post'|'th', kill }
+function svgCkt(net, vname, sol) {
+  const V = { orig: { ph: 0, e: 'norm', act: true }, pre: { ph: 0, e: 'dc' }, zero: { ph: 1, e: 'src' }, post: { ph: 1, e: 'dc' }, th: { ph: 1, e: 'look', kill: true },
+    post2: { ph: 2, e: 'dc' }, th2: { ph: 2, e: 'look', kill: true } }[vname] || { ph: 0, e: 'norm', act: true };
+  const ph = Math.min(V.ph, net.nph - 1), live = net.E && !V.act ? liveSet(net, ph, V.kill) : null;
+  const isLive = o => !live || live.has(o) || o === net.E;
+  let wr = '', el = '', lb = '';
+  const seq = net.draw, E = net.E;
+  const line = (x1, y1, x2, y2, cls = 'wire') => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${cls}"/>`;
+  const off = o => (isLive(o) ? '' : ' off');
+  // top rail between consecutive items
+  for (let k = 0; k + 1 < seq.length; k++) {
+    const a = seq[k], b = seq[k + 1];
+    let x1 = a.ra, x2 = b.la;
+    if (b === E && net.spdt) x2 = E.x - 40;
+    if (a === E && net.spdt) x1 = E.x + 40;
+    const farther = !E || k + 1 <= seq.indexOf(E) ? a : b;
+    if (x2 > x1) wr += line(x1, TY, x2, TY, isLive(farther) ? 'wire' : 'wire off');
+  }
+  // bottom rail
+  const sh = seq.filter(o => SHUNT.has(o.t));
+  if (sh.length > 1) wr += line(sh[0].x, BY, sh[sh.length - 1].x, BY);
+  // ground
+  const gx = sh.length ? (sh[0].x + sh[sh.length - 1].x) / 2 : 0;
+  lb += `<path class="wire" d="M${gx},${BY} V${BY + 16} M${gx - 18},${BY + 16} H${gx + 18} M${gx - 11},${BY + 23} H${gx + 11} M${gx - 4},${BY + 30} H${gx + 4}"/>`;
+  // junction dots
+  sh.forEach((o, i) => { if (i > 0 && i < sh.length - 1) wr += (o === E && net.spdt ? '' : `<circle cx="${o.x}" cy="${TY}" r="5" class="dot"/>`) + `<circle cx="${o.x}" cy="${BY}" r="5" class="dot"/>`; });
+  const evTxt = a => { const out = []; for (let k = 1; k < a.length; k++) if (a[k] !== a[k - 1]) out.push(k === 1 ? 't = 0' : `t = ${si(net.t0, 's')}`); return out.join(', '); };
+  for (const o of seq) {
+    const cls = off(o), first = o === sh[0];
+    if (SHUNT.has(o.t) && o !== E) {
+      const x = o.x, hasSw = !!o.swa, yc = hasSw ? TY + 150 : (TY + BY) / 2;
+      let fam = o.t === 'Rp' ? 'R' : o.t === 'Cp' ? 'C' : o.t;
+      let body = fam === 'R' ? R_BODY : fam === 'C' ? C_BODY : `<circle class="wire src ${fam === 'I' ? 'si' : 'sv'}" r="28"/>`;   // sv / si: tint by kind
+      if (fam === 'I') body += '<path class="wire" stroke-width="2.5" d="M15,0 H-8"/><path class="arrowhead" d="M-17,0 l10,-7 v14 z"/>';
+      let half = HALF[fam], lab2 = valH(o), killed = false;
+      if (V.kill && (fam === 'V' || fam === 'I') && isLive(o)) { killed = true; body = fam === 'V' ? '<path class="wire" d="M-28,0 H28"/>' : '<circle class="tdot" cx="-12" cy="0" r="4"/><circle class="tdot" cx="12" cy="0" r="4"/>'; lab2 = fam === 'V' ? 'killed: wire' : 'killed: gap'; half = fam === 'V' ? 28 : 12; }
+      if (V.e === 'dc' && fam === 'C') { body = '<circle class="tdot" cx="-12" cy="0" r="4"/><circle class="tdot" cx="12" cy="0" r="4"/>'; lab2 = 'gap (DC)'; }
+      const top = hasSw ? TY + 70 : TY;
+      let g = line(x, top, x, yc - half) + line(x, yc + half, x, BY) + `<g transform="translate(${x},${yc}) rotate(90)">${body}</g>`;
+      if (fam === 'V' && !killed) g += `<path class="sign" d="M${x - 6},${yc - 13} h12 M${x},${yc - 19} v12 M${x - 6},${yc + 13} h12"/>`;
+      if (hasSw) {
+        const cl = closed(o, ph), y1 = TY + 30, y2 = TY + 70;
+        g += line(x, TY, x, y1) + `<circle cx="${x}" cy="${y1}" r="4" class="tdot"/><circle cx="${x}" cy="${y2}" r="4" class="tdot"/>` + (cl ? line(x, y1, x, y2, 'wire blade') : line(x, y1, x + 22, y1 + 36, 'wire blade'));
+        lb += `<text x="${x - 14}" y="${TY + 54}" text-anchor="end" class="lab sw">${evTxt(o.swa)}</text>`;
+      }
+      const left = first && (fam === 'V' || fam === 'I');
+      const lx = left ? x - 42 : x + 40, anch = left ? 'end' : 'start';
+      el += `<g class="el${cls}" data-el="${o.id}"><rect class="halo" x="${x - 34}" y="${yc - Math.max(half, 30) - 8}" width="68" height="${2 * Math.max(half, 30) + 16}" rx="10"/>${g}` +
+        `<text x="${lx}" y="${yc - 6}" text-anchor="${anch}" class="lab nm">${o.svg}</text><text x="${lx}" y="${yc + 20}" text-anchor="${anch}" class="lab val">${o.hide ? '?' : lab2}</text></g>`;
+    } else if (o === E) {
+      const x = o.x, top = net.spdt ? TY + 40 : TY, yc = (top + BY) / 2, isC = E.et === 'C';
+      let body, half, lab2 = o.hide ? '?' : valH(o), extra = '';
+      if (V.e === 'norm') { body = isC ? C_BODY : L_BODY; half = isC ? 12 : 42; }
+      else if (V.e === 'dc') { body = isC ? '<circle class="tdot" cx="-14" cy="0" r="4"/><circle class="tdot" cx="14" cy="0" r="4"/>' : '<path class="wire" d="M-42,0 H42"/>'; half = isC ? 14 : 42; lab2 = isC ? 'gap (DC)' : 'wire (DC)'; }
+      else if (V.e === 'src') {
+        const x0 = sol ? sol.plot.pre : 0;
+        body = `<circle class="wire src ${isC ? 'sv' : 'si'}" r="28"/>` + (isC ? '' : '<path class="wire" stroke-width="2.5" d="M-15,0 H8"/><path class="arrowhead" d="M17,0 l-10,-7 v14 z"/>'); half = 28;
+        if (isC) extra = `<path class="sign" d="M${x - 6},${yc - 13} h12 M${x},${yc - 19} v12 M${x - 6},${yc + 13} h12"/>`;
+        lab2 = `${si(x0, isC ? 'V' : 'A')} at 0⁺`;
+      } else { body = '<circle class="tdot" cx="-30" cy="0" r="5"/><circle class="tdot" cx="30" cy="0" r="5"/>'; half = 30; lab2 = 'removed';
+        extra = `<path class="look" d="M${x + 110},${yc} H${x + 18}"/><path class="lookh" d="M${x + 12},${yc} l12,-8 v16 z"/><text x="${x + 116}" y="${yc + 7}" class="lab look">R<tspan dy="7" font-size="16">Th</tspan></text>`; }
+      let g = line(x, top, x, yc - half) + line(x, yc + half, x, BY) + `<g transform="translate(${x},${yc}) rotate(90)">${body}</g>` + extra;
+      if (V.e === 'norm') {        // quantity markers on the left: + v − for C, current arrow i for L
+        if (isC) g += `<text x="${x - 24}" y="${yc - 22}" text-anchor="middle" class="lab q">+</text><text x="${x - 24}" y="${yc + 36}" text-anchor="middle" class="lab q">−</text><text x="${x - 36}" y="${yc + 8}" text-anchor="end" class="lab q">v<tspan dy="7" font-size="16">C</tspan></text>`;
+        else g += `<path class="qarr" d="M${x - 22},${yc - 34} V${yc + 8}"/><path class="qarrh" d="M${x - 22},${yc + 18} l-7,-12 h14 z"/><text x="${x - 34}" y="${yc + 2}" text-anchor="end" class="lab q">i<tspan dy="7" font-size="16">L</tspan></text>`;
+      }
+      if (net.spdt) {
+        const p = { x, y: TY + 40 }, c1 = { x: x - 40, y: TY }, c2 = { x: x + 40, y: TY }, pos = net.spdt[ph] === 'L' ? c1 : c2;
+        g += `<circle cx="${c1.x}" cy="${c1.y}" r="4" class="tdot"/><circle cx="${c2.x}" cy="${c2.y}" r="4" class="tdot"/><circle cx="${p.x}" cy="${p.y}" r="4" class="dot"/>` + line(p.x, p.y, pos.x, pos.y + 3, 'wire blade');
+        lb += `<text x="${c1.x - 6}" y="${TY - 12}" text-anchor="end" class="lab sw">1</text><text x="${c2.x + 6}" y="${TY - 12}" text-anchor="start" class="lab sw">2</text><text x="${x}" y="${TY - 34}" text-anchor="middle" class="lab sw">${net.spdtSvg}: ${evTxt(net.spdt)}</text>`;
+        if (V.act) lb += `<path class="act" d="M${x - 26},${TY - 4} Q${x},${TY - 24} ${x + 24},${TY - 6}"/><path class="acth" d="M${x + 28},${TY - 3} l-12,-1 l6,-9 z"/>`;
+      }
+      el += `<g class="el" data-el="${E.id}"><rect class="halo" x="${x - 40}" y="${yc - 52}" width="80" height="104" rx="10"/>${g}` +
+        (V.e === 'look' ? '' : `<text x="${x + 40}" y="${yc - 6}" class="lab nm">${E.svg}</text><text x="${x + 40}" y="${yc + 20}" class="lab val">${lab2}</text>`) + '</g>';
+    } else {
+      // series item on the top rail
+      const c = o.x, fam = o.t === 'Rs' ? 'R' : o.t === 'Ls' ? 'L' : 'S';
+      let g;
+      if (fam === 'S') {
+        const cl = closed(o, ph);
+        g = line(o.la, TY, c - 22, TY) + line(c + 22, TY, o.ra, TY) + `<circle cx="${c - 22}" cy="${TY}" r="4" class="tdot"/><circle cx="${c + 22}" cy="${TY}" r="4" class="tdot"/>` +
+          (cl ? line(c - 22, TY, c + 22, TY, 'wire blade') : line(c - 22, TY, c + 16, TY - 24, 'wire blade'));
+        if (V.act && o.swa && o.swa[1] !== o.swa[0]) g += cl ? `<path class="act" d="M${c + 28},${TY - 6} Q${c + 34},${TY - 22} ${c + 24},${TY - 34}"/><path class="acth" d="M${c + 21},${TY - 38} l1,12 l9,-6 z"/>`
+          : `<path class="act" d="M${c + 24},${TY - 34} Q${c + 34},${TY - 18} ${c + 26},${TY - 6}"/><path class="acth" d="M${c + 24},${TY - 2} l-5,-11 l10,0 z"/>`;
+        el += `<g class="el${cls}" data-el="${o.id}"><rect class="halo" x="${c - 36}" y="${TY - 40}" width="72" height="60" rx="10"/>${g}<text x="${c - 4}" y="${TY - 52}" text-anchor="middle" class="lab nm">${o.svg}</text><text x="${c}" y="${TY + 34}" text-anchor="middle" class="lab sw">${evTxt(o.swa || [0, 0])}</text></g>`;
+        if (V.e === 'dc' || V.e === 'look' || V.e === 'src') { /* state shown by the blade */ }
+      } else {
+        let body = fam === 'R' ? R_BODY : L_BODY, lab2 = o.hide ? '?' : valH(o);
+        if (V.e === 'dc' && fam === 'L') { body = '<path class="wire" d="M-42,0 H42"/>'; lab2 = 'wire (DC)'; }
+        g = line(o.la, TY, c - 42, TY) + line(c + 42, TY, o.ra, TY) + `<g transform="translate(${c},${TY})">${body}</g>`;
+        el += `<g class="el${cls}" data-el="${o.id}"><rect class="halo" x="${c - 50}" y="${TY - 30}" width="100" height="60" rx="10"/>${g}<text x="${c}" y="${TY - 52}" text-anchor="middle" class="lab nm">${o.svg}</text><text x="${c}" y="${TY - 24}" text-anchor="middle" class="lab val">${lab2}</text></g>`;
+      }
+    }
+  }
+  const cap = { orig: 'The circuit', pre: 't < 0, settled: C is a gap, L is a wire', zero: 't = 0⁺: C or L replaced by its starting value', post: 't → ∞, settled again', th: 'Sources killed, looking in from C or L',
+    post2: `after t = ${si(net.t0 || 0, 's')}, settled`, th2: `after t = ${si(net.t0 || 0, 's')}: sources killed` }[vname] || '';
+  return `<svg viewBox="0 0 ${net.W} ${net.H}" class="ckt" style="max-width:${Math.round(net.W * 1.05)}px;margin:auto" role="img" aria-label="Circuit diagram: ${cap}">${wr}${el}${lb}</svg>`;
+}
+
+// ---------------------------------------------------------------- response plot
+function plotFn(pm) {
+  return t => {
+    if (t < 0) return pm.pre;
+    let s = pm.segs[0];
+    for (const g of pm.segs) if (t >= g.from) s = g;
+    return fx(s.x0, s.xf, s.tau, t - s.from);
+  };
+}
+function plotSpan(pm) { const l = pm.segs[pm.segs.length - 1]; return l.from + 5 * l.tau; }
+function tUnit(span) { return span < 5e-4 ? [1e-6, 'µs'] : span < 0.5 ? [1e-3, 'ms'] : [1, 's']; }
+function niceStep(range, n = 6) { const raw = range / n, p = 10 ** Math.floor(Math.log10(raw)), m = raw / p; return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p; }
+function plotSVG(pm, cursor) {
+  const W = 680, H = 350, L = 70, R = 24, TOP = 26, BOT = 70, f = plotFn(pm), span = plotSpan(pm), tmin = -0.12 * span;
+  const tu = tUnit(span);
+  let ys = []; for (let k = 0; k <= 200; k++) ys.push(f(tmin + (span - tmin) * k / 200));
+  pm.segs.forEach(s => ys.push(s.xf, s.x0));
+  let y0 = Math.min(0, ...ys), y1 = Math.max(0, ...ys); if (y1 - y0 < 1e-12) y1 = y0 + 1; const pad = (y1 - y0) * 0.12; y0 -= y0 < 0 ? pad : 0; y1 += pad;
+  const X = t => L + (t - tmin) / (span - tmin) * (W - L - R), Y = v => TOP + (y1 - v) / (y1 - y0) * (H - TOP - BOT);
+  let g = '';
+  // grid and axes
+  const ys2 = niceStep(y1 - y0, 5);
+  for (let v = Math.ceil(y0 / ys2) * ys2; v <= y1 + 1e-12; v += ys2) g += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" class="grid"/><text x="${L - 8}" y="${Y(v) + 5}" text-anchor="end" class="tick">${sf(v, 3)}</text>`;
+  const ts = niceStep(span / tu[0], 6);
+  for (let t = 0; t <= span / tu[0] + 1e-9; t += ts) if (X(t * tu[0]) < W - R - 45) g += `<text x="${X(t * tu[0])}" y="${H - BOT + 20}" text-anchor="middle" class="tick">${sf(t, 3)}</text>`;
+  g += `<line x1="${X(0)}" x2="${X(0)}" y1="${TOP}" y2="${H - BOT}" class="axis"/><line x1="${L}" x2="${W - R}" y1="${Y(0)}" y2="${Y(0)}" class="axis"/>`;
+  g += `<text x="${W - R}" y="${H - BOT + 20}" text-anchor="end" class="tick">t (${tu[1]})</text><text x="${L - 8}" y="${TOP - 10}" text-anchor="end" class="tick">${pm.norm ? '' : pm.unit}</text>`;
+  // tau markers for each segment
+  pm.segs.forEach((s, j) => {
+    for (let k = 1; k <= 5; k++) { const t = s.from + k * s.tau; if (s.to !== undefined && t > s.to + 1e-12) break; g += `<line x1="${X(t)}" x2="${X(t)}" y1="${TOP}" y2="${H - BOT}" class="taul"/><text x="${X(t)}" y="${H - BOT + 40}" text-anchor="middle" class="taut">${k === 1 ? '' : k}τ${pm.segs.length > 1 ? (j ? '₂' : '₁') : ''}</text>`; }
+    const xe = s.to !== undefined ? s.to : span;
+    g += `<line x1="${X(s.from)}" x2="${X(xe)}" y1="${Y(s.xf)}" y2="${Y(s.xf)}" class="final"/><text x="${X(xe) - 4}" y="${Y(s.xf) - 8}" text-anchor="end" class="finalt">final ${si(s.xf, pm.unit || '')}</text>`;
+    if (j === 0 && !pm.norm) g += `<line x1="${X(s.from)}" y1="${Y(s.x0)}" x2="${X(s.from + s.tau)}" y2="${Y(s.xf)}" class="tan"/>`;
+  });
+  // curve
+  let d = ''; for (let k = 0; k <= 400; k++) { const t = tmin + (span - tmin) * k / 400; d += (k ? 'L' : 'M') + X(t).toFixed(1) + ',' + Y(f(t)).toFixed(1); }
+  g += `<path d="${d}" class="curve"/>`;
+  g += `<circle cx="${X(0)}" cy="${Y(pm.segs[0].x0)}" r="5" class="p0"/><text x="${X(0) + 8}" y="${Y(pm.segs[0].x0) + (pm.segs[0].x0 >= pm.segs[0].xf ? -10 : 20)}" class="p0t">${pm.norm ? '100 %' : si(pm.segs[0].x0, pm.unit)} at 0⁺</text>`;
+  (pm.marks || []).forEach(m => { g += `<circle cx="${X(m.t)}" cy="${Y(m.x)}" r="6" class="mk"/><text x="${X(m.t) + 9}" y="${Y(m.x) - 9}" class="mkt">${si(m.x, pm.unit)} at ${si(m.t, 's')}</text>`; });
+  if (cursor !== undefined && cursor !== null) {
+    const t = Math.max(0, Math.min(span, cursor)), v = f(t), s = pm.segs.filter(z => t >= z.from).pop();
+    const done = s.x0 === s.xf ? 100 : 100 * (v - s.x0) / (s.xf - s.x0);
+    const tx = X(t) > W * 0.6 ? X(t) - 10 : X(t) + 10, an = X(t) > W * 0.6 ? 'end' : 'start';
+    g += `<line x1="${X(t)}" x2="${X(t)}" y1="${TOP}" y2="${H - BOT}" class="cur"/><circle cx="${X(t)}" cy="${Y(v)}" r="6" class="curd"/>` +
+      `<text x="${tx}" y="${Math.min(H - BOT - 30, Math.max(TOP + 30, Y(v) + (v > (y0 + y1) / 2 ? 28 : -34)))}" text-anchor="${an}" class="curt"><tspan x="${tx}">t = ${si(t, 's')} (${sf((t - s.from) / s.tau, 3)}τ${pm.segs.length > 1 ? (pm.segs.indexOf(s) ? '₂' : '₁') : ''})</tspan><tspan x="${tx}" dy="20">${pm.norm ? '' : `${pm.name.replace(/<[^>]+>/g, '')} = ${si(v, pm.unit)}, `}${sf(done, 3)} % of the way</tspan></text>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" class="plot" role="img" aria-label="Response plot" data-span="${span}" data-l="${L}" data-r="${R}" data-tmin="${tmin}" data-w="${W}">${g}</svg>`;
+}
+// time-constant ruler: bars at 0..5 tau
+function rulerSVG(mode, hi) {
+  const W = 620, H = 250, bw = 62, gap = 34, x0 = 50, base = 200, top = 40;
+  let g = '';
+  for (let k = 0; k <= 5; k++) {
+    const left = Math.exp(-k), v = mode === 'grow' ? 1 - left : left, h = (base - top) * v, x = x0 + k * (bw + gap);
+    g += `<rect x="${x}" y="${base - h}" width="${bw}" height="${h}" rx="4" class="bar${k === hi ? ' hi' : ''}"/><text x="${x + bw / 2}" y="${base - h - 8}" text-anchor="middle" class="tick">${sf(100 * v, 3)} %</text><text x="${x + bw / 2}" y="${base + 22}" text-anchor="middle" class="tick">${k ? k + 'τ' : '0'}</text>`;
+  }
+  g += `<line x1="${x0 - 10}" x2="${x0 + 6 * (bw + gap) - gap + 10}" y1="${base}" y2="${base}" class="axis"/><text x="${x0}" y="${H - 6}" class="tick">${mode === 'grow' ? 'growth: how much of the change is DONE' : 'decay: how much is LEFT'}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" class="plot ruler" role="img" aria-label="Time-constant ruler">${g}</svg>`;
+}
+
+// ---------------------------------------------------------------- generator
+function rng(seed) { let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function friendlySol(s) {
+  for (const a of s.answers) { if (!Number.isFinite(a.val)) return false; }
+  if (s.plot && s.plot.segs) for (const g of s.plot.segs) { if (!(g.tau > 0)) return false; }
+  return true;
+}
+function generate(topic, level, seed) {
+  const R = rng(seed), pick = a => a[Math.floor(R() * a.length)];
+  const h = { R, pick, int: (a, b) => a + Math.floor(R() * (b - a + 1)), nice, near };
+  const tpls = topic.templates[level];
+  for (let tries = 0; tries < 4000; tries++) {
+    const tpl = pick(tpls);
+    let q;
+    try { q = tpl(h); } catch (e) { continue; }
+    if (!q) continue;
+    try {
+      const s = solveQ(q);
+      if (!friendlySol(s)) continue;
+      if (q.ok && !q.ok(s)) continue;
+      return { ...q, id: 'P' + seed, level, generated: true, seed, sol: s };
+    } catch (e) { continue; }
+  }
+  throw Error('could not generate a friendly question');
+}
+
+if (typeof module !== 'undefined') module.exports = { sf, si, pw, nice, fits3, near, buildNet, analyse, solveQ, solveCkt, svgCkt, plotSVG, plotFn, plotSpan, rulerSVG, generate, KINDS, fx, respH, expo };
+
+</script>
+<script>
+'use strict';
+// RL and RC transients: method cards, question bank and practice templates.
+// Bank questions: first-order RC and RL circuits in the style of A&S Ch 7 (7.2, 7.3, 7.5, 7.6, 7.9) with own values.
+(function () {
+  const k = 1e3, m = 1e-3, u = 1e-6;
+  const V = v => ({ t: 'V', v }), I = v => ({ t: 'I', v }), S = sw => ({ t: 'S', sw });
+  const Rs = (v, o) => ({ t: 'Rs', v, ...o }), Rp = (v, o) => ({ t: 'Rp', v, ...o });
+  const C = v => ({ t: 'C', v }), L = v => ({ t: 'L', v });
+
+  const levels = [
+    { id: 'warm', code: 'W', name: 'Warm-up', blurb: 'one step: gap or wire, τ, the ruler' },
+    { id: 'basic', code: 'B', name: 'Basics', blurb: 'one formula: write a decay or a growth' },
+    { id: 'core', code: 'C', name: 'Core', blurb: 'the three numbers from the circuit' },
+    { id: 'app', code: 'A', name: 'Applied', blurb: 'Thevenin, two switchings, measurements' },
+    { id: 'chal', code: 'X', name: 'Challenge', blurb: 'design: relay, flash, delay, spark' },
+  ];
+
+  // ------------------------------------------------------------ method cards
+  const method = [
+    { title: 'What is a transient?', widget: 'analogy',
+      html: `<p>When a switch moves, the currents and voltages do not jump straight to their new values. A <b>capacitor</b> is like a water tank: its voltage (the water level) needs time to fill or empty. An <b>inductor</b> is like a heavy flywheel: its current (the speed) needs time to speed up or slow down.</p>
+      <p>The short period of change is the <b>transient</b>. After it, the circuit is in <b>steady state</b> again. With one C or one L (plus resistors and DC sources) the change is always the same shape: an exponential curve.</p>` },
+    { title: 'The two element laws', html: `<table><tr><th></th><th>Capacitor C</th><th>Inductor L</th></tr>
+      <tr><td>law</td><td>i = C dv/dt</td><td>v = L di/dt</td></tr>
+      <tr><td>cannot jump</td><td><b>voltage</b> v<sub>C</sub></td><td><b>current</b> i<sub>L</sub></td></tr>
+      <tr><td>settled DC (nothing changing)</td><td>dv/dt = 0 so i = 0: a <b>gap</b> (open circuit)</td><td>di/dt = 0 so v = 0: a <b>wire</b> (short circuit)</td></tr>
+      <tr><td>energy stored</td><td>w = ½ C v²</td><td>w = ½ L i²</td></tr></table>
+      <div class="note"><b>Continuity:</b> v<sub>C</sub>(0<sup>+</sup>) = v<sub>C</sub>(0<sup>−</sup>) and i<sub>L</sub>(0<sup>+</sup>) = i<sub>L</sub>(0<sup>−</sup>). A jump would need an infinite current (for C) or an infinite voltage (for L).</div>` },
+    { title: 'Three snapshots of one circuit', ckt: { left: [V(24), Rs(2 * k), S('open'), Rp(6 * k)], E: C(50 * u) }, views: ['orig', 'pre', 'zero', 'post', 'th'],
+      html: `<p>Every question is solved from three pictures of the same circuit. Click the tabs above the circuit:</p>
+      <ul><li><b>t &lt; 0</b>: settled, C a gap (L a wire). Gives x(0<sup>−</sup>).</li>
+      <li><b>t = 0<sup>+</sup></b>: C or L replaced by its starting value (it cannot jump).</li>
+      <li><b>t → ∞</b>: the new circuit settled. Gives x(∞).</li>
+      <li><b>R<sub>Th</sub></b>: sources killed, look in from C or L. Gives τ.</li></ul>
+      <p>Greyed parts are cut off by an open switch. Hover over any element to find it in the equations.</p>` },
+    { title: 'The time constant τ', html: `<div class="eq">RC circuit: τ = R<sub>Th</sub> C &nbsp; &nbsp; RL circuit: τ = L / R<sub>Th</sub></div>
+      <p>R<sub>Th</sub> is the resistance <b>seen by</b> the capacitor or inductor after the switching: remove C or L, <b>kill</b> every source (a voltage source becomes a wire, a current source becomes a gap) and combine the resistors looking in from the two terminals.</p>
+      <ul><li>Big R or big C: slow capacitor (a big tank filled through a narrow pipe).</li><li>Big L: slow inductor (a heavy flywheel); big R: fast (more friction).</li></ul>
+      <div class="note"><b>Powers of ten:</b> k = 10³, m = 10⁻³, µ = 10⁻⁶. kΩ × µF = ms, &nbsp; kΩ × mF = s, &nbsp; mH ÷ Ω = ms.</div>` },
+    { title: 'The time-constant ruler', widget: 'ruler',
+      html: `<p>After each time constant, 63.2 % of the remaining change is done.</p>
+      <table><tr><th>t</th><th>τ</th><th>2τ</th><th>3τ</th><th>4τ</th><th>5τ</th></tr>
+      <tr><td>left (e<sup>−t/τ</sup>)</td><td>36.8 %</td><td>13.5 %</td><td>4.98 %</td><td>1.83 %</td><td>0.674 %</td></tr>
+      <tr><td>done (1 − e<sup>−t/τ</sup>)</td><td>63.2 %</td><td>86.5 %</td><td>95.0 %</td><td>98.2 %</td><td>99.3 %</td></tr></table>
+      <p>After about <b>5τ</b> the transient is over.</p>` },
+    { title: 'One formula for everything', widget: 'explore',
+      html: `<div class="eq">x(t) = <span class="k2">x(∞)</span> + [<span class="k1">x(0<sup>+</sup>)</span> − <span class="k2">x(∞)</span>] e<sup>−t/<span class="k3">τ</span></sup></div>
+      <p>x is v<sub>C</sub> for a capacitor or i<sub>L</sub> for an inductor. Three numbers decide the whole curve: the <span class="k1">start</span>, the <span class="k2">finish</span> and the <span class="k3">speed</span>. Move the sliders.</p>
+      <ul><li>Finish 0: a <b>decay</b>, x(t) = x(0) e<sup>−t/τ</sup>.</li><li>Start 0: a <b>growth</b>, x(t) = x(∞)(1 − e<sup>−t/τ</sup>).</li>
+      <li>The tangent at t = 0 (dotted) reaches the final value at exactly t = τ.</li></ul>` },
+    { title: 'Where the formula comes from (source-free RC)', html: `<p>A capacitor charged to V<sub>0</sub> is connected across R at t = 0 (A&amp;S 7.2). KCL at the top node: the capacitor current plus the resistor current is zero.</p>
+      <div class="eq">C dv/dt + v/R = 0</div>
+      <p class="how">Divide every term by C, then move the v term to the right:</p><div class="eq">dv/dt = −v/(RC)</div>
+      <p class="how">Separate the variables: everything with v on the left, everything with t on the right.</p><div class="eq">dv/v = −dt/(RC)</div>
+      <p class="how">Integrate both sides (∫ dv/v = ln v):</p><div class="eq">ln v = −t/(RC) + constant</div>
+      <p class="how">Undo ln with e, and use v(0) = V<sub>0</sub> to find the constant:</p><div class="eq">v(t) = V<sub>0</sub> e<sup>−t/RC</sup> = V<sub>0</sub> e<sup>−t/τ</sup></div>
+      <p>With a source (A&amp;S 7.5), the same steps applied to u = v − v(∞) give the general formula. Each Core question has a fold-out showing this with its own numbers.</p>` },
+    { title: 'Source-free RL', html: `<p>An inductor carrying I<sub>0</sub> is left in a loop with R (A&amp;S 7.3). KVL round the loop:</p>
+      <div class="eq">L di/dt + Ri = 0 &nbsp; → &nbsp; di/i = −(R/L) dt &nbsp; → &nbsp; i(t) = I<sub>0</sub> e<sup>−Rt/L</sup> = I<sub>0</sub> e<sup>−t/τ</sup>, &nbsp; τ = L/R</div>
+      <p>The same recipe as for RC: only the time constant changes.</p>` },
+    { title: 'Maths reminder: e and ln', html: `<ul>
+      <li><b>e<sup>0</sup> = 1</b> (put t = 0) and <b>e<sup>−big</sup> → 0</b> (let t → ∞).</li>
+      <li>Calculator: e<sup>x</sup> is usually <b>SHIFT ln</b>. Example: e<sup>−1.5</sup> = 0.2231.</li>
+      <li><b>ln undoes e:</b> if e<sup>−t/τ</sup> = k then −t/τ = ln k, so <b>t = −τ ln k = τ ln(1/k)</b>. Example: e<sup>−t/0.3</sup> = 1/3 gives t = 0.3 ln 3 = 0.330 s.</li>
+      <li>ln of a number below 1 is <b>negative</b>; the minus signs cancel and t comes out positive.</li>
+      <li>Derivative: d/dt (e<sup>−t/τ</sup>) = −(1/τ) e<sup>−t/τ</sup>.</li></ul>` },
+    { title: 'Maths reminder: resistors', html: `<ul>
+      <li><b>Series</b> (one after the other, same current): add. 2 kΩ + 4 kΩ = 6 kΩ.</li>
+      <li><b>Parallel</b> (across the same two nodes): product over sum. 4 ∥ 6 = (4 × 6)/(4 + 6) = 2.4.</li>
+      <li><b>Voltage divider</b>: the voltage across R<sub>2</sub> = V × R<sub>2</sub>/(R<sub>1</sub> + R<sub>2</sub>).</li>
+      <li><b>Current divider</b>: the current in one branch = I × (other branch)/(sum of both).</li></ul>` },
+    { title: 'The recipe', widget: 'recipe', html: `<ol>
+      <li><b>t &lt; 0:</b> old circuit settled (C gap, L wire): find v<sub>C</sub>(0<sup>−</sup>) or i<sub>L</sub>(0<sup>−</sup>).</li>
+      <li><b>t = 0<sup>+</sup>:</b> it cannot jump: x(0<sup>+</sup>) = x(0<sup>−</sup>).</li>
+      <li><b>t → ∞:</b> new circuit settled: find x(∞).</li>
+      <li><b>τ:</b> new circuit, sources killed, R<sub>Th</sub> seen by C or L.</li>
+      <li><b>Formula:</b> x(t) = x(∞) + [x(0<sup>+</sup>) − x(∞)] e<sup>−t/τ</sup>.</li>
+      <li><b>Check:</b> t = 0 gives the start, t → ∞ gives the finish.</li></ol>
+      <div class="note">For a second switching at t = t<sub>0</sub>: the value at t<sub>0</sub> is the new start, and the clock restarts: use e<sup>−(t − t<sub>0</sub>)/τ</sup>.</div>` },
+  ];
+
+  // ------------------------------------------------------------ question bank
+  const dcText = '<p>The circuit has been connected for a long time.</p>';
+  const questions = [
+    // warm-up
+    { level: 'warm', title: 'Gap or wire?', kind: 'dc2', V: 18, R1: 2, R2: 4, L: 0.5, C: 0.1,
+      text: `${dcText}<p>Redraw it for DC steady state: what replaces the inductor and what replaces the capacitor?</p>`,
+      mistake: 'Swapping them. Think of the tank (C): once full, no more water flows in, so no current: a gap. The flywheel (L) spins steadily, so no voltage: a wire.' },
+    { level: 'warm', title: 'Time constant of an RC circuit', kind: 'tau', el: 'C', R: 2 * k, v: 50 * u, mistake: 'Forgetting the prefixes: 2 × 50 = 100 is not 100 s. kilo × micro = milli, so τ = 100 ms.' },
+    { level: 'warm', title: 'Time constant of an RL circuit', kind: 'tau', el: 'L', R: 40, v: 0.2, mistake: 'Writing τ = R/L = 200 s. For an inductor L goes on top: τ = L/R.' },
+    { level: 'warm', title: 'Use the ruler', kind: 'ruler', X: 10, tau: 1, t: 2, n: 2, mode: 'decay', unit: 'V', sym: 'v',
+      text: '<p>A capacitor charged to 10 V discharges with τ = 1 s. Without a calculator, what is its voltage at t = 2 s?</p>', mistake: 'Halving each time constant. Each τ leaves 36.8 %, not 50 %.' },
+    { level: 'warm', title: 'Read a response', kind: 'read', A: 12, B: -9, k: 5, unit: 'V', sym: 'v', mistake: 'Taking the initial value as 12 V. At t = 0 the exponential is 1, so v(0) = 12 − 9 = 3 V.' },
+    // basics
+    { level: 'basic', title: 'Time constant and settling time', kind: 'tau', el: 'C', R: 4.7 * k, v: 10 * u, five: true, mistake: 'Taking 5τ as the time constant. τ is one time constant; 5τ is when the transient is over.' },
+    { level: 'basic', title: 'Evaluate an exponential', kind: 'evalx', X: 8, tau: 0.5, times: [0.5, 1.5], unit: 'A', sym: 'i', mistake: 'Typing e^(−0.5/1.5) instead of e^(−1.5/0.5). The power is −t/τ: time on top.' },
+    { level: 'basic', title: 'Initial values from the old circuit', kind: 'dc2', V: 18, R1: 2, R2: 4, L: 0.5, C: 0.1, values: true,
+      text: `${dcText}<p>A switch somewhere operates at t = 0. Find i<sub>L</sub>(0<sup>+</sup>) and v<sub>C</sub>(0<sup>+</sup>).</p>`, mistake: 'Taking v<sub>C</sub> as the whole 18 V. The capacitor sits across R<sub>2</sub> only, so it has R<sub>2</sub>\'s share.' },
+    { level: 'basic', title: 'Write a discharge', kind: 'ckt', ckt: { left: [Rp(4, { sw: 'close' })], E: C(0.25), ic: 15 }, ask: { at: 1 }, mistake: 'Writing e<sup>−t/4</sup>: τ is RC = 4 × 0.25 = 1 s, not R.' },
+    { level: 'basic', title: 'Write a growth', kind: 'ckt', ckt: { left: [V(24), S('close'), Rs(6)], E: L(1.5) }, ask: { at: 0.5 }, mistake: 'Starting the current at 4 A. Before the switch closes no current flows, and an inductor current cannot jump.' },
+    // core
+    { level: 'core', title: 'Discharging through a resistor', kind: 'ckt', de: true, ckt: { left: [V(24), Rs(2 * k), S('open'), Rp(6 * k)], E: C(50 * u) }, ask: { when: 6 },
+      mistake: 'τ = (2 k + 6 k)(50 µ). The 2 kΩ is cut off once the switch opens: only the 6 kΩ is left across C.' },
+    { level: 'core', title: 'Charging through a divider', kind: 'ckt', de: true, ckt: { left: [V(20), S('close'), Rs(4 * k), Rp(6 * k)], E: C(25 * u), ic: 0 }, ask: { at: 0.1 },
+      mistake: 'Final value 20 V. The 6 kΩ stays across the capacitor and forms a divider with the 4 kΩ.' },
+    { level: 'core', title: 'Growth of inductor current', kind: 'ckt', de: true, ckt: { left: [V(36), S('close'), Rs(9)], E: L(3) }, ask: { other: true, at: 0.5 },
+      mistake: 'τ = R/L = 3 s. For an inductor τ = L/R = 1/3 s.' },
+    { level: 'core', title: 'Decay of inductor current', kind: 'ckt', de: true, ckt: { left: [V(12), Rs(3), S('open'), Rp(6)], E: L(0.6) }, ask: { energy: true, other: true },
+      mistake: 'Taking i<sub>L</sub>(0) = 12/(3 + 6). Before the switch opens, the inductor (a wire) shorts the 6 Ω, so i<sub>L</sub>(0) = 12/3.' },
+    { level: 'core', title: 'Charging a capacitor that is already charged', kind: 'ckt', de: true, ckt: { left: [V(15), S('close'), Rs(1 * k)], E: C(200 * u), ic: 5 }, ask: { other: true, when: 12 },
+      mistake: 'Writing v = 15(1 − e<sup>−5t</sup>). That form is only for a capacitor starting from 0 V.' },
+    // applied
+    { level: 'app', title: 'A resistor is switched in (RC)', kind: 'ckt', de: true, ckt: { left: [V(30), Rs(10), Rp(15, { sw: 'close' })], E: C(0.1) }, ask: { at: 0.6 },
+      mistake: 'Sketching from zero. The capacitor starts at 30 V (no current flowed before), not at the origin.' },
+    { level: 'app', title: 'A resistor is switched out (RL)', kind: 'ckt', de: true, ckt: { left: [V(20), Rs(4), Rp(4, { sw: 'open' }), Rs(6)], E: L(1) }, ask: { at: 0.1 },
+      mistake: 'Using τ from the old circuit. τ belongs to the circuit after switching: L/(4 + 6).' },
+    { level: 'app', title: 'Switching twice: charge, then discharge', kind: 'ckt', de: true, ckt: { left: [V(10), S([0, 1, 0]), Rs(100 * k), Rp(50 * k, { sw: [0, 0, 1] })], E: C(10 * u), ic: 0, t0: 2 }, ask: { at2: 3 },
+      mistake: 'Writing e<sup>−2t</sup> for the second interval. The clock restarts at the second switching: e<sup>−2(t − 2)</sup>.' },
+    { level: 'app', title: 'Find C from a measured response', kind: 'measure', el: 'C', X0: 20, R: 2 * k, Xm: 5, tm: 0.6,
+      text: '<p>A capacitor charged to 20 V discharges through a 2 kΩ resistor. A scope shows that v has fallen to 5 V after 0.6 s. Find τ and C.</p>',
+      mistake: 'Using ln 0.25 and getting a negative τ. Keep the signs: −0.6/τ = ln 0.25 = −1.386.' },
+    { level: 'app', title: 'A current source and a switched resistor', kind: 'ckt', de: true, ckt: { left: [I(2), Rp(6), Rs(2), Rp(8, { sw: 'open' })], E: C(0.05) }, ask: { when: 9 },
+      mistake: 'Treating the current source as a wire when finding R<sub>Th</sub>. A dead current source is a gap.' },
+    // challenge
+    { level: 'chal', title: 'Relay design: delay and drop-out', kind: 'ckt', ckt: { left: [V(12), S('close'), Rs(20, { n: { html: 'R<sub>coil</sub>', svg: 'R coil' } })], E: L(0.4) }, ask: { when: 0.45, maxR: 0.45 },
+      story: 'A relay coil has inductance 0.4 H and resistance R<sub>coil</sub> = 20 Ω. It is switched onto 12 V at t = 0 and the relay pulls in (closes its contacts) when the coil current reaches 0.45 A (A&amp;S 7.9.3).',
+      mistake: 'Using 5τ as the delay. 5τ is when the current is practically final; the contacts close earlier, at 0.45 A.' },
+    { level: 'chal', title: 'Camera flash: slow charge, fast discharge', kind: 'ckt', ckt: { left: [V(200), Rs(5 * k)], right: [Rp(10, { n: { html: 'R<sub>lamp</sub>', svg: 'R lamp' } })], spdt: 'LR', E: C(1000 * u) }, ask: { peak: true, energy: true, five: true, charge5: true },
+      story: 'A camera flash (A&amp;S 7.9.2): in position 1 the capacitor charges from 200 V through a current-limiting 5 kΩ; in position 2 it discharges through the flash lamp, 10 Ω.',
+      mistake: 'Using the 5 kΩ for the discharge. Once the switch moves, the capacitor sees only the lamp: τ = 10 × 1000 µ = 10 ms.' },
+    { level: 'chal', title: 'Delay circuit design', kind: 'design', V: 100, C: 1 * u, Vf: 75, td: 0.5,
+      text: '<p>A warning lamp (A&amp;S 7.9.1) is connected across an uncharged 1 µF capacitor, which charges from 100 V through a resistor R when the switch closes at t = 0. The lamp fires when the capacitor voltage reaches 75 V. Choose R so that the lamp fires 0.5 s after the switch closes.</p>',
+      mistake: 'Using 0.5 s as τ. The lamp fires partway up the curve: 0.5 s is the delay, and τ = 0.5/ln 4.' },
+    { level: 'chal', title: 'Change-over between two sources', kind: 'ckt', de: true, ckt: { left: [V(30), Rs(3 * k), Rp(6 * k)], right: [V(12), Rs(4 * k)], spdt: 'LR', E: C(25 * u) }, ask: { other: true, when: 14 },
+      mistake: 'Taking v<sub>C</sub>(0) = 30 V. In position 1 the capacitor sits across the 6 kΩ of a divider: 30 × 6/9 = 20 V.' },
+    { level: 'chal', title: 'Ignition coil: the voltage spike', kind: 'ckt', ckt: { left: [V(12), Rs(4), S('open'), Rp(1 * k, { n: { html: 'R<sub>gap</sub>', svg: 'R gap' } })], E: L(6 * m) }, ask: { peak: true, energy: true },
+      story: 'A spark coil (A&amp;S 7.9.4): 6 mH with a 12 V battery and 4 Ω. When the switch opens, the coil current is forced through the spark gap, modelled as 1 kΩ.',
+      mistake: 'Expecting the voltage to stay below 12 V. The inductor keeps its 3 A flowing, and 3 A through 1 kΩ needs 3000 V.' },
+  ];
+
+  // ------------------------------------------------------------ practice templates
+  const RK = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20], RO = [2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50];
+  const CU = [10, 20, 25, 40, 50, 100, 200, 250, 500], LH = [0.1, 0.2, 0.25, 0.4, 0.5, 1, 2], LM = [10, 20, 40, 50, 100, 200];
+  const VS = [6, 9, 10, 12, 15, 18, 20, 24, 30, 36, 40, 48, 50, 60];
+  const pickL = h => (h.R() < 0.6 ? h.pick(LH) : h.pick(LM) * m);
+  const okStd = s => {                     // friendly start, finish and τ, and a visible change
+    const g = s.plot.segs[0];
+    return s.answers.slice(0, 3).every(a => a.val === 0 || (fits3(a.val) && nice(a.val, 2) && Math.abs(a.val) >= 0.01)) && Math.abs(g.x0 - g.xf) > 0.05 * Math.max(Math.abs(g.x0), Math.abs(g.xf));
+  };
+  const E = (h, isC, cu) => (isC ? C(h.pick(cu || CU) * u) : L(pickL(h)));
+  const at = h => h.pick([0.5, 1, 2, 3]), wk = h => h.pick([0.5, 0.25, 0.2, 0.1, 0.4, 0.8]);
+  const templates = {
+    warm: [
+      h => ({ kind: 'tau', el: 'C', R: h.pick(RK) * k, v: h.pick(CU) * u, mistake: 'Dropping the powers of ten: kΩ × µF gives milliseconds.' }),
+      h => ({ kind: 'tau', el: 'L', R: h.pick(RO), v: pickL(h), mistake: 'Writing τ = R/L. For an inductor L goes on top.' }),
+      h => { const grow = h.R() < 0.5, isC = h.R() < 0.6, X = isC ? h.pick(VS) : h.pick([2, 4, 5, 8, 10]), tau = h.pick([0.5, 1, 2, 4, 0.1, 0.2]), n = h.int(1, 5);
+        return { kind: 'ruler', X, tau, t: n * tau, n, mode: grow ? 'grow' : 'decay', unit: isC ? 'V' : 'A', sym: isC ? 'v' : 'i',
+          text: `<p>${isC ? (grow ? `An uncharged capacitor charges towards ${X} V` : `A capacitor charged to ${X} V discharges`) : (grow ? `An inductor current grows from 0 towards ${X} A` : `An inductor current of ${X} A decays`)} with τ = ${si(tau, 's')}. Using the time-constant ruler, find its value at t = ${si(n * tau, 's')}.</p>`,
+          mistake: grow ? 'Using the decay column. A growth counts what is DONE: 63.2 %, 86.5 %, 95.0 % …' : 'Using the growth column. A decay counts what is LEFT: 36.8 %, 13.5 %, 4.98 % …' }; },
+      h => { const isC = h.R() < 0.6, A = isC ? h.pick([5, 10, 12, 15, 20, 24, 30]) : h.pick([1, 2, 3, 4, 5]), x0 = isC ? h.pick([0, 2, 3, 4, 5, 6, 8, 40, 50, 36]) : h.pick([0, 0.5, 1, 6, 8, 10]);
+        if (x0 === A) return null;
+        return { kind: 'read', A, B: x0 - A, k: h.pick([2, 4, 5, 10, 20, 50, 100, 500]), unit: isC ? 'V' : 'A', sym: isC ? 'v' : 'i', mistake: 'Reading τ as the number in front of t. That number is 1/τ.' }; },
+      h => ({ kind: 'dc2', V: h.pick(VS), R1: h.pick([1, 2, 3, 4, 5, 6]), R2: h.pick([2, 3, 4, 6, 8, 10]), L: h.pick(LH), C: h.pick([0.1, 0.2, 0.5]),
+        text: `${dcText}<p>Redraw it for DC steady state: what replaces the inductor and what replaces the capacitor?</p>`, mistake: 'Swapping them: C becomes a gap, L becomes a wire.' }),
+    ],
+    basic: [
+      h => (h.R() < 0.6 ? { kind: 'tau', el: 'C', R: h.pick(RK) * k, v: h.pick(CU) * u, five: true, mistake: 'Treating 5τ as τ.' } : { kind: 'tau', el: 'L', R: h.pick(RO), v: pickL(h), five: true, mistake: 'Treating 5τ as τ.' }),
+      h => { const isC = h.R() < 0.5, tau = h.pick([0.2, 0.5, 1, 2, 0.01, 0.05]), a = h.pick([0.5, 1, 2]), b = h.pick([1.5, 3, 4]);
+        return { kind: 'evalx', X: isC ? h.pick(VS) : h.pick([2, 4, 5, 8, 10]), tau, times: [a * tau, b * tau], unit: isC ? 'V' : 'A', sym: isC ? 'v' : 'i', mistake: 'Typing the power as −τ/t. It is −t/τ.' }; },
+      h => { const R1 = h.pick([1, 2, 3, 4, 5, 6]), R2 = h.pick([2, 3, 4, 6, 8, 10]), V = (R1 + R2) * h.pick([1, 2, 3, 0.5]);
+        return { kind: 'dc2', V, R1, R2, L: h.pick(LH), C: h.pick([0.1, 0.2, 0.5]), values: true, text: `${dcText}<p>A switch somewhere operates at t = 0. Find i<sub>L</sub>(0<sup>+</sup>) and v<sub>C</sub>(0<sup>+</sup>).</p>`, mistake: 'Taking v<sub>C</sub> as the whole source voltage. C sits across R<sub>2</sub> only.' }; },
+      h => { const isC = h.R() < 0.6;
+        return { kind: 'ckt', ckt: { left: [Rp(isC ? h.pick(RK) * k : h.pick(RO), { sw: 'close' })], E: E(h, isC), ic: isC ? h.pick(VS) : h.pick([1, 2, 3, 4, 5]) }, ask: { atK: at(h) }, ok: okStd,
+          mistake: isC ? 'Using R alone as the time constant. τ = RC.' : 'Using τ = R/L. For an inductor τ = L/R.' }; },
+      h => { const isC = h.R() < 0.5;
+        return { kind: 'ckt', ckt: { left: [V(h.pick(VS)), S('close'), Rs(isC ? h.pick(RK) * k : h.pick(RO))], E: E(h, isC), ...(isC ? { ic: 0 } : {}) }, ask: { atK: at(h) }, ok: okStd,
+          mistake: 'Starting at the final value. Just after the switch the capacitor voltage (inductor current) is still 0.' }; },
+    ],
+    core: [
+      h => { const isC = h.R() < 0.6, R1 = isC ? h.pick(RK) * k : h.pick(RO), R2 = isC ? h.pick(RK) * k : h.pick(RO);
+        return { kind: 'ckt', de: true, ckt: { left: [V(h.pick(VS)), Rs(R1), S('open'), Rp(R2)], E: E(h, isC) }, ask: isC ? { whenK: wk(h) } : { energy: true, other: true }, ok: okStd,
+          mistake: isC ? 'Including R<sub>1</sub> in τ. It is cut off once the switch opens.' : 'Taking i<sub>L</sub>(0) through both resistors. Before t = 0 the inductor shorts R<sub>2</sub>.' }; },
+      h => { const isC = h.R() < 0.6, R1 = isC ? h.pick(RK) * k : h.pick(RO), R2 = isC ? h.pick(RK) * k : h.pick(RO);
+        return { kind: 'ckt', de: true, ckt: { left: [V(h.pick(VS)), S('close'), Rs(R1), Rp(R2)], E: E(h, isC), ...(isC ? { ic: 0 } : {}) }, ask: { atK: at(h) }, ok: okStd,
+          mistake: isC ? 'Final value = source voltage. R<sub>2</sub> forms a divider with R<sub>1</sub>.' : 'τ = L/(R<sub>1</sub> + R<sub>2</sub>). With the source killed R<sub>1</sub> and R<sub>2</sub> are in parallel.' }; },
+      h => ({ kind: 'ckt', de: true, ckt: { left: [V(h.pick(VS)), S('close'), Rs(h.pick(RO))], E: L(pickL(h)) }, ask: { other: true, atK: at(h) }, ok: okStd, mistake: 'Forgetting the minus sign when differentiating e<sup>−t/τ</sup>.' }),
+      h => { const Vs = h.pick(VS), v0 = h.pick([0.2, 0.25, 0.5, 0.75, 1.5, 2]) * Vs;
+        return { kind: 'ckt', de: true, ckt: { left: [V(Vs), S('close'), Rs(h.pick(RK) * k)], E: C(h.pick(CU) * u), ic: v0 }, ask: { other: true, whenK: wk(h) }, ok: okStd,
+          mistake: 'Writing v = V<sub>s</sub>(1 − e<sup>−t/τ</sup>). The capacitor does not start from 0 V.' }; },
+      h => ({ kind: 'ckt', de: true, ckt: { left: [V(h.pick(VS)), Rs(h.pick(RO)), S('open'), Rp(h.pick(RO))], E: L(pickL(h)) }, ask: { energy: true, atK: at(h) }, ok: okStd, mistake: 'Using the old circuit for τ. After the switch opens the inductor sees only R<sub>2</sub>.' }),
+    ],
+    app: [
+      h => { const isC = h.R() < 0.5, r = () => (isC ? h.pick(RK) * k : h.pick(RO));
+        return { kind: 'ckt', de: true, ckt: { left: isC ? [V(h.pick(VS)), Rs(r()), Rp(r(), { sw: 'close' })] : [V(h.pick(VS)), Rs(r()), Rp(r(), { sw: 'close' }), Rs(r())], E: E(h, isC) }, ask: h.R() < 0.5 ? { atK: at(h) } : { whenK: wk(h) }, ok: okStd,
+          mistake: 'Starting the curve at zero. The old circuit had already set a non-zero starting value.' }; },
+      h => { const isC = h.R() < 0.5, r = () => (isC ? h.pick(RK) * k : h.pick(RO));
+        return { kind: 'ckt', de: true, ckt: { left: [V(h.pick(VS)), Rs(r()), Rp(r(), { sw: 'open' }), Rs(r())], E: E(h, isC) }, ask: h.R() < 0.5 ? { atK: at(h) } : { whenK: wk(h) }, ok: okStd,
+          mistake: 'Keeping the removed resistor in R<sub>Th</sub>. Its branch is open after t = 0.' }; },
+      h => { const isC = h.R() < 0.6;
+        return { kind: 'ckt', de: true, ckt: isC ? { left: [V(h.pick(VS)), S([0, 1, 0]), Rs(h.pick(RK) * k), Rp(h.pick(RK) * k, { sw: [0, 0, 1] })], E: C(h.pick(CU) * u), ic: 0, t0K: h.pick([1, 2]) }
+          : { left: [V(h.pick(VS)), S([0, 1, 0]), Rs(h.pick(RO)), Rp(h.pick(RO))], E: L(pickL(h)), t0K: h.pick([1, 2]) }, ask: { at2K: h.pick([0.5, 1, 2]) }, ok: okStd,
+          mistake: 'Not restarting the clock: the second interval uses (t − t<sub>0</sub>).' }; },
+      h => { const isC = h.R() < 0.6, X0 = isC ? h.pick(VS) : h.pick([2, 4, 5, 8, 10]), r = h.pick([0.5, 0.25, 0.2, 0.1]), tm = h.pick([0.2, 0.5, 1, 2, 0.01, 0.05]), R = isC ? h.pick(RK) * k : h.pick(RO);
+        return { kind: 'measure', el: isC ? 'C' : 'L', X0, R, Xm: X0 * r, tm,
+          text: `<p>${isC ? `A capacitor charged to ${si(X0, 'V')} discharges through a ${si(R, 'Ω')} resistor. A scope shows that v has fallen to ${si(X0 * r, 'V')}` : `An inductor carrying ${si(X0, 'A')} is left in a loop with a ${si(R, 'Ω')} resistor. A current probe shows that i has fallen to ${si(X0 * r, 'A')}`} after ${si(tm, 's')}. Find τ and ${isC ? 'C' : 'L'}.</p>`,
+          mistake: 'Dividing the two readings the wrong way up. e<sup>−t/τ</sup> is the fraction LEFT, which is less than 1.' }; },
+      h => { const isC = h.R() < 0.6, Rr = () => h.pick(RO);
+        return { kind: 'ckt', de: true, ckt: { left: [I(h.pick([1, 2, 3, 4, 5])), Rp(Rr()), Rs(Rr()), Rp(Rr(), { sw: h.R() < 0.5 ? 'open' : 'close' })], E: isC ? C(h.pick([0.01, 0.02, 0.05, 0.1])) : L(pickL(h)) }, ask: { whenK: wk(h) }, ok: okStd,
+          mistake: 'Killing a current source as a wire. A dead current source is a gap.' }; },
+    ],
+    chal: [
+      h => { const Vs = h.pick([6, 9, 12, 24]), Rc = h.pick(RO), Lc = pickL(h), Ip = Vs / Rc * h.pick([0.5, 0.6, 0.75, 0.8]);
+        return { kind: 'ckt', ckt: { left: [V(Vs), S('close'), Rs(Rc, { n: { html: 'R<sub>coil</sub>', svg: 'R coil' } })], E: L(Lc) }, ask: { when: Ip, maxR: Ip }, ok: s => okStd(s) && fits3(Ip) && h.nice(Ip, 2),
+          story: `A relay coil has inductance ${si(Lc, 'H')} and resistance R<sub>coil</sub> = ${si(Rc, 'Ω')}. It is switched onto ${Vs} V at t = 0 and the relay pulls in when the coil current reaches ${si(Ip, 'A')}.`,
+          mistake: 'Using 5τ as the delay. The contacts close when the current passes the pull-in value, long before 5τ.' }; },
+      h => { const Vs = h.pick([100, 150, 200, 240, 300]), R1 = h.pick([2, 5, 6, 10]) * k, Cf = h.pick([500, 1000, 2000]) * u, R2 = h.pick([5, 10, 12, 20]);
+        return { kind: 'ckt', ckt: { left: [V(Vs), Rs(R1)], right: [Rp(R2, { n: { html: 'R<sub>lamp</sub>', svg: 'R lamp' } })], spdt: 'LR', E: C(Cf) }, ask: { peak: true, energy: true, five: true, charge5: true }, ok: okStd,
+          story: `A camera flash: in position 1 the capacitor charges from ${Vs} V through ${si(R1, 'Ω')}; in position 2 it discharges through the flash lamp, ${R2} Ω.`,
+          mistake: 'Using the charging resistor for the discharge time constant.' }; },
+      h => { const Vs = h.pick([50, 100, 110, 120]), fr = h.pick([0.5, 0.6, 0.7, 0.75, 0.8]), Cd = h.pick([0.1, 0.47, 1, 2.2, 10]) * u, td = h.pick([0.1, 0.2, 0.5, 1, 2]);
+        return { kind: 'design', V: Vs, C: Cd, Vf: Vs * fr, td,
+          text: `<p>A lamp that fires at ${si(Vs * fr, 'V')} is connected across an uncharged ${si(Cd, 'F')} capacitor, which charges from ${Vs} V through a resistor R when the switch closes at t = 0. Choose R so that the lamp fires ${si(td, 's')} after the switch closes.</p>`,
+          mistake: 'Setting τ equal to the delay. The delay is the time to reach the firing voltage, found with ln.' }; },
+      h => { const isC = h.R() < 0.6, r = () => (isC ? h.pick(RK) * k : h.pick(RO));
+        return { kind: 'ckt', de: true, ckt: { left: [V(h.pick(VS)), Rs(r()), Rp(r())], right: [V(h.pick(VS)), Rs(r())], spdt: 'LR', E: E(h, isC) }, ask: { other: true, whenK: wk(h) }, ok: okStd,
+          mistake: 'Ignoring the divider in position 1: the starting value is the Thevenin voltage, not the source voltage.' }; },
+      h => { const Rb = h.pick([2, 3, 4, 6]), Rg = h.pick([0.5, 1, 2, 5]) * k, Lc = h.pick([5, 6, 8, 10, 20]) * m;
+        return { kind: 'ckt', ckt: { left: [V(12), Rs(Rb), S('open'), Rp(Rg, { n: { html: 'R<sub>gap</sub>', svg: 'R gap' } })], E: L(Lc) }, ask: { peak: true, energy: true }, ok: okStd,
+          story: `A spark coil: ${si(Lc, 'H')} with a 12 V battery and ${Rb} Ω. When the switch opens the coil current is forced through the spark gap, modelled as ${si(Rg, 'Ω')}.`,
+          mistake: 'Expecting at most 12 V. The current keeps flowing and the large gap resistance needs a huge voltage.' }; },
+    ],
+  };
+  window.TOPIC = { kind: 'transient', title: 'RL and RC Transients', levels, method, questions, templates };
+})();
+
+</script>
+<script>
+'use strict';
+// Shared by the self-study pages (RL and RC Transients, Nodal and Mesh Analysis AC): reading typed answers, checking
+// them with hints for known mistakes, the step badges and icons, and the help modes (Watch / Guided / On my own) in
+// which the student works out one number at a time.  A page gives each question a list of "stages":
+//   { html, unit, kind: 'real' | 'cx' | 'deg', val (number, or [re, im] for 'cx'), step (index), wrong: [{ val, why }] }
+// and a reveal(n) that shows the first n steps.  Loaded before the page's shell.js, which defines $ and $$.
+
+// ---------------------------------------------------------------- reading a typed answer
+// real: 0.33, 330 ms, 330m, 1.5k, 2.4 kΩ, -24, 63.4°     complex: 4+j8, 4 + 8j, -j2, 8.94∠63.4, 8.94<63.4, 8.94@63.4
+const PFX = { G: 1e9, M: 1e6, k: 1e3, K: 1e3, m: 1e-3, u: 1e-6, 'µ': 1e-6, 'μ': 1e-6, n: 1e-9 };
+const UNITS = ['ohm', 'ohms', 'Ω', 'V', 'A', 's', 'F', 'H', 'J', 'W', 'VA', 'VAR', 'deg'];
+function parseNum(s) {
+  s = String(s).trim().replace(/[−–]/g, '-').replace(/,/g, '').replace(/\s+/g, '').replace(/°$/, '');
+  const m = /^([+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)(.*)$/.exec(s);
+  if (!m) return null;
+  const v = Number(m[1]), rest = m[2];
+  if (!rest || UNITS.includes(rest)) return v;
+  if (PFX[rest[0]] !== undefined && (rest.length === 1 || UNITS.includes(rest.slice(1)))) return v * PFX[rest[0]];
+  return null;
+}
+function parseCx(s) {
+  s = String(s).trim().replace(/[−–]/g, '-').replace(/\s+/g, '').replace(/°/g, '').replace(/(VA|VAR|[VAWΩ])$/i, '').replace(/i/g, 'j');
+  if (!s) return null;
+  const pm = /^(-?\d*\.?\d+)(?:∠|<|@|ang)(-?\d*\.?\d+)$/.exec(s);
+  if (pm) { const m = +pm[1], a = +pm[2] * Math.PI / 180; return [m * Math.cos(a), m * Math.sin(a)]; }
+  const toks = s.match(/[+-]?[^+-]+/g); if (!toks) return null;
+  let re = 0, im = 0;
+  for (const t of toks) {
+    if (t.includes('j')) { const n = t.replace('j', ''); const v = n === '' || n === '+' ? 1 : n === '-' ? -1 : Number(n); if (!Number.isFinite(v)) return null; im += v; }
+    else { const v = Number(t); if (!Number.isFinite(v)) return null; re += v; }
+  }
+  return [re, im];
+}
+const readIn = (st, s) => (st.kind === 'cx' ? parseCx(s) : parseNum(s));
+const angDiff = (a, b) => Math.abs((((a - b) % 360) + 540) % 360 - 180);
+
+// ---------------------------------------------------------------- checking it
+function isRight(st, v) {
+  if (v === null || v === undefined) return false;
+  if (st.kind === 'cx') { const [a, b] = st.val; return Math.hypot(v[0] - a, v[1] - b) <= Math.max(0.02, Math.hypot(a, b) * 0.01); }
+  if (st.kind === 'deg') return angDiff(v, st.val) <= 0.5;
+  return Math.abs(v - st.val) <= Math.max(1e-12, Math.abs(st.val) * 0.01, st.val === 0 ? 0.005 : 0);
+}
+// the hint for a wrong answer: a known mistake first, then the slips that can happen in any question
+function diagnose(st, v, all) {
+  const as = val => isRight({ ...st, val }, v);
+  for (const w of st.wrong || []) if (as(w.val)) return w.why;
+  const nearRight = val => isRight(st, val);      // a "slip" value that is really the right answer is never reported
+  const slip = (val, why) => (!nearRight(val) && as(val) ? why : null);
+  let h = null;
+  if (st.kind === 'cx') {
+    const [a, b] = st.val, m = Math.hypot(a, b);
+    if (m > 0) h = slip([a, -b], 'Right size, but the j part has the wrong sign. Check 1/j = −j, and the sign of each reactance (+j for L, −j for C).')
+      || slip([-a, -b], 'Right size, wrong sign: check the direction (tail minus head), or which end of the source is +.')
+      || slip([b, a], 'The real part and the j part are swapped.')
+      || slip([-b, a], 'Off by a factor of j: check where the j goes when you multiply or divide.')
+      || slip([b, -a], 'Off by a factor of −j: remember 1/j = −j.')
+      || (Math.abs(v[1]) < 1e-9 && Math.abs(b) > 1e-9 && Math.abs(v[0] - m) <= Math.max(0.02, m * 0.01) ? 'That is only the magnitude. Give the whole phasor: a + jb, or A∠θ.' : null);
+  } else if (st.kind === 'deg') {
+    const t = st.val;
+    h = slip(t + 180, 'Off by 180°: check which quadrant the phasor is in. When the real part is negative, add or subtract 180° from what tan⁻¹ gives.')
+      || (Math.abs(v - t * Math.PI / 180) < 0.01 && Math.abs(t) > 1 ? 'That is the angle in radians. Set your calculator to degrees (DEG).' : null)
+      || slip(90 - t, 'That is tan⁻¹(a ÷ b). The angle is tan⁻¹(b ÷ a): the j part goes on top.')
+      || slip(-t, 'Right size, wrong sign: a phasor below the real axis has a negative angle.');
+  } else if (st.val !== 0) {
+    for (const f of [1e3, 1e6, 1e9, 1e-3, 1e-6, 1e-9]) if (!h) h = slip(st.val * f, 'Right digits, wrong power of ten. Check the prefixes: k = 10³, m = 10⁻³, µ = 10⁻⁶ (kΩ × µF = ms). You can type the prefix too: 330 ms, 2.4k.');
+    h = h || slip(-st.val, 'Right size, wrong sign. Check the bracket [x(0<sup>+</sup>) − x(∞)], or which way the current flows.');
+  }
+  if (h) return h;
+  for (const o of all) if (o !== st && o.kind === st.kind && as(o.val) && !nearRight(o.val)) return `That is the value of ${o.html}. Which number does this box ask for?`;
+  return null;
+}
+
+// ---------------------------------------------------------------- step badges and icons
+// every step title of the three pages falls under one of these (test.js checks that none is left over)
+const STEP_TYPES = [
+  ['check', /^check|rising or falling|power balance/i],
+  ['setup', /^before the switch|just after|long after|after the second switching|redraw|reference node|draw the mesh|already known|spot the|phasor domain|rectangular form|how many time constants/i],
+  ['equation', /^kcl|^kvl|use the (voltage|current) source|controlling quantity|write the (response|second response|decay|charging)|put in the known/i],
+  ['algebra', /tidy|solve|back-substitute|rearrange|read the ruler|when does|make it reach/i],
+  ['answer', /value|time constant|current|voltage|polar form|energy|largest|choose|find|settl|charging time|how long|at t =/i],
+];
+const STEP_NAME = { setup: 'set-up', equation: 'equation', algebra: 'algebra', answer: 'answer', check: 'check' };
+function stepType(title) { const t = String(title).replace(/<[^>]+>/g, ''); const m = STEP_TYPES.find(([, r]) => r.test(t)); return m ? m[0] : null; }
+const ICON = {
+  setup: '<path d="M0 8h3l1.5-4 3 8 3-8 1.5 4H16"/>',
+  equation: '<path d="M3 5.5h10M3 10.5h10"/>',
+  algebra: '<path d="M3 13l1-4 7-7 3 3-7 7zM9.5 3.5l3 3"/>',
+  answer: '<circle cx="8" cy="8" r="6"/><circle cx="8" cy="8" r="2.2"/>',
+  check: '<path d="M2.5 8.5l3.5 3.5 7.5-8"/>',
+};
+const iconSVG = ty => `<svg class="sico" viewBox="0 0 16 16" aria-hidden="true">${ICON[ty]}</svg>`;
+function stepHTML(s, deCls = 'de') {
+  const lines = (s.lines || []).map(l => `<div class="line">${l.how ? `<div class="how">${l.how}</div>` : ''}${l.eq ? `<div class="eq">${l.eq}</div>` : ''}</div>`).join('');
+  const cap = h => h.replace(/^((?:<[^>]+>)*)([a-z])/, (m, t, c) => t + c.toUpperCase());
+  const ty = stepType(s.title) || 'answer';
+  return `<h3>${iconSVG(ty)}<span class="sty">${STEP_NAME[ty]}</span> ${s.title}</h3>${s.say ? `<p>${cap(s.say)}</p>` : ''}${lines}${s.note ? `<div class="note">${s.note}</div>` : ''}` +
+    (s.details ? `<details><summary>${s.details.title}</summary><div class="${deCls}">${s.details.html}</div></details>` : '');
+}
+function stepsHTML(steps, deCls) {
+  return `<ol class="steps${stg && mode === 'own' ? ' own' : ''}">${steps.map(s => `<li hidden class="t-${stepType(s.title) || 'answer'}">${stepHTML(s, deCls)}</li>`).join('')}</ol>`;
+}
+
+// ---------------------------------------------------------------- help modes
+const MODES = [{ id: 'watch', name: 'Watch', tip: 'See every step worked out for you.' },
+  { id: 'guided', name: 'Guided', tip: 'Each step tells you what to do; you work out the number.' },
+  { id: 'own', name: 'On my own', tip: 'Only the step titles: you do all the working.' }];
+let mode = 'guided', stg = null;
+try { const m = localStorage.getItem('eeeMode'); if (MODES.some(x => x.id === m)) mode = m; } catch (e) { /* storage blocked */ }
+const modeBarHTML = () => `<div class="modes"><span class="muted">How much help?</span>${MODES.map(m => `<button data-m="${m.id}" title="${m.tip}"${m.id === mode ? ' class="on"' : ''}>${m.name}</button>`).join('')}
+  <span class="muted">${MODES.find(m => m.id === mode).tip}</span></div>`;
+function bindModeBar(box, rerender) {
+  $$('.modes button', box).forEach(b => { b.onclick = () => {
+    mode = b.dataset.m; try { localStorage.setItem('eeeMode', mode); } catch (e) { /* storage blocked */ }
+    rerender();
+  }; });
+}
+
+// ---------------------------------------------------------------- one number at a time (Guided / On my own)
+// stage k asks for list[k]; the steps up to its step are "pending" (title shown, result hidden) until it is right.
+// hooks: reveal(n) shows the first n steps; restart() renders the question again; fmt(st) writes an answer.
+function stageStart(list, steps, hooks) {
+  stg = list.length && mode !== 'watch' ? { list, steps, i: 0, tries: 0, res: [], ...hooks } : null;
+  return !!stg;
+}
+const pendEnd = shown => (stg && stg.i < stg.list.length ? stg.list[stg.i].step + 1 : shown);
+// show the earned steps in full and the pending ones as titles (and, in Guided, their "how" text)
+function markSteps(shown) {
+  const li = $$('ol.steps>li'), upto = Math.max(shown, pendEnd(shown));
+  li.forEach((l, i) => { l.hidden = i >= upto; l.classList.toggle('pend', i >= shown); l.classList.toggle('new', i === shown - 1); });
+  return li;
+}
+function stepHint(st) {
+  const s = stg.steps[st.step], l = (s.lines || []).find(x => x.how);
+  return s.say || (l ? l.how : 'Look at the step title: what does it ask you to work out?');
+}
+const TYPE_TIP = { real: 'Type a number with or without a prefix and unit: 0.33, 330 ms, 2.4k, −24.', cx: 'Type rectangular form (4 + j8) or polar form (8.94∠63.4 or 8.94&lt;63.4).', deg: 'Type the angle in degrees: 63.4 or −116.6.' };
+function drawStage() {
+  const box = $('#stage'), A = stg.list, n = A.length;
+  if (stg.i >= n) {
+    const alone = stg.res.filter(r => r === 'alone').length;
+    box.innerHTML = `<b>${alone === n ? 'All done on your own <span class="ok">✓</span>' : `Done: ${alone} of ${n} on your own.`}</b>
+      <ul>${A.map((a, k) => `<li>${a.html} = ${stg.fmt(a)} &nbsp; ${stg.res[k] === 'alone' ? '<span class="ok">✓</span>' : '<span class="muted">✓ with help</span>'}</li>`).join('')}</ul>
+      ${alone < n ? '<p class="muted">Try another question and aim to get every number with no help.</p>' : ''}
+      <button id="sagain">Start this question again</button>`;
+    $('#sagain').onclick = () => stg.restart();
+    return;
+  }
+  const a = A[stg.i];
+  box.innerHTML = `<div class="sq">Number ${stg.i + 1} of ${n}: find <b>${a.html}</b></div>
+    <div class="srow"><label>${a.html} = <input id="sin" class="${a.kind}" autocomplete="off" spellcheck="false" aria-label="your answer"> ${a.unit}</label>
+      <button class="primary" id="sck">Check</button><button id="sshow" hidden>Show me this step</button></div>
+    <div id="shint"></div><div class="muted">${TYPE_TIP[a.kind || 'real']}</div>`;
+  const inp = $('#sin'), hint = $('#shint');
+  const check = () => {
+    if (!inp.value.trim()) return;
+    const v = readIn(a, inp.value);
+    if (v === null) { hint.innerHTML = `<div class="warn">That is not a number I can read. ${TYPE_TIP[a.kind || 'real']}</div>`; return; }
+    if (isRight(a, v)) { advance('alone'); return; }
+    stg.tries++;
+    const d = diagnose(a, v, A);
+    hint.innerHTML = `<div class="warn"><b>Not yet.</b> ${d || (mode === 'own' ? `Hint: ${stepHint(a)}` : 'Read what the step above tells you to do, then try once more.')}</div>`;
+    inp.style.borderColor = 'var(--bad)';
+    if (stg.tries >= 2) $('#sshow').hidden = false;
+  };
+  $('#sck').onclick = check;
+  inp.onkeydown = e => { if (e.key === 'Enter') check(); };
+  inp.oninput = () => { inp.style.borderColor = ''; };
+  $('#sshow').onclick = () => advance('help');
+}
+function advance(r) {
+  const A = stg.list, a = A[stg.i], li = $$('ol.steps>li');
+  stg.res[stg.i] = r; li[a.step].classList.add(r === 'alone' ? 'won' : 'helped');
+  stg.i++; stg.tries = 0;
+  stg.reveal(stg.i >= A.length ? li.length : a.step + 1);
+  drawStage();
+  ($('ol.steps>li.pend') || $('#stage')).scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  if ($('#sin')) $('#sin').focus({ preventScroll: true });
+}
+
+if (typeof module !== 'undefined') module.exports = { parseNum, parseCx, isRight, diagnose, stepType };
+
+</script>
+<script>
+'use strict';
+// Page shell: method view, question bank (every question open, in any order), practice generator, circuit snapshot
+// tabs that follow the solution, the response plot with a time cursor, and the two-way hover link between circuit
+// elements and equation terms. Nothing here is timed or locked.
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const TOPIC = window.TOPIC;
+let view = 'questions', cur = null, shown = 0, genLevel = TOPIC.levels[1].id, plotForced = false, vSel = null, tCur = null;
+const VIEW_NAME = { orig: 'Circuit', pre: 't < 0', zero: 't = 0⁺', post: 't → ∞', th: 'R<sub>Th</sub>', post2: 't → ∞ (2nd)', th2: 'R<sub>Th</sub> (2nd)' };
+const VIEW_TIP = { orig: 'The circuit as given', pre: 'Before the switch, settled: C is a gap, L is a wire', zero: 'The instant after the switch: C or L shown as its starting value',
+  post: 'Long after the switch, settled again', th: 'Sources killed, looking in from C or L', post2: 'Long after the second switching', th2: 'Second interval, sources killed' };
+
+// ---------------------------------------------------------------- hover: element <-> term
+let pinned = null;
+function keyOf(t) { const g = t.closest('[data-el]'); return g ? g.dataset.el : null; }
+function light(k, scope) { $$('.hl').forEach(n => n.classList.remove('hl')); if (!k || !scope) return; $$(`[data-el="${k}"]`, scope).forEach(n => n.classList.add('hl')); }
+document.addEventListener('mouseover', e => { if (pinned) return; light(keyOf(e.target), e.target.closest('.scope')); });
+document.addEventListener('mouseout', e => { if (pinned) return; if (!e.relatedTarget || !keyOf(e.relatedTarget)) light(null); });
+document.addEventListener('click', e => {
+  const k = keyOf(e.target);
+  if (!k) { if (pinned) { pinned = null; light(null); } return; }
+  if (pinned === k) { pinned = null; light(null); return; }
+  pinned = k; light(k, e.target.closest('.scope'));
+});
+
+const fmtAns = a => si(a.val, a.unit);
+
+// ---------------------------------------------------------------- one question (bank or generated)
+// typed answers, help modes and the one-number-at-a-time stages come from html_common/stage.js
+function renderQ(box, q, label) {
+  const sol = solveQ(q); cur = { q, sol, box, label }; shown = 0; plotForced = false; vSel = null; tCur = null;
+  const lvi = TOPIC.levels.findIndex(l => l.id === q.level), lv = TOPIC.levels[lvi];
+  const tryable = sol.answers;
+  const staged = stageStart(tryable, sol.steps, { reveal, restart: () => renderQ(box, q, label), fmt: fmtAns });
+  const left = `${sol.net ? `<div class="vtabs" role="tablist">${sol.views.map(v => `<button data-v="${v}" title="${VIEW_TIP[v]}">${VIEW_NAME[v]}</button>`).join('')}</div><div id="cktbox"></div><p class="hint" id="vcap"></p>` : ''}
+    ${sol.visual ? `<div id="visbox"></div>` : ''}
+    ${sol.plot ? `<div id="plotwrap"><div class="plotph" id="plotph"><button id="showplot">Show the graph now</button><span class="muted">The graph of the answer appears when the formula step is reached.</span></div>
+      <div id="plotbox" hidden></div><label class="slider" id="sl" hidden>time <input type="range" id="tsl" min="0" max="1000" value="0"> <span id="tval" class="muted"></span></label></div>` : ''}
+    ${sol.net ? '<p class="hint">Hover over (or tap) an element to light up where it appears in the working.</p>' : ''}`;
+  box.innerHTML = `<div class="qgrid scope" data-lv="${lvi}">
+    <div class="sticky"><div class="card">${left}</div></div>
+    <div class="card qcard">
+      <div class="qhead"><span class="chip" data-lv="${lvi}">${lv ? lv.name : ''}</span><h2>${label}</h2></div>
+      <div class="qtext">${sol.text}</div>
+      ${tryable.length ? modeBarHTML() : ''}
+      ${staged ? '' : tryable.length ? `<details class="try"><summary>Try it yourself first, then check your answers here</summary>
+        <div class="muted">Type a number with or without a prefix and unit: 0.33, 330 ms, 2.4k, −24.</div>
+        <div>${tryable.map((a, i) => `<label>${a.html} = <input data-i="${i}" autocomplete="off" spellcheck="false" inputmode="decimal"> ${a.unit}</label>`).join('')}
+        <button id="chk">Check</button> <span id="chkout"></span></div></details>` : ''}
+      ${staged ? '' : `<div class="ctl"><button class="primary" id="nx">Show next step</button><button id="all">Show all steps</button><button id="hide">Hide steps</button>
+        <span class="muted" id="cnt"></span></div>`}
+      ${stepsHTML(sol.steps, 'de')}
+      ${staged ? '<div class="stage" id="stage" aria-live="polite"></div>' : ''}
+      <div class="answer" id="ansbox" hidden><b>Answers:</b> ${tryable.length ? tryable.map(a => `${a.html} = <b>${fmtAns(a)}</b>`).join('; &nbsp; ') : 'see the redrawn circuit (t &lt; 0 tab).'}</div>
+      ${q.mistake ? `<div class="warn" id="mist" hidden><b>Common mistake:</b> ${q.mistake}</div>` : ''}
+      <div class="more"><button id="more">Practise more like this →</button><span class="muted">a new ${lv ? lv.name : ''} question with its own step-by-step solution</span></div>
+    </div></div>`;
+  $$('.vtabs button', box).forEach(b => { b.onclick = () => { vSel = b.dataset.v; drawView(); }; });
+  bindModeBar(box, () => renderQ(box, q, label));
+  if (!staged) {
+    $('#nx').onclick = () => reveal(shown + 1);
+    $('#all').onclick = () => reveal(sol.steps.length);
+    $('#hide').onclick = () => reveal(0);
+  }
+  $('#more').onclick = () => { genLevel = q.level; setView('practice'); gen(genLevel, newSeed()); };
+  if ($('#showplot')) $('#showplot').onclick = () => { plotForced = true; drawPlot(); };
+  const tsl = $('#tsl');
+  if (tsl) tsl.oninput = () => { tCur = plotSpan(sol.plot) * tsl.value / 1000; drawPlot(); };
+  const ck = $('#chk');
+  if (ck) ck.onclick = () => {
+    let good = 0;
+    $$('.try input', box).forEach(inp => {
+      const a = tryable[+inp.dataset.i], v = parseNum(inp.value), ok = isRight(a, v);
+      inp.style.borderColor = v === null ? (inp.value.trim() ? 'var(--bad)' : '') : ok ? 'var(--ok)' : 'var(--bad)'; if (ok) good++;
+    });
+    $('#chkout').innerHTML = good === tryable.length ? '<span class="ok">All correct ✓</span>' : `<span class="bad">${good} of ${tryable.length} correct.</span> Open the steps to see where it goes wrong (3 significant figures are enough).`;
+  };
+  reveal(0);
+  if (staged) drawStage();
+}
+
+function curViewName() {
+  if (vSel) return vSel;
+  const st = cur.sol.steps.slice(0, stg && mode === 'guided' ? Math.max(shown, pendEnd(shown)) : shown).filter(s => s.view);
+  return st.length ? st[st.length - 1].view : 'orig';
+}
+function drawView() {
+  const sol = cur.sol;
+  if (sol.net && $('#cktbox')) {
+    const v = curViewName();
+    $('#cktbox').innerHTML = svgCkt(sol.net, v, sol);
+    $$('.vtabs button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+    $('#vcap').textContent = VIEW_TIP[v] + (v !== 'orig' && v !== 'zero' && v !== 'th' && v !== 'th2' ? '. Greyed parts are cut off.' : '');
+  }
+  if (sol.visual && $('#visbox')) {
+    const st = sol.steps.slice(0, shown).filter(s => s.visual), vis = st.length ? st[st.length - 1].visual : sol.visual;
+    $('#visbox').innerHTML = rulerSVG(vis.ruler, vis.hi);
+  }
+}
+function plotVisible() {
+  const st = cur.sol.steps;
+  return plotForced || st.slice(0, shown).some(s => s.plot) || (!st.some(s => s.plot) && shown >= st.length);
+}
+function drawPlot() {
+  const sol = cur.sol;
+  if (!sol.plot || !$('#plotbox')) return;
+  const vis = plotVisible();
+  $('#plotbox').hidden = !vis; $('#sl').hidden = !vis; $('#plotph').hidden = vis;
+  if (!vis) return;
+  $('#plotbox').innerHTML = plotSVG(sol.plot, tCur);
+  $('#tval').textContent = tCur === null ? 'drag the slider, or drag on the graph' : '';
+  const svg = $('#plotbox svg');
+  const setT = e => {
+    const r = svg.getBoundingClientRect(), W = +svg.dataset.w, sc = r.width / W, x = (e.clientX - r.left) / sc;
+    const span = +svg.dataset.span, tmin = +svg.dataset.tmin, L = +svg.dataset.l, R = +svg.dataset.r;
+    tCur = Math.max(0, Math.min(span, tmin + (x - L) / (W - L - R) * (span - tmin)));
+    $('#tsl').value = Math.round(1000 * tCur / span); drawPlot();
+  };
+  let drag = false;
+  svg.onpointerdown = e => { drag = true; svg.setPointerCapture(e.pointerId); setT(e); };
+  svg.onpointermove = e => { if (drag) setT(e); };
+  svg.onpointerup = () => { drag = false; };
+}
+function reveal(n) {
+  shown = Math.max(0, Math.min($$('ol.steps>li').length, n));
+  const li = markSteps(shown);
+  if (!stg) {
+    $('#cnt').textContent = `${shown} of ${li.length} steps shown`;
+    $('#nx').disabled = shown >= li.length; $('#hide').disabled = shown === 0; $('#all').disabled = shown >= li.length;
+  }
+  $('#ansbox').hidden = shown < li.length; const m = $('#mist'); if (m) m.hidden = shown < li.length;
+  vSel = null; drawView(); drawPlot();
+  if (!stg && n > 0 && li[shown - 1] && n === shown && n !== li.length) li[shown - 1].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+// ---------------------------------------------------------------- method widgets
+function widget(name, host) {
+  if (name === 'ruler') {
+    let mode = 'decay', hi = 1;
+    const draw = () => {
+      host.innerHTML = `<div class="ctl"><button data-m="decay">Decay (what is left)</button><button data-m="grow">Growth (what is done)</button></div>${rulerSVG(mode, hi)}
+        <p class="muted">${hi ? `After ${hi}τ: ${sf(100 * Math.exp(-hi), 3)} % left, ${sf(100 - 100 * Math.exp(-hi), 3)} % done.` : 'At t = 0 nothing has changed yet.'} Click a bar.</p>`;
+      $$('button', host).forEach(b => { b.classList.toggle('on', b.dataset.m === mode); b.onclick = () => { mode = b.dataset.m; draw(); }; });
+      $$('.bar', host).forEach((b, i) => { b.style.cursor = 'pointer'; b.onclick = () => { hi = i; draw(); }; });
+    };
+    draw();
+  } else if (name === 'explore') {
+    const st = { x0: 2, xf: 10, tau: 1, t: 1 };
+    host.innerHTML = `<div class="sliders">
+      <label><span class="k1">x(0<sup>+</sup>)</span> <input type="range" id="e0" min="-10" max="20" step="1" value="2"> <b id="e0v"></b></label>
+      <label><span class="k2">x(∞)</span> <input type="range" id="ef" min="-10" max="20" step="1" value="10"> <b id="efv"></b></label>
+      <label><span class="k3">τ</span> <input type="range" id="et" min="0.2" max="3" step="0.1" value="1"> <b id="etv"></b></label>
+      <label>t <input type="range" id="ec" min="0" max="1000" value="200"> <b id="ecv"></b></label></div><div id="eplot"></div><div class="eq" id="eform"></div>`;
+    const draw = () => {
+      st.x0 = +$('#e0', host).value; st.xf = +$('#ef', host).value; st.tau = +$('#et', host).value;
+      const pm = { segs: [{ from: 0, x0: st.x0, xf: st.xf, tau: st.tau }], pre: st.x0, name: 'x', unit: 'V', marks: [] }, span = plotSpan(pm);
+      const t = span * $('#ec', host).value / 1000;
+      $('#e0v', host).textContent = st.x0 + ' V'; $('#efv', host).textContent = st.xf + ' V'; $('#etv', host).textContent = st.tau + ' s'; $('#ecv', host).textContent = sf(t, 3) + ' s';
+      $('#eplot', host).innerHTML = st.x0 === st.xf ? '<p class="muted">Start = finish: nothing changes, so there is no transient.</p>' : plotSVG(pm, t);
+      $('#eform', host).innerHTML = st.x0 === st.xf ? `x(t) = ${st.xf} V` : `x(t) = ${respH(st.x0, st.xf, st.tau)} V`;
+    };
+    $$('input', host).forEach(i => { i.oninput = draw; }); draw();
+  } else if (name === 'analogy') {
+    host.innerHTML = `<svg viewBox="0 0 640 210" class="plot" role="img" aria-label="Water tank and flywheel analogy">
+      <rect x="40" y="40" width="130" height="140" rx="6" class="tank"/><rect x="42" y="110" width="126" height="68" class="water"/><path d="M0,60 H40" class="pipe"/><text x="105" y="200" text-anchor="middle" class="tick">capacitor = tank</text>
+      <text x="105" y="30" text-anchor="middle" class="tick">level = voltage v<tspan baseline-shift="sub" font-size="12">C</tspan></text><text x="182" y="114" class="tick">level rises slowly</text>
+      <circle cx="470" cy="105" r="70" class="wheel"/><circle cx="470" cy="105" r="10" class="hub"/><path d="M470,35 V175 M400,105 H540" class="spoke"/>
+      <path d="M560,60 A90,90 0 0 1 560,150" class="act"/><path d="M553,152 l14,6 l-2,-15 z" class="acth"/>
+      <text x="470" y="200" text-anchor="middle" class="tick">inductor = heavy flywheel</text><text x="470" y="22" text-anchor="middle" class="tick">speed = current i<tspan baseline-shift="sub" font-size="12">L</tspan></text></svg>`;
+  } else if (name === 'recipe') {
+    const box = ['t &lt; 0: x(0<sup>−</sup>)', 'continuity: x(0<sup>+</sup>)', 't → ∞: x(∞)', 'R<sub>Th</sub> → τ', 'formula', 'check'];
+    host.innerHTML = `<div class="flow">${box.map((b, i) => `<span class="fbox f${i}">${b}</span>`).join('<span class="farr">→</span>')}</div>`;
+  }
+}
+function methodCkt(host, s) {
+  const net = buildNet(s.ckt), q = { kind: 'ckt', ckt: s.ckt }, sol = solveQ(q);
+  let v = 'orig';
+  const draw = () => {
+    host.innerHTML = `<div class="vtabs">${s.views.map(x => `<button data-v="${x}" title="${VIEW_TIP[x]}"${x === v ? ' class="on"' : ''}>${VIEW_NAME[x]}</button>`).join('')}</div>${svgCkt(sol.net, v, sol)}<p class="hint">${VIEW_TIP[v]}</p>`;
+    $$('button', host).forEach(b => { b.onclick = () => { v = b.dataset.v; draw(); }; });
+  };
+  void net; draw();
+}
+
+// ---------------------------------------------------------------- views
+const newSeed = () => Math.floor(Math.random() * 90000) + 10000;
+function setView(v) {
+  view = v; pinned = null;
+  $$('nav.tabs button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  const M = $('main');
+  if (v === 'method') {
+    M.innerHTML = `<div class="mgrid">${TOPIC.method.map((s, i) => `<div class="card scope"><h2>${s.title}</h2>${s.ckt ? `<div class="mc" data-i="${i}"></div>` : ''}${s.widget ? `<div class="wg" data-i="${i}"></div>` : ''}${s.html}</div>`).join('')}</div>`;
+    $$('.mc').forEach(d => methodCkt(d, TOPIC.method[+d.dataset.i]));
+    $$('.wg').forEach(d => widget(TOPIC.method[+d.dataset.i].widget, d));
+  } else if (v === 'questions') {
+    M.innerHTML = `<div class="card levels">${TOPIC.levels.map((l, li) => `<div class="level" data-lv="${li}"><div class="lname"><span class="lnum">${li + 1}</span><span>${l.name}<small>${l.blurb}</small></span></div>${TOPIC.questions.map((q, i) => [q, i]).filter(([q]) => q.level === l.id).map(([q, i]) => `<button class="qbtn" data-i="${i}">Q${i + 1} · ${q.title}</button>`).join('')}</div>`).join('')}
+      <p class="muted">Every question is open: start anywhere. They get harder from top to bottom. Each one has a "Practise more like this" button for fresh questions at the same level.</p></div><div id="qbox"></div>`;
+    $$('.qbtn').forEach(b => { b.onclick = () => openQ(+b.dataset.i); });
+    const i = cur && TOPIC.questions.indexOf(cur.q) >= 0 ? TOPIC.questions.indexOf(cur.q) : 0;
+    openQ(i, true);
+  } else {
+    M.innerHTML = `<div class="card gen"><b>Difficulty:</b> ${TOPIC.levels.map((l, li) => `<button class="lvb" data-lv="${li}" data-l="${l.id}" title="${l.blurb}">${l.name}</button>`).join('')}
+      <button class="primary" id="go">Generate question</button>
+      <span class="code" id="code"></span>
+      <span style="margin-left:auto"></span><input id="cin" placeholder="question code" aria-label="question code"><button id="cgo">Load</button></div>
+      <p class="muted">Each question is new: the circuit is chosen from the level you pick (RC or RL at random) and the values are picked so that the start, the finish and τ come out as friendly numbers. The solution is worked out step by step, the same way as in the question bank. Share the code to give a classmate the same question.</p><div id="qbox"></div>`;
+    const mark = () => $$('.lvb').forEach(b => b.classList.toggle('on', b.dataset.l === genLevel));
+    $$('.lvb').forEach(b => { b.onclick = () => { genLevel = b.dataset.l; mark(); }; });
+    mark();
+    $('#go').onclick = () => gen(genLevel, newSeed());
+    $('#cgo').onclick = () => {
+      const m = /^\s*([A-Za-z])-(\d+)\s*$/.exec($('#cin').value), lv = m && TOPIC.levels.find(l => l.code.toLowerCase() === m[1].toLowerCase());
+      if (lv) { genLevel = lv.id; mark(); gen(lv.id, +m[2]); } else $('#code').textContent = 'Code not recognised (example: C-12345)';
+    };
+    if (!cur || !cur.q.generated) gen(genLevel, newSeed(), true);
+    else renderQ($('#qbox'), cur.q, `Practice question (${TOPIC.levels.find(l => l.id === cur.q.level).name})`);
+  }
+}
+function openQ(i, quiet) {
+  const q = TOPIC.questions[i];
+  $$('.qbtn').forEach(b => b.classList.toggle('on', +b.dataset.i === i));
+  renderQ($('#qbox'), q, `Question ${i + 1}: ${q.title}`);
+  if (!quiet) $('#qbox').scrollIntoView({ block: 'start', behavior: 'smooth' });
+}
+function gen(level, seed, quiet) {
+  const lv = TOPIC.levels.find(l => l.id === level);
+  let q;
+  try { q = generate(TOPIC, level, seed); } catch (e) { $('#qbox').innerHTML = '<p class="bad">Could not make a question this time. Click Generate again.</p>'; return; }
+  genLevel = level; $$('.lvb').forEach(b => b.classList.toggle('on', b.dataset.l === level));
+  $('#code').textContent = `Code: ${lv.code}-${seed}`;
+  renderQ($('#qbox'), q, `Practice question (${lv.name})`);
+  if (!quiet) $('#qbox').scrollIntoView({ block: 'start', behavior: 'smooth' });
+}
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || !$('#nx')) return;
+  if (e.key === 'ArrowRight') reveal(shown + 1); if (e.key === 'ArrowLeft') reveal(shown - 1);
+});
+$$('nav.tabs button').forEach(b => { b.onclick = () => setView(b.dataset.v); });
+setView('questions');
+
+</script>
+</body>
+</html>
