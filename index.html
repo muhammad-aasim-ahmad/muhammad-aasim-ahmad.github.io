@@ -2,9 +2,10 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
+<script>try{const t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Circuit Analysis</title>
-<meta name="description" content="Interactive, step-by-step practice for nodal and mesh analysis, circuit theorems, phasors and RL/RC transients.">
+<meta name="description" content="Interactive, step-by-step practice for nodal and mesh analysis, circuit theorems, phasors, RL/RC transients and the Laplace transform, with self-study guides.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -54,6 +55,9 @@ a.card.blue{--c:var(--blue)}a.card.orange{--c:var(--orange)}a.card.green{--c:var
 .meta{margin:0;font-size:.88rem;color:var(--soft)}
 .btn{align-self:flex-start;margin-top:auto;display:inline-flex;align-items:center;gap:10px;padding:11px 22px;border-radius:8px;background:var(--c);color:var(--on);font-weight:700;font-size:1rem;white-space:nowrap;box-shadow:0 4px 12px color-mix(in srgb,var(--c) 30%,transparent);transition:gap .18s}
 .spacer{height:20px}
+h3.sub{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;margin:30px 0 14px;font-size:1.1rem;font-weight:800;color:var(--ink)}
+h3.sub small{font-size:.9rem;font-weight:500;color:var(--muted)}
+.badge{display:inline-block;align-self:flex-start;margin-bottom:10px;padding:2px 10px;border-radius:20px;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c);font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 a.card:hover .btn{gap:14px}
 .btn svg{width:18px;height:18px}
 
@@ -62,6 +66,8 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:18px 16px 2
 @media (max-width:1060px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero .wave{display:none}}
 @media (max-width:640px){body{font-size:16px}.wrap{padding:0 16px}.grid{grid-template-columns:1fr}a.card{padding:20px 18px 22px}.card h3{font-size:1.3rem}.icon{width:54px;height:54px}.hero .wrap{padding-top:28px;padding-bottom:30px}}
 @media (prefers-reduced-motion:reduce){a.card,.btn{transition:none}a.card:hover{transform:none}}
+#theme{margin-left:auto;font:inherit;font-size:.9rem;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:6px 14px;cursor:pointer;white-space:nowrap}
+#theme:hover{border-color:var(--soft)}
 </style>
 </head>
 <body>
@@ -69,6 +75,7 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:18px 16px 2
   <div class="wrap">
     <svg class="logo" width="46" height="20" viewBox="0 0 46 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="4" cy="10" r="3"/><path d="M7 10h6l2.5-6 4 12 4-12 4 12 2.5-6h5"/><circle cx="42" cy="10" r="3"/></svg>
     <a class="brand" href="./">Circuit Analysis</a>
+    <button id="theme" title="Switch between light and dark">◐ Light / dark</button>
   </div>
 </header>
 
@@ -76,7 +83,7 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:18px 16px 2
   <svg class="wave" viewBox="0 0 300 100" fill="none" stroke="#fff" stroke-width="2.5" aria-hidden="true"><path d="M0 50 C25 0 50 0 75 50 S125 100 150 50 S200 0 225 50 S275 100 300 50"/><path d="M0 50h300" stroke-dasharray="4 6" stroke-width="1.5"/></svg>
   <div class="wrap">
     <h1>Learn circuits, one step at a time</h1>
-    <p>Interactive, step-by-step practice for DC and AC circuits.</p>
+    <p>Interactive, step-by-step practice for DC and AC circuits, self-study guides, and the maths behind them.</p>
   </div>
 </div>
 
@@ -146,9 +153,64 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:18px 16px 2
           <span class="btn">Start transient response <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h14M11 4l6 6-6 6"/></svg></span>
         </a>
       </div>
+
+      <h3 class="sub">Self-study <small>Learn the topic from scratch, at your own pace</small></h3>
+      <div class="grid">
+        <a class="card purple" href="phasors-self-study.html">
+          <span class="badge">Self-study</span>
+          <div class="head"><h3>Phasors Self-Study</h3>
+            <svg class="icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 46h52M14 58V6"/><path d="M14 46L46 18"/><path d="M46 18l-10 2.5 7.5 7.5z" fill="currentColor"/><path d="M28 46a14 14 0 0 0-3.5-9.5"/></svg>
+          </div>
+          <p class="desc">Learn phasors, impedance, AC power and power factor correction, with interactive pictures.</p>
+          <p class="meta">4 levels · Phasors to power factor</p>
+          <div class="spacer"></div>
+          <span class="btn">Start phasors self-study <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h14M11 4l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card green" href="rl-rc-transients-self-study.html">
+          <span class="badge">Self-study</span>
+          <div class="head"><h3>RL and RC Self-Study</h3>
+            <svg class="icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="14" r="3"/><path d="M11 14l14-8"/><circle cx="30" cy="14" r="3"/><path d="M33 14h24"/><path d="M8 58V30M8 58h50"/><path d="M8 56C16 38 26 34 56 32"/></svg>
+          </div>
+          <p class="desc">Learn how capacitors and inductors behave, then solve RC and RL circuits with switch animations.</p>
+          <p class="meta">5 parts · Switch animations</p>
+          <div class="spacer"></div>
+          <span class="btn">Start transients self-study <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h14M11 4l6 6-6 6"/></svg></span>
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="group">Mathematics</h2>
+      <div class="grid">
+        <a class="card blue" href="laplace-basic.html">
+          <div class="head"><h3>Laplace Transform: Basics</h3>
+            <svg class="icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v30h22"/><path d="M5 19c4 14 9 22 21 24"/><path d="M29 32h9M34 28l4 4-4 4"/><path d="M42 32h20M54 20v24"/><path d="M45 26l6 6M51 26l-6 6"/></svg>
+          </div>
+          <p class="desc">Transform signals one term at a time: the pair table, shifts, forward and inverse.</p>
+          <p class="meta">Signals · Pair table · Shifts</p>
+          <div class="spacer"></div>
+          <span class="btn">Start Laplace basics <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h14M11 4l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card orange" href="laplace-advanced.html">
+          <div class="head"><h3>Laplace Transform: Advanced</h3>
+            <svg class="icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 32h16M10 24h8M10 40h8"/><path d="M26 32l10-12M26 32l10 12"/><path d="M42 16h16M46 10h8M46 22h8M42 44h16M46 38h8M46 50h8"/></svg>
+          </div>
+          <p class="desc">Use partial fractions, the initial and final value theorems, and solve differential equations.</p>
+          <p class="meta">Partial fractions · Differential equations</p>
+          <div class="spacer"></div>
+          <span class="btn">Start Laplace advanced <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h14M11 4l6 6-6 6"/></svg></span>
+        </a>
+      </div>
     </section>
   </div>
 </main>
 <footer>Developed by Muhammad 'Aasim Asyafi'ie bin Ahmad, 2026</footer>
+<script>
+document.getElementById('theme').onclick = () => {
+  const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  r.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('theme', r.dataset.theme); } catch (e) { }
+};
+</script>
 </body>
 </html>

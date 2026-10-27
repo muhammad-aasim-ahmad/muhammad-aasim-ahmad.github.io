@@ -1,0 +1,1210 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<script>try{const t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RL and RC Self-Study</title>
+<meta name="description" content="Learn it yourself: what a transient is, capacitors and inductors in DC steady state, then RC and RL circuits step by step, with switch animations and step-by-step worked examples.">
+<style>
+:root{--bg:#f5f6fb;--card:#fff;--ink:#1b2430;--muted:#5d6a78;--line:#dfe3ec;--wire:#2c3640;--soft:#f0f2f8;
+  --s1:#6741d9;--s2:#0c8599;--s3:#1971c2;--s4:#e8590c;--s5:#2b8a3e;--cap:#1971c2;--ind:#d9480f;--bad:#c92a2a;--hl:#fff3bf;
+  --s1t:#f3f0ff;--s2t:#e3fafc;--s3t:#e7f5ff;--s4t:#fff4e6;--s5t:#ebfbee;--warn:#fff5f5;--shadow:0 1px 2px rgba(20,30,60,.06),0 6px 20px rgba(20,30,60,.07)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11151c;--card:#1a2029;--ink:#e7ecf2;--muted:#9eabb9;--line:#2f3846;--wire:#cfd8e3;--soft:#222a35;
+  --s1:#b197fc;--s2:#3bc9db;--s3:#74c0fc;--s4:#ffa94d;--s5:#69db7c;--cap:#74c0fc;--ind:#ffa94d;--bad:#ff8787;--hl:#4a3f12;
+  --s1t:#231e3a;--s2t:#132e33;--s3t:#152a3d;--s4t:#3a2614;--s5t:#16301d;--warn:#3a1d1d;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.3)}}
+:root[data-theme="dark"]{--bg:#11151c;--card:#1a2029;--ink:#e7ecf2;--muted:#9eabb9;--line:#2f3846;--wire:#cfd8e3;--soft:#222a35;
+  --s1:#b197fc;--s2:#3bc9db;--s3:#74c0fc;--s4:#ffa94d;--s5:#69db7c;--cap:#74c0fc;--ind:#ffa94d;--bad:#ff8787;--hl:#4a3f12;
+  --s1t:#231e3a;--s2t:#132e33;--s3t:#152a3d;--s4t:#3a2614;--s5t:#16301d;--warn:#3a1d1d;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.3)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+sub,sup{line-height:0}
+kbd{font:600 .8em/1 ui-monospace,Consolas,monospace;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:2px 6px;background:var(--soft)}
+button{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 16px;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--sc,var(--s1))}
+button:disabled{opacity:.45;cursor:default}
+button.primary{background:var(--sc,var(--s1));border-color:var(--sc,var(--s1));color:#fff;font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button.primary{color:#111}}
+:root[data-theme="dark"] button.primary{color:#111}
+
+/* hero */
+.hero{background:linear-gradient(120deg,#5f3dc4 0%,#1c7ed6 45%,#0c8599 70%,#e8590c 100%);color:#fff;padding:34px 20px 30px}
+.hero .in{max-width:1080px;margin:auto;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.hero h1{margin:0;font-size:2rem;line-height:1.2}
+.hero p{margin:.4em 0 0;max-width:46em;opacity:.95}
+.hero .tag{display:inline-block;background:rgba(255,255,255,.2);border-radius:999px;padding:2px 12px;font-size:.85rem;margin-bottom:8px}
+#theme{background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.4)}
+/* contents bar */
+nav.bar{position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+#toc{max-width:1080px;margin:auto;display:flex;gap:6px;padding:8px 16px;overflow-x:auto;scrollbar-width:none}
+#toc::-webkit-scrollbar{display:none}
+.chip{display:flex;align-items:center;gap:7px;text-decoration:none;color:var(--ink);padding:5px 12px 5px 5px;border-radius:999px;white-space:nowrap;font-size:.92rem;border:1px solid transparent}
+.chip .dot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:.8rem;background:var(--sc)}
+.chip.on{background:var(--sct);border-color:var(--sc)}
+#prog{height:3px;background:linear-gradient(90deg,var(--s1),var(--s2),var(--s3),var(--s4),var(--s5));width:0}
+.s1{--sc:var(--s1);--sct:var(--s1t)}.s2{--sc:var(--s2);--sct:var(--s2t)}.s3{--sc:var(--s3);--sct:var(--s3t)}.s4{--sc:var(--s4);--sct:var(--s4t)}.s5{--sc:var(--s5);--sct:var(--s5t)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip .dot{color:#111}}
+:root[data-theme="dark"] .chip .dot{color:#111}
+
+main{max-width:1080px;margin:auto;padding:22px 16px 50px}
+section.sec{background:var(--card);border-radius:18px;box-shadow:var(--shadow);margin:0 0 30px;overflow:hidden;border-top:6px solid var(--sc)}
+.band{display:flex;gap:16px;align-items:center;padding:20px 24px;background:linear-gradient(100deg,var(--sct),transparent 85%)}
+.band .num{flex:none;width:52px;height:52px;border-radius:15px;background:var(--sc);color:#fff;display:grid;place-items:center;font-size:1.6rem;font-weight:800}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .band .num{color:#111}}
+:root[data-theme="dark"] .band .num{color:#111}
+.band small{color:var(--sc);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:.75rem}
+.band h2{margin:0;font-size:1.5rem;line-height:1.25}
+.body{padding:4px 24px 24px}
+.body h3{color:var(--sc);font-size:1.2rem;margin:1.6em 0 .4em;padding-bottom:4px;border-bottom:2px solid var(--sct)}
+.lead{font-size:1.06rem}
+.muted{color:var(--muted);font-size:.93rem}
+p{margin:.55em 0}
+
+/* maths */
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.2}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .2em}
+.fr>span:last-child{padding:0 .2em}
+.formula{background:var(--sct);border-left:5px solid var(--sc);border-radius:10px;padding:10px 16px;margin:.7em 0;font-size:1.12rem;text-align:center;overflow-x:auto}
+.formula.big{font-size:1.4rem;font-weight:600}
+.ans{background:var(--hl);border-radius:6px;padding:1px 7px;font-weight:700}
+.mline{padding:3px 0;overflow-x:auto}
+.cC{color:var(--cap)}.cL{color:var(--ind)}
+.no{color:var(--bad)}
+
+/* boxes */
+.key{display:flex;gap:12px;background:var(--sct);border:1.5px solid var(--sc);border-radius:14px;padding:12px 16px;margin:1em 0}
+.key .ki{color:var(--sc);font-size:1.4rem;line-height:1.2}
+.key ol{margin:.3em 0 0;padding-left:1.3em}
+.maths{background:var(--hl);border-radius:14px;padding:10px 16px;margin:1em 0;border:1px dashed rgba(0,0,0,.18)}
+.maths h4{margin:.2em 0 .3em;font-size:1rem}
+.maths .mi{display:inline-block;background:var(--ink);color:var(--card);border-radius:6px;padding:0 6px;font-size:.85rem;margin-right:4px}
+.maths ul{margin:.3em 0;padding-left:1.2em}
+.warnbox{background:var(--warn);border-left:5px solid var(--bad);border-radius:10px;padding:10px 14px;margin:1em 0}
+.take{border:2px dashed var(--sc);border-radius:14px;padding:10px 18px;margin:1.6em 0 .4em}
+.take h4{margin:.2em 0;color:var(--sc)}
+.take ul{list-style:none;padding:0;margin:.3em 0}
+.take li{padding:3px 0}
+.take input{accent-color:var(--sc);width:18px;height:18px;vertical-align:-3px;margin-right:6px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:.8em 0}
+.tile{background:var(--sct);border-radius:14px;padding:12px 14px}
+.tile .big{font-size:1.5rem;font-weight:800;color:var(--sc)}
+.tile p{margin:.3em 0 0;font-size:.95rem}
+.rules,.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:.8em 0}
+.rule,.fcard{border-radius:14px;padding:12px 16px;border:1.5px solid var(--line);background:var(--card)}
+.rule h4,.fcard h4{margin:.1em 0 .4em}
+.rC{border-color:var(--cap);background:linear-gradient(180deg,color-mix(in srgb,var(--cap) 9%,transparent),transparent 60%)}
+.rL{border-color:var(--ind);background:linear-gradient(180deg,color-mix(in srgb,var(--ind) 9%,transparent),transparent 60%)}
+.rC h4{color:var(--cap)}.rL h4{color:var(--ind)}
+.fcard .formula{font-size:1.02rem;padding:6px 10px}
+.rC .formula{background:color-mix(in srgb,var(--cap) 10%,transparent);border-color:var(--cap)}
+.rL .formula{background:color-mix(in srgb,var(--ind) 10%,transparent);border-color:var(--ind)}
+.rulefig{width:100%;max-width:300px;display:block;margin:4px auto}
+.try{background:var(--soft);border-radius:12px;padding:10px 14px 10px 34px}
+.try li{margin:3px 0}
+.recipe{counter-reset:r;list-style:none;padding:0}
+.recipe li{counter-increment:r;position:relative;padding:10px 14px 10px 56px;margin:8px 0;background:var(--sct);border-radius:12px}
+.recipe li::before{content:counter(r);position:absolute;left:12px;top:9px;width:32px;height:32px;border-radius:50%;background:var(--sc);color:#fff;display:grid;place-items:center;font-weight:800}
+.mist li{margin:4px 0}
+.mist li::marker{content:"✗  ";color:var(--bad)}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.summary>div{border-radius:12px;padding:10px 14px;background:var(--soft);border-top:4px solid var(--sc)}
+.summary>div:nth-child(1){border-color:var(--s2)}.summary>div:nth-child(2){border-color:var(--s1)}.summary>div:nth-child(3){border-color:var(--s3)}.summary>div:nth-child(4){border-color:var(--s5)}.summary>div:nth-child(5){border-color:var(--s4)}
+.summary h4{margin:0 0 .2em}.summary p{margin:0}
+
+/* tables */
+.tbl{border-collapse:collapse;width:100%;margin:.8em 0;font-size:.96rem;display:block;overflow-x:auto}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+.tbl th{background:var(--sct);color:var(--ink)}
+.tbl.center td,.tbl.center th{text-align:center}
+.tbl.small{font-size:.9rem;width:auto}
+.tbl tr.rowC td:first-child{border-left:4px solid var(--cap)}
+.tbl tr.rowL td:first-child{border-left:4px solid var(--ind)}
+
+/* svg: circuits and plots */
+figure{margin:.8em 0}
+figure.ckt svg{width:100%;max-width:440px;display:block;margin:auto}
+figure.plot svg{width:100%;max-width:420px;display:block;margin:auto}
+figure.plot.wide svg{max-width:620px}
+figcaption{text-align:center;color:var(--muted);font-size:.86rem;margin-top:2px}
+svg .el line,svg .el path,svg .wire,svg .blade{stroke:var(--wire);stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+svg .el.cC line,svg .el.cC path{stroke:var(--cap)}
+svg .el.cL line,svg .el.cL path{stroke:var(--ind)}
+svg .el .plate{stroke-width:3.4}
+svg .el .coil{stroke-width:2.6}
+svg .cfill{fill:var(--cap)}
+svg .src{fill:var(--card);stroke:var(--wire);stroke-width:2.2}
+svg .sign{stroke:var(--wire)!important;stroke-width:1.8!important}
+svg .term{fill:var(--card);stroke:var(--wire);stroke-width:2}
+svg .term.open{stroke:var(--cap);stroke-width:2.4}
+svg .short{stroke:var(--ind)!important;stroke-width:4.5!important}
+svg .node{fill:var(--wire)}
+svg .dead,svg .dead *{opacity:.32}
+svg text{fill:var(--ink);font:14px "Segoe UI",system-ui,sans-serif}
+svg text .it,svg .it{font-style:italic}
+svg text.lab.cC{fill:var(--cap)}svg text.lab.cL{fill:var(--ind)}
+svg text.pm{font-weight:700;font-size:15px}
+svg text.note{fill:var(--bad);font-weight:600}
+svg .cur path{stroke:var(--s5);stroke-width:2;fill:none}
+svg .cur.cC path{stroke:var(--cap)}svg .cur.cL path{stroke:var(--ind)}
+svg text.cur{fill:var(--s5)}
+svg text.big{font-size:26px;fill:var(--muted)}
+svg .grid{stroke:var(--line);stroke-width:1}
+svg .axis{stroke:var(--muted);stroke-width:1.5}
+svg .curve,svg .gcurve{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+svg .guide{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:5 4}
+svg .g63{stroke:var(--sc)}
+svg text.tick{fill:var(--muted);font-size:12px}
+svg text.alab{fill:var(--muted);font-size:12.5px;font-weight:600}
+svg text.gtxt{fill:var(--muted);font-size:11.5px}
+svg text.dtxt{font-size:12.5px;font-weight:700}
+svg text.zl{font-size:13px;font-weight:700;fill:var(--ink)}
+svg .z1{fill:var(--s2t)}svg .z2{fill:var(--s1t)}svg .z3{fill:var(--s5t)}
+svg .sw{stroke:var(--bad);stroke-width:2;stroke-dasharray:4 3}
+svg text.sw{fill:var(--muted);font-weight:700;stroke:none}
+
+/* worked examples */
+.ex{border:1.5px solid var(--sc);border-radius:16px;margin:1.2em 0;overflow:hidden}
+.extitle{margin:0;padding:10px 16px;background:var(--sc);color:#fff;font-size:1.02rem}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .extitle{color:#111}}
+:root[data-theme="dark"] .extitle{color:#111}
+.exq{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;padding:12px 16px;align-items:center}
+.tryfirst{color:var(--sc);font-weight:600;font-size:.92rem}
+.steps{list-style:none;margin:0;padding:0 16px}
+.step{border-left:4px solid var(--sc);background:var(--sct);border-radius:0 12px 12px 0;padding:10px 14px;margin:10px 0;animation:pop .35s ease}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.sh{font-weight:700;margin-bottom:4px}
+.sn{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--sc);color:#fff;font-size:.8rem;margin-right:8px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sn{color:#111}}
+:root[data-theme="dark"] .sn{color:#111}
+.sm{padding-left:32px;font-size:1.04rem}
+.why{padding-left:32px;color:var(--muted);font-size:.9rem;margin-top:4px}
+.tip{margin:8px 0 2px 32px;background:var(--hl);border-radius:10px;padding:6px 12px;font-size:.92rem}
+.tip::before{content:"√x  Maths tip: ";font-weight:700}
+.step figure{margin:.5em 0}
+.final{margin:10px 16px;padding:10px 14px;border-radius:12px;background:var(--s5t);border:1.5px solid var(--s5);animation:pop .35s ease}
+.exbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 16px 14px}
+.cnt{color:var(--muted);font-size:.9rem;margin-left:auto}
+
+/* switch-flip animation */
+.sim{border:1.5px solid var(--sc);border-radius:16px;padding:12px 14px;margin:1em 0;background:linear-gradient(180deg,var(--sct),var(--card) 40%)}
+.modes{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.modes button.on{background:var(--sc);border-color:var(--sc);color:#fff;font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .modes button.on{color:#111}}
+:root[data-theme="dark"] .modes button.on{color:#111}
+.simgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center}
+.simsvg{width:100%;display:block}
+.gsvg{width:100%;display:block}
+.simsvg .hit{fill:transparent;cursor:pointer;stroke:var(--sc);stroke-dasharray:4 4;stroke-width:1.2;opacity:.7}
+.simsvg .hit:hover{fill:color-mix(in srgb,var(--sc) 10%,transparent)}
+.simsvg .blade{stroke:var(--bad);stroke-width:3.2}
+.simsvg .edot{fill:#fab005;stroke:#e67700;stroke-width:1}
+.simsvg .field ellipse{fill:none;stroke:var(--ind);stroke-width:1.5;stroke-dasharray:3 4}
+.simsvg .glow{fill:#ffd43b}
+.simsvg text.val{font-weight:700;fill:var(--sc)}
+.gsvg .gdot{stroke:var(--card);stroke-width:2}
+.simbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.status{margin-left:auto;font-weight:700;font-size:.85rem;padding:3px 12px;border-radius:999px}
+.status.moving{background:var(--s4t);color:var(--s4)}
+.status.steady{background:var(--s5t);color:var(--s5)}
+.readout{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.93rem;margin-top:8px;padding:6px 10px;background:var(--soft);border-radius:10px;font-variant-numeric:tabular-nums}
+.insight{margin-top:8px;padding:8px 12px;border-left:4px solid var(--sc);background:var(--card);border-radius:0 10px 10px 0;min-height:2.6em}
+
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:18px 16px 28px}
+
+@media (max-width:820px){
+  .exq,.simgrid,.rules,.pair{grid-template-columns:1fr}
+  .tiles{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  body{font-size:16px}
+  .hero{padding:22px 16px}.hero h1{font-size:1.5rem}
+  main{padding:14px 10px 40px}
+  .band{padding:14px 16px}.band h2{font-size:1.2rem}.band .num{width:42px;height:42px;font-size:1.3rem}
+  .body{padding:2px 14px 18px}
+  .chip .lbl{display:none}.chip.on .lbl{display:inline}
+  .sm,.why{padding-left:0}.tip{margin-left:0}
+  .formula.big{font-size:1.15rem}
+  .cnt{margin-left:0;width:100%}
+}
+
+a.home{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;font-weight:600;font-size:.9rem;text-decoration:none;white-space:nowrap;transition:background .15s}
+a.home:hover{background:rgba(255,255,255,.26)}
+a.home:focus-visible{outline:2px solid #fff;outline-offset:2px}
+a.home svg{width:16px;height:16px}
+.hero a.home{display:flex;width:max-content;margin-bottom:12px}
+</style>
+</head>
+<body>
+<header class="hero"><div class="in"><div><a class="home" href="index.html" aria-label="Back to all topics"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 10H3M9 4l-6 6 6 6"/></svg>All topics</a>
+
+<h1>RL and RC Transients — learn it yourself</h1>
+<p>Work through the five parts in order. Each part explains one idea, lets you play with a circuit, and then walks you through examples one step at a time. Have a calculator ready.</p></div>
+<button id="theme" title="Switch between light and dark">◐ Light / dark</button></div></header>
+<nav class="bar" aria-label="Parts"><div id="toc"></div><div id="prog"></div></nav>
+<main></main>
+<footer>Developed by Muhammad 'Aasim Asyafi'ie bin Ahmad, 2026</footer>
+<script>
+// written by check.py - do not edit
+const N = {
+"dec1": "36.8",
+"gro1": "63.2",
+"e1": "0.3679",
+"dec2": "13.5",
+"gro2": "86.5",
+"e2": "0.1353",
+"dec3": "4.98",
+"gro3": "95.0",
+"e3": "0.04979",
+"dec4": "1.83",
+"gro4": "98.2",
+"e4": "0.01832",
+"dec5": "0.674",
+"gro5": "99.3",
+"e5": "0.006738",
+"e05": "0.6065",
+"d1_I_mA": "2",
+"d1_vC": "8",
+"d1_vR1": "4",
+"d1_Rt": "6",
+"d2_iL": "5",
+"d3_i0m": "2",
+"d3_vC0": "16",
+"d3_iR2p": "2",
+"d3_iCp": "−2",
+"d3_tau": "0.4",
+"d3_a": "2.5",
+"g1_v": "5.89",
+"d4_i0": "2",
+"d4_vR2m": "8",
+"d4_vR1p": "4",
+"d4_vLp": "8",
+"d4_iinf": "6",
+"d4_tau": "0.5",
+"d4_a": "2",
+"g2_A": "−4",
+"g2_i": "4.53",
+"g2_4e": "1.472",
+"rc1_tau": "1",
+"rc1_v2": "10.4",
+"rc1_1me2": "0.8647",
+"rc1_I0_mA": "1.2",
+"rc1_i2_mA": "0.162",
+"rc1_5tau": "5",
+"rc2_tau": "0.2",
+"rc2_tau_ms": "200",
+"rc2_a": "5",
+"rc2_v": "12.1",
+"rc2_I0_mA": "5",
+"rc2_ratio": "0.25",
+"rc2_ln": "−1.386",
+"rc2_t5": "0.277",
+"rc2_t5_ms": "277",
+"rl1_tau": "0.4",
+"rl1_a": "2.5",
+"rl1_iinf": "2",
+"rl1_i": "1.26",
+"rl1_1me1": "0.6321",
+"rl1_vL": "3.68",
+"rl1_vR": "6.32",
+"rl1_5tau": "2",
+"rl2_tau": "0.005",
+"rl2_tau_ms": "5",
+"rl2_a": "200",
+"rl2_i": "0.406",
+"rl2_vR0": "18",
+"rl2_vR": "2.44",
+"w_r_i_mA": "0.6"
+};
+
+'use strict';
+// Drawing helpers for the self-study page: maths snippets, circuit symbols (SVG strings) and static response plots.
+
+// ---------------------------------------------------------------- maths snippets
+const fr = (a, b) => `<span class="fr"><span>${a}</span><span>${b}</span></span>`;
+const ex = s => `<i>e</i><sup>${s}</sup>`;
+const V = (n, s) => `<i>${n}</i>${s ? `<sub>${s}</sub>` : ''}`;           // V('v','C') -> v_C
+const vC = V('v', 'C'), iC = V('i', 'C'), vL = V('v', 'L'), iL = V('i', 'L'), vR = V('v', 'R'), iR = V('i', 'R');
+const TAU = '<i>τ</i>';
+const t0m = '0<sup>−</sup>', t0p = '0<sup>+</sup>', INF = '∞';
+const box = s => `<span class="ans">${s}</span>`;
+
+// inside SVG text: italic letter with a subscript (no HTML tags allowed there)
+const sb = (n, s) => `<tspan class="it">${n}</tspan><tspan dy="4" font-size="72%">${s}</tspan><tspan dy="-4">​</tspan>`;
+
+// ---------------------------------------------------------------- circuit symbols
+// two(kind, x1, y1, x2, y2, o): a two-terminal element between two points, drawn along the x axis and rotated.
+// kinds: R C L V (voltage source, first point is +) SWo SWc (switch open / closed) OPEN SHORT W
+// o: { lab: 'R₁ = 2 kΩ' or [line1, line2], side: 1 | -1, off: px, cls: extra class, pm: true (+/− beside it), id }
+function two(kind, x1, y1, x2, y2, o = {}) {
+  const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy), ang = Math.atan2(dy, dx) * 180 / Math.PI;
+  const b = o.body || (kind === 'V' ? 40 : kind === 'C' ? 12 : 48), s = (len - b) / 2, e = s + b, m = len / 2;
+  let g = '';
+  const lead = (a, c) => `<line x1="${a}" y1="0" x2="${c}" y2="0"/>`;
+  switch (kind) {
+    case 'R': {
+      let p = `M${s} 0`; const n = 6, w = b / n;
+      for (let k = 0; k < n; k++) p += ` L${s + w * (k + 0.5)} ${k % 2 ? 8 : -8}`;
+      p += ` L${e} 0`;
+      g = lead(0, s) + `<path d="${p}"/>` + lead(e, len); break;
+    }
+    case 'C':
+      g = lead(0, s) + lead(e, len) + `<rect class="cfill" ${o.id ? `data-k="${o.id}"` : ''} x="${s}" y="-14" width="${b}" height="28" opacity="0"/>`
+        + `<line class="plate" x1="${s}" y1="-15" x2="${s}" y2="15"/><line class="plate" x1="${e}" y1="-15" x2="${e}" y2="15"/>`; break;
+    case 'L': {
+      let p = `M${s} 0`; const n = 4, w = b / n;
+      for (let k = 0; k < n; k++) p += ` a${w / 2} ${w / 2} 0 0 1 ${w} 0`;
+      g = lead(0, s) + `<path class="coil" ${o.id ? `data-k="${o.id}"` : ''} d="${p}"/>` + lead(e, len); break;
+    }
+    case 'V':
+      g = lead(0, s) + lead(e, len) + `<circle class="src" cx="${m}" cy="0" r="${b / 2}"/>`
+        + `<path class="sign" d="M${s + 7} -5v10M${s + 2} 0h10M${e - 12} -5v10"/>`;
+      break;     // '+' near the first point, '−' near the second (drawn across the axis so it reads after rotation)
+    case 'SWo':
+      g = lead(0, s) + lead(e, len) + `<circle class="term" cx="${s}" cy="0" r="3"/><circle class="term" cx="${e}" cy="0" r="3"/>`
+        + `<line x1="${s}" y1="0" x2="${e - 4}" y2="-20"/>`; break;
+    case 'SWc':
+      g = lead(0, s) + lead(e, len) + `<circle class="term" cx="${s}" cy="0" r="3"/><circle class="term" cx="${e}" cy="0" r="3"/>`
+        + `<line x1="${s}" y1="0" x2="${e}" y2="-3"/>`; break;
+    case 'OPEN':
+      g = lead(0, s) + lead(e, len) + `<circle class="term open" cx="${s}" cy="0" r="4"/><circle class="term open" cx="${e}" cy="0" r="4"/>`; break;
+    case 'SHORT':
+      g = `<line class="short" x1="0" y1="0" x2="${len}" y2="0"/>`; break;
+    default:
+      g = lead(0, len);
+  }
+  let out = `<g class="el el-${kind} ${o.cls || ''}" transform="translate(${x1} ${y1}) rotate(${ang})">${g}</g>`;
+  if (o.lab) out += label(x1, y1, x2, y2, o);
+  return out;
+}
+function label(x1, y1, x2, y2, o) {
+  const len = Math.hypot(x2 - x1, y2 - y1), side = o.side || 1, off = o.off || 24;
+  const nx = -(y2 - y1) / len * side, ny = (x2 - x1) / len * side;
+  const mx = (x1 + x2) / 2 + nx * off, my = (y1 + y2) / 2 + ny * off;
+  const lines = Array.isArray(o.lab) ? o.lab : [o.lab];
+  const anc = Math.abs(nx) < 0.3 ? 'middle' : nx > 0 ? 'start' : 'end';
+  const y0 = my - (lines.length - 1) * 8 + (Math.abs(nx) < 0.3 ? 5 : 5);
+  let t = lines.map((l, k) => `<tspan x="${mx}" y="${y0 + k * 17}">${l}</tspan>`).join('');
+  let s = `<text class="lab ${o.lcls || ''}" text-anchor="${anc}">${t}</text>`;
+  if (o.pm) {          // + at the first end, − at the second end, on the label side
+    const px = (k) => x1 + (x2 - x1) * k + nx * 13, py = (k) => y1 + (y2 - y1) * k + ny * 13 + 5;
+    s += `<text class="pm" x="${px(0.18)}" y="${py(0.18)}" text-anchor="middle">+</text><text class="pm" x="${px(0.82)}" y="${py(0.82)}" text-anchor="middle">−</text>`;
+  }
+  return s;
+}
+const wire = (...p) => `<polyline class="wire" points="${p.map(q => q.join(',')).join(' ')}"/>`;
+const node = (x, y) => `<circle class="node" cx="${x}" cy="${y}" r="3.5"/>`;
+const txt = (x, y, s, cls = '', anc = 'middle') => `<text class="${cls}" x="${x}" y="${y}" text-anchor="${anc}">${s}</text>`;
+function arrow(x, y, dir, lab, cls = 'cur') {        // small current arrow: dir 'r' 'l' 'u' 'd'
+  const r = { r: 0, d: 90, l: 180, u: 270 }[dir];
+  const lx = dir === 'r' || dir === 'l' ? x : x + 12, ly = dir === 'r' || dir === 'l' ? y - 10 : y + 4;
+  return `<g class="${cls}" transform="translate(${x} ${y}) rotate(${r})"><path d="M-9 0H7M2 -5L8 0L2 5"/></g>`
+    + (lab ? `<text class="lab ${cls}" x="${lx}" y="${ly}" text-anchor="${dir === 'r' || dir === 'l' ? 'middle' : 'start'}">${lab}</text>` : '');
+}
+const fig = (w, h, inner, cap) => `<figure class="ckt"><svg viewBox="0 0 ${w + 30} ${h}" role="img" aria-label="${(cap || 'circuit').replace(/<[^>]+>/g, '')}"><g transform="translate(30 0)">${inner}</g></svg>${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
+
+// ---------------------------------------------------------------- static response plots
+// plot({ f, tmax, ymin, ymax, yt: [[value,label]], tt: [[t,label]], ylab, tlab, col, guide: [[y,label]], dots: [[t,y,label]] })
+function plot(o) {
+  const W = 360, H = 210, L = 52, R = 14, T = 16, B = 40, pw = W - L - R, ph = H - T - B;
+  const X = t => L + t / o.tmax * pw, Y = y => T + (o.ymax - y) / (o.ymax - o.ymin) * ph;
+  let s = '';
+  for (const [t, l] of o.tt || []) s += `<line class="grid" x1="${X(t)}" y1="${T}" x2="${X(t)}" y2="${T + ph}"/><text class="tick" x="${X(t)}" y="${T + ph + 16}" text-anchor="middle">${l}</text>`;
+  for (const [y, l] of o.yt || []) s += `<line class="grid" x1="${L}" y1="${Y(y)}" x2="${L + pw}" y2="${Y(y)}"/><text class="tick" x="${L - 6}" y="${Y(y) + 4}" text-anchor="end">${l}</text>`;
+  for (const [y, l] of o.guide || []) s += `<line class="guide" x1="${L}" y1="${Y(y)}" x2="${L + pw}" y2="${Y(y)}"/><text class="gtxt" x="${L + pw - 4}" y="${Y(y) - 5}" text-anchor="end">${l}</text>`;
+  s += `<line class="axis" x1="${L}" y1="${T}" x2="${L}" y2="${T + ph}"/><line class="axis" x1="${L}" y1="${Y(Math.max(0, o.ymin))}" x2="${L + pw}" y2="${Y(Math.max(0, o.ymin))}"/>`;
+  let p = ''; for (let k = 0; k <= 160; k++) { const t = o.tmax * k / 160; p += `${k ? 'L' : 'M'}${X(t).toFixed(1)} ${Y(o.f(t)).toFixed(1)}`; }
+  s += `<path class="curve" style="stroke:${o.col}" d="${p}"/>`;
+  for (const [t, y, l] of o.dots || []) {        // label below-right of a rising curve, above-right of a falling one (the empty side)
+    const up = o.f(t + o.tmax / 100) > o.f(t);
+    s += `<circle cx="${X(t)}" cy="${Y(y)}" r="4.5" style="fill:${o.col}"/><text class="dtxt" x="${X(t) + 9}" y="${Y(y) + (up ? 19 : -9)}">${l}</text>`;
+  }
+  s += `<text class="alab" x="${L + pw}" y="${H - 4}" text-anchor="end">${o.tlab || 't (s)'}</text><text class="alab" x="8" y="${T - 4}">${o.ylab}</text>`;
+  return `<figure class="plot"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="graph of ${o.ylab.replace(/<[^>]+>/g, '')}">${s}</svg>${o.cap ? `<figcaption>${o.cap}</figcaption>` : ''}</figure>`;
+}
+
+'use strict';
+// Circuit figures used by the worked examples.  Each returns an SVG <figure>; a state argument redraws the same
+// circuit as it looks before / after switching or with C replaced by an open circuit and L by a short circuit.
+
+const CAPC = 'cC', INDC = 'cL';
+
+// D1 - capacitor in DC steady state.  dc = true: C drawn as an open circuit.
+function figD1(dc) {
+  const T = 40, B = 160;
+  let s = two('V', 40, T, 40, B, { lab: ['12 V'], side: 1, off: 26 })
+    + two('R', 40, T, 190, T, { lab: 'R₁ = 2 kΩ', side: 1, off: 24 })
+    + two('R', 190, T, 190, B, { lab: ['R₂', '4 kΩ'], side: 1, off: 22 })
+    + wire([190, T], [320, T]) + wire([40, B], [320, B]) + node(190, T) + node(190, B)
+    + two(dc ? 'OPEN' : 'C', 320, T, 320, B, { lab: dc ? ['open', 'circuit'] : ['C', '10 µF'], side: -1, off: 22, cls: CAPC, lcls: CAPC })
+    + label(320, T, 320, B, { lab: sb('v', 'C'), side: 1, off: 26, pm: true, lcls: CAPC });
+  if (dc) s += arrow(115, T - 14, 'r', 'I') + arrow(262, T - 14, 'r', sb('i', 'C') + ' = 0', 'cur ' + CAPC);
+  return fig(390, 190, s, dc ? 'DC steady state: the capacitor becomes an open circuit' : 'Example D1');
+}
+
+// D2 - inductor in DC steady state.  dc = true: L drawn as a short circuit.
+function figD2(dc) {
+  const T = 40, B = 160;
+  let s = two('V', 40, T, 40, B, { lab: ['10 V'], side: 1, off: 26 })
+    + two('R', 40, T, 190, T, { lab: 'R₁ = 2 Ω', side: 1, off: 24 })
+    + two('R', 190, T, 190, B, { lab: ['R₂', '3 Ω'], side: 1, off: 22 })
+    + wire([190, T], [320, T]) + wire([40, B], [320, B]) + node(190, T) + node(190, B)
+    + two(dc ? 'SHORT' : 'L', 320, T, 320, B, { lab: dc ? ['short', 'circuit'] : ['L', '0.5 H'], side: -1, off: 22, cls: INDC, lcls: INDC });
+  if (dc) s += arrow(115, T - 14, 'r', sb('i', 'L'), 'cur ' + INDC) + txt(204, 112, sb('i', 'R2') + ' = 0', 'lab note', 'start');
+  else s += arrow(320, T + 22, 'd', sb('i', 'L'), 'cur ' + INDC);
+  return fig(390, 190, s, dc ? 'DC steady state: the inductor becomes a short circuit' : 'Example D2');
+}
+
+// D3 - switch opens at t = 0.  st: 'orig' | 'before' (t < 0, C open) | 'after' (t > 0)
+function figD3(st) {
+  const T = 50, B = 170, after = st === 'after', dead = after ? 'dead' : '';
+  let s = two('V', 40, T, 40, B, { lab: ['24 V'], side: 1, off: 26, cls: dead, lcls: dead })
+    + two(after ? 'SWo' : 'SWc', 40, T, 120, T, { lab: st === 'orig' ? 'opens at t = 0' : after ? 'open' : 'closed', side: -1, off: 32 })
+    + two('R', 120, T, 220, T, { lab: 'R₁ = 4 Ω', side: 1, off: 24, cls: dead, lcls: dead })
+    + two('R', 220, T, 220, B, { lab: ['R₂', '8 Ω'], side: 1, off: 22 })
+    + wire([220, T], [330, T]) + wire([220, B], [330, B]) + `<g class="${dead}">${wire([40, B], [220, B])}</g>` + node(220, T) + node(220, B)
+    + two(st === 'before' ? 'OPEN' : 'C', 330, T, 330, B, { lab: st === 'before' ? ['open', 'circuit'] : ['C', '0.05 F'], side: -1, off: 22, cls: CAPC, lcls: CAPC })
+    + label(330, T, 330, B, { lab: sb('v', 'C'), side: 1, off: 26, pm: true, lcls: CAPC });
+  if (st === 'before') s += arrow(170, T - 16, 'r', 'I');
+  if (after) s += arrow(220, T + 22, 'd', '', 'cur') + txt(232, T + 30, sb('i', 'R2'), 'lab cur', 'start') + arrow(330, T + 22, 'd', '', 'cur ' + CAPC) + txt(344, T + 30, sb('i', 'C'), 'lab ' + CAPC, 'start');
+  return fig(400, 200, s, { orig: 'Example D3: the switch has been closed for a long time and opens at t = 0', before: 't &lt; 0 (switch closed, DC steady state): C is an open circuit', after: 't &gt; 0: switch open; the source and R₁ are cut off (faded)' }[st]);
+}
+
+// D4 - switch across R2 closes at t = 0.  st: 'orig' | 'before' (t < 0, L short) | 'after' (t > 0) | 'inf' (t -> inf, L short)
+function figD4(st) {
+  const T = 84, B = 204, Y = 42, closed = st === 'after' || st === 'inf', short = st === 'before' || st === 'inf';
+  let s = two('V', 40, T, 40, B, { lab: ['12 V'], side: 1, off: 26 })
+    + two('R', 40, T, 160, T, { lab: 'R₁ = 2 Ω', side: 1, off: 24 })
+    + two('R', 160, T, 270, T, { lab: 'R₂ = 4 Ω', side: 1, off: 24, cls: closed ? 'dead' : '', lcls: closed ? 'dead' : '' })
+    + wire([160, T], [160, Y]) + wire([270, Y], [270, T])
+    + two(closed ? 'SWc' : 'SWo', 160, Y, 270, Y, { lab: st === 'orig' ? 'closes at t = 0' : closed ? 'closed' : 'open', side: -1, off: 34 })
+    + wire([270, T], [340, T]) + wire([40, B], [340, B]) + node(160, T) + node(270, T)
+    + two(short ? 'SHORT' : 'L', 340, T, 340, B, { lab: short ? ['short', 'circuit'] : ['L', '1 H'], side: -1, off: 22, cls: INDC, lcls: INDC })
+    + label(340, T, 340, B, { lab: sb('v', 'L'), side: 1, off: 26, pm: !short, lcls: INDC });
+  s += arrow(100, T - 16, 'r', sb('i', 'L'), 'cur ' + INDC);
+  return fig(410, 230, s, { orig: 'Example D4: the switch has been open for a long time and closes at t = 0', before: 't &lt; 0 (switch open, DC steady state): L is a short circuit', after: 't &gt; 0: the closed switch shorts out R₂ (faded)', inf: 't → ∞: new DC steady state, L is a short circuit again' }[st]);
+}
+
+// RC1 - charging
+function figRC1() {
+  const T = 50, B = 170;
+  const s = two('V', 40, T, 40, B, { lab: ['12 V'], side: 1, off: 26 })
+    + two('SWo', 40, T, 130, T, { lab: 'closes at t = 0', side: -1, off: 32 })
+    + two('R', 130, T, 250, T, { lab: 'R = 10 kΩ', side: 1, off: 24 })
+    + wire([250, T], [320, T]) + wire([40, B], [320, B])
+    + two('C', 320, T, 320, B, { lab: ['C', '100 µF'], side: -1, off: 22, cls: CAPC, lcls: CAPC })
+    + label(320, T, 320, B, { lab: sb('v', 'C'), side: 1, off: 26, pm: true, lcls: CAPC }) + arrow(190, T - 16, 'r', 'i');
+  return fig(400, 200, s, 'Example RC1: the capacitor is uncharged before the switch closes');
+}
+// RC2 - discharging
+function figRC2() {
+  const T = 50, B = 170;
+  const s = two('C', 60, T, 60, B, { lab: ['C', '50 µF'], side: 1, off: 22, cls: CAPC, lcls: CAPC })
+    + label(60, T, 60, B, { lab: sb('v', 'C'), side: -1, off: 26, pm: true, lcls: CAPC })
+    + two('SWo', 60, T, 170, T, { lab: 'closes at t = 0', side: -1, off: 32 })
+    + wire([170, T], [270, T]) + wire([60, B], [270, B])
+    + two('R', 270, T, 270, B, { lab: ['R', '4 kΩ'], side: -1, off: 22 }) + arrow(222, T - 16, 'r', 'i');
+  return fig(360, 200, s, 'Example RC2: the capacitor holds 20 V before the switch closes');
+}
+// RL1 - growth
+function figRL1() {
+  const T = 50, B = 170;
+  const s = two('V', 40, T, 40, B, { lab: ['10 V'], side: 1, off: 26 })
+    + two('SWo', 40, T, 130, T, { lab: 'closes at t = 0', side: -1, off: 32 })
+    + two('R', 130, T, 250, T, { lab: 'R = 5 Ω', side: 1, off: 24 })
+    + wire([250, T], [320, T]) + wire([40, B], [320, B])
+    + two('L', 320, T, 320, B, { lab: ['L', '2 H'], side: -1, off: 22, cls: INDC, lcls: INDC })
+    + label(320, T, 320, B, { lab: sb('v', 'L'), side: 1, off: 26, pm: true, lcls: INDC }) + arrow(190, T - 16, 'r', sb('i', 'L'), 'cur ' + INDC);
+  return fig(400, 200, s, 'Example RL1: no current flows before the switch closes');
+}
+// RL2 - decay
+function figRL2() {
+  const T = 50, B = 170;
+  const s = two('L', 60, T, 60, B, { lab: ['L', '30 mH'], side: 1, off: 22, cls: INDC, lcls: INDC })
+    + wire([60, T], [250, T]) + wire([60, B], [250, B])
+    + two('R', 250, T, 250, B, { lab: ['R', '6 Ω'], side: -1, off: 22 })
+    + label(250, T, 250, B, { lab: sb('v', 'R'), side: 1, off: 24, pm: true })
+    + arrow(155, T - 16, 'r', sb('i', 'L') + '(0) = 3 A', 'cur ' + INDC);
+  return fig(340, 200, s, 'Example RL2: for t &gt; 0 the inductor (carrying 3 A at t = 0) is left with only the resistor');
+}
+
+// Small symbol pictures for the two DC rules
+function figRule(kind) {
+  const c = kind === 'C' ? CAPC : INDC;
+  const s = two(kind, 20, 40, 120, 40, { cls: c }) + txt(150, 46, '→', 'big')
+    + two(kind === 'C' ? 'OPEN' : 'SHORT', 180, 40, 280, 40, { cls: c });
+  return `<svg class="rulefig" viewBox="0 0 300 80" role="img" aria-label="${kind === 'C' ? 'capacitor becomes open circuit' : 'inductor becomes short circuit'}">${s}</svg>`;
+}
+
+'use strict';
+// Worked examples (step-reveal).  Every number comes from N (nums.js, written by check.py).
+// step: { h: heading, m: [maths lines], why: one-line reason, fig, tip: maths-reminder html }
+
+const kOhm = 'kΩ', uF = 'µF';
+const EX = {};
+
+// ================================================================ Section 2 - DC steady state
+EX.D1 = {
+  title: 'Example D1 · Capacitor in a DC circuit',
+  q: `The circuit below has been connected for a long time. Find the current <i>I</i> from the source, the capacitor voltage ${vC} and the capacitor current ${iC}.`,
+  fig: figD1(false),
+  steps: [
+    { h: 'Replace C by an open circuit', m: [`DC steady state &nbsp;⇒&nbsp; ${iC} = 0`, `so the capacitor is an <b>open circuit</b>`], fig: figD1(true),
+      why: 'Nothing changes in DC steady state, so no current flows into the capacitor.' },
+    { h: 'Find the current I', m: [`R₁ and R₂ now carry the same current, so they are in series:`, `<i>R</i><sub>T</sub> = <i>R</i>₁ + <i>R</i>₂ = 2 kΩ + 4 kΩ = ${N.d1_Rt} kΩ`,
+      `<i>I</i> = ${fr('<i>V</i><sub>s</sub>', '<i>R</i><sub>T</sub>')} = ${fr('12 V', N.d1_Rt + ' kΩ')} = ${N.d1_I_mA} mA`],
+      why: 'Ohm\'s law for the whole loop.', tip: `12 ÷ 6 kΩ = 12 ÷ 6000 = 0.002 A = 2 mA. A short cut: <b>V ÷ kΩ gives mA</b>.` },
+    { h: `Find ${vC}`, m: [`C is connected across R₂ (same two nodes), so ${vC} = <i>v</i><sub>R2</sub>`, `${vC} = <i>I</i> × <i>R</i>₂ = ${N.d1_I_mA} mA × 4 kΩ = ${N.d1_vC} V`],
+      why: 'Elements in parallel share the same voltage.', tip: `mA × kΩ = V, because 10<sup>−3</sup> × 10<sup>3</sup> = 1.` },
+    { h: 'Check with KVL', m: [`<i>v</i><sub>R1</sub> = ${N.d1_I_mA} mA × 2 kΩ = ${N.d1_vR1} V`, `<i>v</i><sub>R1</sub> + ${vC} = ${N.d1_vR1} V + ${N.d1_vC} V = 12 V ✓`],
+      why: 'The voltages round the loop must add up to the source voltage.' },
+  ],
+  ans: `<i>I</i> = ${N.d1_I_mA} mA, &nbsp; ${vC} = ${N.d1_vC} V, &nbsp; ${iC} = 0`,
+};
+
+EX.D2 = {
+  title: 'Example D2 · Inductor in a DC circuit',
+  q: `The circuit below has been connected for a long time. Find the inductor current ${iL}, the inductor voltage ${vL} and the current in R₂.`,
+  fig: figD2(false),
+  steps: [
+    { h: 'Replace L by a short circuit', m: [`DC steady state &nbsp;⇒&nbsp; ${vL} = 0`, `so the inductor is a <b>short circuit</b> (a plain wire)`], fig: figD2(true),
+      why: 'The current is not changing, so there is no voltage across the inductor.' },
+    { h: 'What happens to R₂?', m: [`R₂ is connected across the short circuit, so <i>v</i><sub>R2</sub> = 0`, `<i>i</i><sub>R2</sub> = ${fr('<i>v</i><sub>R2</sub>', '<i>R</i>₂')} = ${fr('0', '3 Ω')} = 0`],
+      why: 'A short circuit "steals" all the current from anything in parallel with it.' },
+    { h: `Find ${iL}`, m: [`Only R₁ limits the current:`, `${iL} = ${fr('<i>V</i><sub>s</sub>', '<i>R</i>₁')} = ${fr('10 V', '2 Ω')} = ${N.d2_iL} A`], why: 'Ohm\'s law on R₁ (it has the full 10 V across it, since v<sub>L</sub> = 0).' },
+  ],
+  ans: `${iL} = ${N.d2_iL} A, &nbsp; ${vL} = 0, &nbsp; <i>i</i><sub>R2</sub> = 0`,
+};
+
+EX.D3 = {
+  title: 'Example D3 · Capacitor: before and after a switch',
+  q: `The switch has been <b>closed for a long time</b> and <b>opens at t = 0</b>. Find (a) ${vC}(${t0m}) and ${iC}(${t0m}); (b) ${vC}(${t0p}), the current in R₂ at ${t0p} and ${iC}(${t0p}); (c) ${vC}(∞).`,
+  fig: figD3('orig'),
+  steps: [
+    { h: `(a) Draw the circuit for t &lt; 0`, m: [`Switch closed, DC steady state ⇒ C is an open circuit`], fig: figD3('before'), why: 'Before the switch moves the circuit has settled, so the DC rule applies.' },
+    { h: `(a) Find ${vC}(${t0m}) and ${iC}(${t0m})`, m: [`<i>I</i> = ${fr('24 V', '4 Ω + 8 Ω')} = ${fr('24 V', '12 Ω')} = ${N.d3_i0m} A`,
+      `${vC}(${t0m}) = <i>v</i><sub>R2</sub> = <i>I</i> × <i>R</i>₂ = ${N.d3_i0m} A × 8 Ω = ${N.d3_vC0} V`, `${iC}(${t0m}) = 0 &nbsp;(open circuit)`],
+      why: 'Same method as Example D1: series current, then the voltage across R₂.' },
+    { h: `(b) Carry ${vC} across the switching instant`, m: [`${vC}(${t0p}) = ${vC}(${t0m}) = ${N.d3_vC0} V`], why: 'A capacitor voltage cannot jump.' },
+    { h: '(b) Draw the circuit for t &gt; 0', m: [`The open switch cuts off the source and R₁. C and R₂ are left on their own.`, `At ${t0p} the capacitor behaves like a ${N.d3_vC0} V battery.`], fig: figD3('after'),
+      why: 'Only what is still connected to C matters after switching.' },
+    { h: `(b) Current in R₂ at ${t0p}`, m: [`<i>i</i><sub>R2</sub>(${t0p}) = ${fr(`${vC}(${t0p})`, '<i>R</i>₂')} = ${fr(N.d3_vC0 + ' V', '8 Ω')} = ${N.d3_iR2p} A`], why: 'R₂ has the capacitor voltage across it.' },
+    { h: `(b) Find ${iC}(${t0p}) with KCL`, m: [`KCL at the top node: ${iC} + <i>i</i><sub>R2</sub> = 0`, `${iC}(${t0p}) = −<i>i</i><sub>R2</sub>(${t0p}) = ${N.d3_iCp} A`],
+      why: 'The current leaving through R₂ must come out of the capacitor.', tip: `The minus sign means the current really flows <b>upwards</b>, out of the + plate: the capacitor is now acting as the source. ${iC} jumped from 0 to ${N.d3_iCp} A — that is allowed; only ${vC} must not jump.` },
+    { h: `(c) Find ${vC}(∞)`, m: [`For t &gt; 0 there is no source. The capacitor slowly loses its energy in R₂.`, `In the end nothing flows: ${iC} = 0, <i>i</i><sub>R2</sub> = 0 ⇒ ${vC}(∞) = 0`], why: 'With no source, every voltage and current dies away to zero.' },
+  ],
+  ans: `(a) ${vC}(${t0m}) = ${N.d3_vC0} V, ${iC}(${t0m}) = 0 &nbsp; (b) ${vC}(${t0p}) = ${N.d3_vC0} V, <i>i</i><sub>R2</sub>(${t0p}) = ${N.d3_iR2p} A, ${iC}(${t0p}) = ${N.d3_iCp} A &nbsp; (c) ${vC}(∞) = 0. &nbsp;We finish this circuit in Section 5.`,
+};
+
+EX.D4 = {
+  title: 'Example D4 · Inductor: before and after a switch',
+  q: `The switch has been <b>open for a long time</b> and <b>closes at t = 0</b>, shorting out R₂. Find (a) ${iL}(${t0m}) and ${vL}(${t0m}); (b) ${iL}(${t0p}) and ${vL}(${t0p}); (c) ${iL}(∞).`,
+  fig: figD4('orig'),
+  steps: [
+    { h: '(a) Draw the circuit for t &lt; 0', m: [`Switch open, DC steady state ⇒ L is a short circuit`], fig: figD4('before'), why: 'Before switching the circuit has settled, so the DC rule applies.' },
+    { h: `(a) Find ${iL}(${t0m}) and ${vL}(${t0m})`, m: [`R₁ and R₂ are in series: ${iL}(${t0m}) = ${fr('12 V', '2 Ω + 4 Ω')} = ${fr('12 V', '6 Ω')} = ${N.d4_i0} A`, `${vL}(${t0m}) = 0 &nbsp;(short circuit)`],
+      why: 'Ohm\'s law for the loop.' },
+    { h: `(b) Carry ${iL} across the switching instant`, m: [`${iL}(${t0p}) = ${iL}(${t0m}) = ${N.d4_i0} A`], why: 'An inductor current cannot jump.' },
+    { h: '(b) Draw the circuit for t &gt; 0', m: [`The closed switch is a wire across R₂, so R₂ carries no current. The loop is 12 V, R₁ and L.`], fig: figD4('after'), why: 'Current always takes the zero-resistance path.' },
+    { h: `(b) Find ${vL}(${t0p}) with KVL`, m: [`<i>v</i><sub>R1</sub>(${t0p}) = ${iL}(${t0p}) × <i>R</i>₁ = ${N.d4_i0} A × 2 Ω = ${N.d4_vR1p} V`, `KVL: 12 = <i>v</i><sub>R1</sub> + ${vL}`, `${vL}(${t0p}) = 12 − ${N.d4_vR1p} = ${N.d4_vLp} V`],
+      why: 'The source voltage is shared between R₁ and L.', tip: `${vL} jumped from 0 to ${N.d4_vLp} V — that is allowed; only ${iL} must not jump.` },
+    { h: `(c) Find ${iL}(∞)`, m: [`Long after switching: DC steady state again ⇒ L is a short circuit`, `${iL}(∞) = ${fr('12 V', '2 Ω')} = ${N.d4_iinf} A`], fig: figD4('inf'), why: 'Only R₁ is left to limit the current.' },
+  ],
+  ans: `(a) ${iL}(${t0m}) = ${N.d4_i0} A, ${vL}(${t0m}) = 0 &nbsp; (b) ${iL}(${t0p}) = ${N.d4_i0} A, ${vL}(${t0p}) = ${N.d4_vLp} V &nbsp; (c) ${iL}(∞) = ${N.d4_iinf} A. &nbsp;We finish this circuit in Section 5.`,
+};
+
+// ================================================================ Section 3 - RC
+EX.RC1 = {
+  title: 'Example RC1 · Charging a capacitor',
+  q: `The capacitor is uncharged. The switch closes at t = 0. Find (a) the time constant ${TAU}; (b) ${vC}(t) and <i>i</i>(t); (c) ${vC} at t = 2 s; (d) roughly how long the capacitor takes to charge fully.`,
+  fig: figRC1(),
+  steps: [
+    { h: '(a) Time constant', m: [`${TAU} = <i>RC</i> = 10 kΩ × 100 µF`, `= (10 × 10<sup>3</sup>) × (100 × 10<sup>−6</sup>)`, `= 1000 × 10<sup>−3</sup> = ${N.rc1_tau} s`],
+      why: 'For an RC circuit, τ = R × C.', tip: `Multiply the numbers (10 × 100 = 1000) and the powers of ten separately (10<sup>3</sup> × 10<sup>−6</sup> = 10<sup>3−6</sup> = 10<sup>−3</sup>).` },
+    { h: `(b) Write ${vC}(t)`, m: [`Charging formula: ${vC}(t) = <i>V</i><sub>s</sub>(1 − ${ex('−t/τ')})`, `${vC}(t) = 12(1 − ${ex('−t/1')})`, `${vC}(t) = 12(1 − ${ex('−t')}) V`],
+      why: 'Put <i>V</i><sub>s</sub> = 12 V and τ = 1 s into the charging formula.' },
+    { h: '(b) Write i(t)', m: [`<i>i</i>(t) = ${fr('<i>V</i><sub>s</sub>', '<i>R</i>')} ${ex('−t/τ')}, &nbsp; ${fr('<i>V</i><sub>s</sub>', '<i>R</i>')} = ${fr('12 V', '10 kΩ')} = ${N.rc1_I0_mA} mA`, `<i>i</i>(t) = ${N.rc1_I0_mA}${ex('−t')} mA`],
+      why: 'At t = 0⁺ the empty capacitor has 0 V across it, so all 12 V is across R: the current starts at 12/10k.' },
+    { h: `(c) ${vC} at t = 2 s`, m: [`${vC}(2) = 12(1 − ${ex('−2')})`, `${ex('−2')} = ${N.e2} &nbsp;(calculator)`, `1 − ${N.e2} = ${N.rc1_1me2}`, `${vC}(2) = 12 × ${N.rc1_1me2} = ${box(N.rc1_v2 + ' V')}`],
+      why: 'Substitute t = 2, then work from the inside of the bracket outwards.', tip: `Casio: <kbd>SHIFT</kbd> <kbd>ln</kbd> gives <i>e</i><sup>□</sup>; then type <kbd>(−)</kbd> <kbd>2</kbd> <kbd>=</kbd> → 0.1353. Keep 4 figures in the middle of a calculation and round only the final answer.` },
+    { h: '(d) Time to charge fully', m: [`After 5${TAU} the capacitor is ${N.gro5} % charged — we call that "fully charged".`, `5${TAU} = 5 × ${N.rc1_tau} s = ${N.rc1_5tau} s`], why: 'The 5τ rule of thumb.' },
+  ],
+  ans: `(a) ${TAU} = ${N.rc1_tau} s &nbsp; (b) ${vC}(t) = 12(1 − ${ex('−t')}) V, <i>i</i>(t) = ${N.rc1_I0_mA}${ex('−t')} mA &nbsp; (c) ${N.rc1_v2} V &nbsp; (d) about ${N.rc1_5tau} s`,
+  plot: () => plot({ f: t => 12 * (1 - Math.exp(-t)), tmax: 6, ymin: 0, ymax: 13, yt: [[0, '0'], [6, '6'], [12, '12']], tt: [0, 1, 2, 3, 4, 5, 6].map(k => [k, k + '']), ylab: sb('v', 'C') + ' (V)', col: 'var(--cap)',
+    guide: [[12, 'final value 12 V']], dots: [[2, 12 * (1 - Math.exp(-2)), N.rc1_v2 + ' V at 2 s']], cap: 'Sketch of the answer: it rises fast at first, then levels off at 12 V' }),
+};
+
+EX.RC2 = {
+  title: 'Example RC2 · Discharging a capacitor',
+  q: `A 50 µF capacitor charged to 20 V is connected to a 4 kΩ resistor at t = 0. Find (a) ${TAU}; (b) ${vC}(t) and <i>i</i>(t); (c) ${vC} at t = 0.1 s; (d) the time at which ${vC} has fallen to 5 V.`,
+  fig: figRC2(),
+  steps: [
+    { h: '(a) Time constant', m: [`${TAU} = <i>RC</i> = 4 kΩ × 50 µF = (4 × 10<sup>3</sup>)(50 × 10<sup>−6</sup>)`, `= 200 × 10<sup>−3</sup> = ${N.rc2_tau} s &nbsp;(= ${N.rc2_tau_ms} ms)`], why: 'τ = R × C.' },
+    { h: `(b) Write ${vC}(t)`, m: [`Discharging formula: ${vC}(t) = <i>V</i>₀ ${ex('−t/τ')}`, `${vC}(t) = 20 ${ex('−t/0.2')}`, `${fr('t', '0.2')} = ${N.rc2_a}t &nbsp; ⇒ &nbsp; ${vC}(t) = 20 ${ex('−' + N.rc2_a + 't')} V`],
+      why: 'V₀ = 20 V is the starting voltage.', tip: `Dividing by 0.2 is the same as multiplying by 5, because ${fr('1', '0.2')} = 5. Writing ${ex('−5t')} instead of ${ex('−t/0.2')} is common in the textbook.` },
+    { h: '(b) Write i(t)', m: [`<i>i</i>(t) = ${fr(`${vC}(t)`, '<i>R</i>')} = ${fr('20', '4 kΩ')} ${ex('−5t')} = ${N.rc2_I0_mA} ${ex('−5t')} mA`], why: 'The resistor has the capacitor voltage across it, so Ohm\'s law gives the current.' },
+    { h: `(c) ${vC} at t = 0.1 s`, m: [`exponent: −5 × 0.1 = −0.5`, `${ex('−0.5')} = ${N.e05}`, `${vC}(0.1) = 20 × ${N.e05} = ${box(N.rc2_v + ' V')}`], why: 'Always work out the exponent first, then e to that power.' },
+    { h: '(d) When does vC = 5 V?', m: [`5 = 20 ${ex('−5t')}`, `÷ 20: &nbsp; ${ex('−5t')} = ${fr('5', '20')} = ${N.rc2_ratio}`, `take ln of both sides: &nbsp; −5t = ln(${N.rc2_ratio}) = ${N.rc2_ln}`, `t = ${fr(N.rc2_ln.replace('−', ''), '5')} = ${box(N.rc2_t5 + ' s')} &nbsp;(${N.rc2_t5_ms} ms)`],
+      why: 'Get the e-term on its own, then use ln to bring the exponent down.', tip: `<b>ln undoes e:</b> ln(${ex('a')}) = a. So ln(${ex('−5t')}) = −5t. Both sides are negative (−5t and −1.386), so the minus signs cancel.` },
+  ],
+  ans: `(a) ${N.rc2_tau} s &nbsp; (b) ${vC} = 20${ex('−5t')} V, <i>i</i> = ${N.rc2_I0_mA}${ex('−5t')} mA &nbsp; (c) ${N.rc2_v} V &nbsp; (d) ${N.rc2_t5} s`,
+  plot: () => plot({ f: t => 20 * Math.exp(-5 * t), tmax: 1.2, ymin: 0, ymax: 22, yt: [[0, '0'], [5, '5'], [10, '10'], [20, '20']], tt: [0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2].map(k => [k, k.toFixed(1)]), ylab: sb('v', 'C') + ' (V)', col: 'var(--cap)',
+    dots: [[0.1, 20 * Math.exp(-0.5), N.rc2_v + ' V'], [-Math.log(0.25) / 5, 5, N.rc2_t5 + ' s']], cap: 'Sketch: starts at 20 V and decays towards 0' }),
+};
+
+// ================================================================ Section 4 - RL
+EX.RL1 = {
+  title: 'Example RL1 · Current growing in an inductor',
+  q: `No current flows before the switch closes at t = 0. Find (a) ${TAU}; (b) ${iL}(t) and ${vL}(t); (c) ${iL} and ${vL} at t = 0.4 s; (d) how long the current takes to reach its final value.`,
+  fig: figRL1(),
+  steps: [
+    { h: '(a) Time constant', m: [`${TAU} = ${fr('<i>L</i>', '<i>R</i>')} = ${fr('2 H', '5 Ω')} = ${N.rl1_tau} s`], why: 'For an RL circuit, τ = L ÷ R (not L × R).' },
+    { h: '(b) Final current', m: [`As t → ∞ the inductor is a short circuit:`, `${iL}(∞) = ${fr('<i>V</i><sub>s</sub>', '<i>R</i>')} = ${fr('10 V', '5 Ω')} = ${N.rl1_iinf} A`], why: 'DC steady state rule from Section 2.' },
+    { h: `(b) Write ${iL}(t) and ${vL}(t)`, m: [`Growth formula: ${iL}(t) = ${fr('<i>V</i><sub>s</sub>', '<i>R</i>')}(1 − ${ex('−t/τ')}) = ${N.rl1_iinf}(1 − ${ex('−t/0.4')})`, `${fr('1', '0.4')} = ${N.rl1_a} &nbsp; ⇒ &nbsp; ${iL}(t) = ${N.rl1_iinf}(1 − ${ex('−' + N.rl1_a + 't')}) A`, `${vL}(t) = <i>V</i><sub>s</sub>${ex('−t/τ')} = 10${ex('−' + N.rl1_a + 't')} V`],
+      why: 'At t = 0⁺ the current is still 0, so there is no voltage on R and the full 10 V appears across L.' },
+    { h: '(c) Values at t = 0.4 s', m: [`exponent: −2.5 × 0.4 = −1 &nbsp; (t = 0.4 s is exactly 1${TAU})`, `${ex('−1')} = ${N.e1}`, `${iL} = 2(1 − ${N.e1}) = 2 × ${N.rl1_1me1} = ${box(N.rl1_i + ' A')}`, `${vL} = 10 × ${N.e1} = ${box(N.rl1_vL + ' V')}`],
+      why: 'After one time constant the current has done 63.2 % of its change.' },
+    { h: 'Check with KVL', m: [`${vR} = 5 Ω × ${N.rl1_i} A = ${N.rl1_vR} V`, `${vR} + ${vL} = ${N.rl1_vR} + ${N.rl1_vL} = 10 V ✓`], why: 'The source voltage is shared between R and L at every instant.' },
+    { h: '(d) Time to reach the final value', m: [`5${TAU} = 5 × ${N.rl1_tau} s = ${N.rl1_5tau} s`], why: 'The 5τ rule works for RL circuits too.' },
+  ],
+  ans: `(a) ${N.rl1_tau} s &nbsp; (b) ${iL} = 2(1 − ${ex('−2.5t')}) A, ${vL} = 10${ex('−2.5t')} V &nbsp; (c) ${N.rl1_i} A, ${N.rl1_vL} V &nbsp; (d) about ${N.rl1_5tau} s`,
+  plot: () => plot({ f: t => 2 * (1 - Math.exp(-2.5 * t)), tmax: 2.4, ymin: 0, ymax: 2.2, yt: [[0, '0'], [1, '1'], [2, '2']], tt: [0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.4].map(k => [k, k.toFixed(1)]), ylab: sb('i', 'L') + ' (A)', col: 'var(--ind)',
+    guide: [[2, 'final value 2 A']], dots: [[0.4, 2 * (1 - Math.exp(-1)), N.rl1_i + ' A at 1τ']], cap: 'Sketch: the same shape as a charging capacitor' }),
+};
+
+EX.RL2 = {
+  title: 'Example RL2 · Current dying away in an inductor',
+  q: `A 30 mH inductor carries 3 A. At t = 0 the source is removed and the inductor is left connected to a 6 Ω resistor. Find (a) ${TAU}; (b) ${iL}(t); (c) ${iL} at t = 10 ms; (d) the resistor voltage ${vR}(t).`,
+  fig: figRL2(),
+  steps: [
+    { h: '(a) Time constant', m: [`${TAU} = ${fr('<i>L</i>', '<i>R</i>')} = ${fr('30 mH', '6 Ω')} = ${fr('30 × 10<sup>−3</sup>', '6')}`, `= 5 × 10<sup>−3</sup> s = ${N.rl2_tau_ms} ms`], why: 'τ = L ÷ R.', tip: 'mH ÷ Ω gives ms.' },
+    { h: `(b) Write ${iL}(t)`, m: [`Decay formula: ${iL}(t) = <i>I</i>₀${ex('−t/τ')} = 3${ex('−t/0.005')}`, `${fr('1', '0.005')} = ${N.rl2_a} &nbsp; ⇒ &nbsp; ${iL}(t) = 3${ex('−' + N.rl2_a + 't')} A`], why: 'I₀ = 3 A is the current at t = 0⁺ (it cannot jump).' },
+    { h: '(c) Value at t = 10 ms', m: [`t = 10 ms = 0.01 s; &nbsp; exponent: −200 × 0.01 = −2`, `${ex('−2')} = ${N.e2}`, `${iL} = 3 × ${N.e2} = ${box(N.rl2_i + ' A')}`],
+      why: 'Convert ms to s before multiplying by 200.', tip: `Quick check: 10 ms = 2${TAU}, and after 2${TAU} only ${N.dec2} % is left. 13.5 % of 3 A ≈ 0.4 A ✓` },
+    { h: `(d) Write ${vR}(t)`, m: [`${vR} = ${iL} × <i>R</i> = 3${ex('−200t')} × 6 = ${N.rl2_vR0}${ex('−200t')} V`, `at 10 ms: ${vR} = ${N.rl2_vR0} × ${N.e2} = ${N.rl2_vR} V`], why: 'Ohm\'s law on the resistor.',
+      tip: `By KVL ${vL} = −${vR}: the inductor voltage is negative because the inductor is now acting as the source that pushes the current round.` },
+  ],
+  ans: `(a) ${N.rl2_tau_ms} ms &nbsp; (b) ${iL} = 3${ex('−200t')} A &nbsp; (c) ${N.rl2_i} A &nbsp; (d) ${vR} = ${N.rl2_vR0}${ex('−200t')} V`,
+  plot: () => plot({ f: t => 3 * Math.exp(-t / 5), tmax: 25, ymin: 0, ymax: 3.3, yt: [[0, '0'], [1, '1'], [2, '2'], [3, '3']], tt: [0, 5, 10, 15, 20, 25].map(k => [k, k + '']), tlab: 't (ms)', ylab: sb('i', 'L') + ' (A)', col: 'var(--ind)',
+    dots: [[10, 3 * Math.exp(-2), N.rl2_i + ' A at 10 ms']], cap: 'Sketch: the same shape as a discharging capacitor' }),
+};
+
+// ================================================================ Section 5 - one recipe
+EX.G1 = {
+  title: 'Example G1 · Finish Example D3 (RC)',
+  q: `Go back to Example D3 (24 V, R₁ = 4 Ω, R₂ = 8 Ω, C = 0.05 F, switch opens at t = 0). Find ${vC}(t) for t &gt; 0 and its value at t = 0.4 s.`,
+  fig: figD3('orig'),
+  steps: [
+    { h: 'Step 1 · Initial value', m: [`From Example D3: ${vC}(${t0p}) = ${N.d3_vC0} V`], why: 'Found from the t < 0 circuit and the "no jump" rule.' },
+    { h: 'Step 2 · Final value', m: [`From Example D3: ${vC}(∞) = 0`], why: 'No source is left for t > 0.' },
+    { h: 'Step 3 · Time constant', m: [`For t &gt; 0 the capacitor sees only R₂ (look at the t &gt; 0 circuit):`, `${TAU} = <i>R</i>₂<i>C</i> = 8 Ω × 0.05 F = ${N.d3_tau} s`], fig: figD3('after'), why: 'Use the resistance connected to C after the switch has moved.' },
+    { h: 'Step 4 · Substitute', m: [`${vC}(t) = ${vC}(∞) + [${vC}(${t0p}) − ${vC}(∞)] ${ex('−t/τ')}`, `= 0 + [${N.d3_vC0} − 0] ${ex('−t/0.4')}`, `= ${N.d3_vC0}${ex('−' + N.d3_a + 't')} V`], why: '1 ÷ 0.4 = 2.5.' },
+    { h: 'Value at t = 0.4 s', m: [`exponent: −2.5 × 0.4 = −1`, `${vC}(0.4) = ${N.d3_vC0} × ${N.e1} = ${box(N.g1_v + ' V')}`], why: '0.4 s is one time constant, so 36.8 % of 16 V is left.' },
+  ],
+  ans: `${vC}(t) = ${N.d3_vC0}${ex('−2.5t')} V; &nbsp; ${vC}(0.4 s) = ${N.g1_v} V`,
+  plot: () => plot({ f: t => 16 * Math.exp(-2.5 * t), tmax: 2.4, ymin: 0, ymax: 18, yt: [[0, '0'], [8, '8'], [16, '16']], tt: [0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.4].map(k => [k, k.toFixed(1)]), ylab: sb('v', 'C') + ' (V)', col: 'var(--cap)',
+    dots: [[0.4, 16 * Math.exp(-1), N.g1_v + ' V at 1τ']], cap: 'Sketch of <i>v</i><sub>C</sub>(t) for t > 0' }),
+};
+
+EX.G2 = {
+  title: 'Example G2 · Finish Example D4 (RL)',
+  q: `Go back to Example D4 (12 V, R₁ = 2 Ω, R₂ = 4 Ω, L = 1 H, switch closes at t = 0). Find ${iL}(t) and ${vL}(t) for t &gt; 0, and ${iL} at t = 0.5 s.`,
+  fig: figD4('orig'),
+  steps: [
+    { h: 'Step 1 · Initial value', m: [`From Example D4: ${iL}(${t0p}) = ${N.d4_i0} A`], why: 'Inductor current cannot jump.' },
+    { h: 'Step 2 · Final value', m: [`From Example D4: ${iL}(∞) = ${N.d4_iinf} A`], why: 'L is a short circuit again in the new steady state.' },
+    { h: 'Step 3 · Time constant', m: [`For t &gt; 0, R₂ is shorted out, so the inductor sees only R₁:`, `${TAU} = ${fr('<i>L</i>', '<i>R</i>₁')} = ${fr('1 H', '2 Ω')} = ${N.d4_tau} s`], fig: figD4('after'), why: 'Use the resistance connected to L after the switch has moved.' },
+    { h: 'Step 4 · Substitute', m: [`${iL}(t) = ${iL}(∞) + [${iL}(${t0p}) − ${iL}(∞)] ${ex('−t/τ')}`, `= ${N.d4_iinf} + [${N.d4_i0} − ${N.d4_iinf}] ${ex('−t/0.5')}`, `= ${N.d4_iinf} + (${N.g2_A})${ex('−' + N.d4_a + 't')}`, `= ${N.d4_iinf} − 4${ex('−2t')} A`],
+      why: 'Work out the bracket first: 2 − 6 = −4.', tip: 'Plus a negative number is the same as minus: 6 + (−4)e<sup>−2t</sup> = 6 − 4e<sup>−2t</sup>.' },
+    { h: `${iL} at t = 0.5 s`, m: [`exponent: −2 × 0.5 = −1, &nbsp; ${ex('−1')} = ${N.e1}`, `4 × ${N.e1} = ${N.g2_4e}`, `${iL}(0.5) = 6 − ${N.g2_4e} = ${box(N.g2_i + ' A')}`], why: 'Multiply before you subtract.' },
+    { h: `The same recipe for ${vL}(t)`, m: [`From D4: ${vL}(${t0p}) = ${N.d4_vLp} V, &nbsp; ${vL}(∞) = 0, &nbsp; ${TAU} = ${N.d4_tau} s (same circuit, same ${TAU})`, `${vL}(t) = 0 + [${N.d4_vLp} − 0]${ex('−2t')} = ${N.d4_vLp}${ex('−2t')} V`],
+      why: 'Every voltage and current in a first-order circuit has the same τ.' },
+  ],
+  ans: `${iL}(t) = 6 − 4${ex('−2t')} A, &nbsp; ${vL}(t) = 8${ex('−2t')} V, &nbsp; ${iL}(0.5 s) = ${N.g2_i} A`,
+  plot: () => plot({ f: t => 6 - 4 * Math.exp(-2 * t), tmax: 3, ymin: 0, ymax: 6.6, yt: [[0, '0'], [2, '2'], [4, '4'], [6, '6']], tt: [0, 0.5, 1, 1.5, 2, 2.5, 3].map(k => [k, k + '']), ylab: sb('i', 'L') + ' (A)', col: 'var(--ind)',
+    guide: [[6, 'final value 6 A']], dots: [[0, 2, 'starts at 2 A'], [0.5, 6 - 4 * Math.exp(-1), N.g2_i + ' A']], cap: 'Sketch: the current starts at 2 A (not 0) and rises to 6 A' }),
+};
+
+'use strict';
+// Page text, section by section.  <div data-ex="ID"> is filled with a step-reveal example from EX,
+// <div data-sim="..."> with a switch-flip animation (app.js).
+
+const reminder = (title, body) => `<aside class="maths"><h4><span class="mi">√x</span> Maths reminder · ${title}</h4>${body}</aside>`;
+const key = (body) => `<div class="key"><span class="ki">★</span><div>${body}</div></div>`;
+const takeaway = (items) => `<div class="take"><h4>Before you move on, make sure you can…</h4><ul>${items.map(s => `<li><label><input type="checkbox"> ${s}</label></li>`).join('')}</ul></div>`;
+
+// timeline picture for Section 1
+function timeline() {
+  const X = t => 60 + t * 50, Y = v => 150 - v * 7.8;
+  let p = `M${X(-1)} ${Y(2)} L${X(1.6)} ${Y(2)}`;
+  for (let k = 0; k <= 80; k++) { const t = 1.6 + k * 0.07; p += ` L${X(t).toFixed(1)} ${Y(12 - 10 * Math.exp(-(t - 1.6) / 0.9)).toFixed(1)}`; }
+  return `<figure class="plot wide"><svg viewBox="0 0 520 200" role="img" aria-label="timeline: steady state, switch, transient, new steady state">
+  <rect class="z1" x="${X(-1)}" y="20" width="${X(1.6) - X(-1)}" height="140"/><rect class="z2" x="${X(1.6)}" y="20" width="${X(6.2) - X(1.6)}" height="140"/><rect class="z3" x="${X(6.2)}" y="20" width="${X(8.6) - X(6.2)}" height="140"/>
+  <line class="axis" x1="${X(-1)}" y1="150" x2="${X(8.6)}" y2="150"/><line class="sw" x1="${X(1.6)}" y1="14" x2="${X(1.6)}" y2="160"/>
+  <path class="curve" style="stroke:var(--s1)" d="${p}"/>
+  <text class="zl" x="${(X(-1) + X(1.6)) / 2}" y="38" text-anchor="middle">old steady state</text>
+  <text class="zl" x="${(X(1.6) + X(6.2)) / 2}" y="38" text-anchor="middle">TRANSIENT (changing)</text>
+  <text class="zl" x="${(X(6.2) + X(8.6)) / 2}" y="38" text-anchor="middle">new steady state</text>
+  <text class="tick" x="${X(1.6)}" y="178" text-anchor="middle">switch moves (t = 0)</text>
+  <text class="tick" x="${X(1.6) - 14}" y="196" text-anchor="end">t = 0⁻</text><text class="tick" x="${X(1.6) + 14}" y="196" text-anchor="start">t = 0⁺</text>
+  <text class="tick" x="${X(8.2)}" y="178" text-anchor="middle">t → ∞</text></svg>
+  <figcaption>Every switching problem has the same three parts</figcaption></figure>`;
+}
+
+const SECTIONS = [
+// ======================================================================================== 1
+{ id: 's1', n: 1, short: 'What is a transient?', title: 'What is transient analysis?', html: () => `
+<p class="lead">Until now every circuit you solved had been switched on for a long time, so nothing in it was changing. That is called the <b>steady state</b>. Real circuits are switched on, switched off and switched over all the time. This section is about what happens in the short time <i>just after</i> a switch moves.</p>
+
+<h3>1.1 A switch moves — what happens next?</h3>
+<p>We always call the moment the switch moves <b>t = 0</b>. Before it, the circuit sits in one steady state. Long after it, the circuit sits in a new steady state. In between, the voltages and currents are moving from their old values to their new values. That in-between part is the <b>transient</b>.</p>
+${timeline()}
+${key('<b>Transient analysis</b> means finding how the voltages and currents change with time, from the moment a switch moves until the circuit settles in its new steady state.')}
+
+<h3>1.2 Three moments you must know</h3>
+<div class="tiles">
+  <div class="tile"><div class="big">t = 0<sup>−</sup></div><p>"Zero minus": the instant <b>just before</b> the switch moves. The circuit is still in its old steady state.</p></div>
+  <div class="tile"><div class="big">t = 0<sup>+</sup></div><p>"Zero plus": the instant <b>just after</b> the switch moves. The new circuit has started, but nothing has had time to change slowly yet.</p></div>
+  <div class="tile"><div class="big">t → ∞</div><p>"t tends to infinity": a <b>long time after</b> switching. The transient is over and the circuit is in its new steady state.</p></div>
+</div>
+
+<h3>1.3 Who causes a transient?</h3>
+<p>Only components that <b>store energy</b> can cause a transient. Compare the three passive components:</p>
+<table class="tbl">
+<tr><th>Component</th><th>Equation (just remember it)</th><th>Stores energy?</th><th>What it does when a switch moves</th></tr>
+<tr><td>Resistor R</td><td><i>v</i> = <i>iR</i></td><td>No</td><td>Its voltage and current change <b>instantly</b>. No transient.</td></tr>
+<tr class="rowC"><td>Capacitor C</td><td>${iC} = <i>C</i> ${fr('d' + vC, 'dt')}</td><td>Yes, ½<i>C</i>${vC}<sup>2</sup></td><td>Its <b>voltage</b> ${vC} cannot jump; it changes smoothly.</td></tr>
+<tr class="rowL"><td>Inductor L</td><td>${vL} = <i>L</i> ${fr('d' + iL, 'dt')}</td><td>Yes, ½<i>L</i>${iL}<sup>2</sup></td><td>Its <b>current</b> ${iL} cannot jump; it changes smoothly.</td></tr>
+</table>
+<p class="muted">Why can ${vC} not jump? A sudden jump would make d${vC}/dt infinite, which would need an infinite current. Why can ${iL} not jump? It would need an infinite voltage. Real circuits cannot supply either, so the change takes time.</p>
+
+<h3>1.4 See it happen</h3>
+<p>Choose a load, then press <b>Flip the switch</b>. Watch the moving dots (the current) and the graphs. Try all three loads.</p>
+<div data-sim="multi"></div>
+<ul class="try">
+  <li><b>Resistor only:</b> the current jumps straight to its new value. No transient at all.</li>
+  <li><b>Resistor + capacitor:</b> the current jumps, but ${vC} climbs slowly. When the switch goes back to B, the dots run <i>backwards</i> — the capacitor pushes the charge back.</li>
+  <li><b>Resistor + inductor:</b> ${iL} grows slowly. When the switch goes back to B, the dots keep going the <i>same way</i> — the inductor will not let its current stop suddenly.</li>
+  <li>Flip the switch back <i>half-way</i> through a transient: the new curve starts from wherever the old one had reached.</li>
+</ul>
+
+<h3>1.5 Words you will meet</h3>
+<table class="tbl">
+<tr><td><b>First-order circuit</b></td><td>A circuit with one capacitor or one inductor (plus resistors and sources). RC and RL circuits are first-order.</td></tr>
+<tr><td><b>Steady-state response</b></td><td>What is left a long time after switching (the t → ∞ value).</td></tr>
+<tr><td><b>Transient response</b></td><td>The temporary part that dies away with time.</td></tr>
+<tr><td><b>Source-free (natural) response</b></td><td>The source is removed; the stored energy drains away through the resistor (discharging C, decaying current in L).</td></tr>
+<tr><td><b>Step response</b></td><td>A DC source is suddenly connected (charging C, growing current in L).</td></tr>
+</table>
+${takeaway(['say what a transient is in one sentence', 'explain what t = 0⁻, t = 0⁺ and t → ∞ mean', 'say which quantity cannot jump in a capacitor (voltage) and in an inductor (current)'])}
+`},
+// ======================================================================================== 2
+{ id: 's2', n: 2, short: 'C and L in DC', title: 'Capacitors and inductors in DC steady state', html: () => `
+<p class="lead">To solve any transient you need two snapshots of the circuit: one just before the switch moves and one a long time after. Both are DC steady states, and in DC steady state capacitors and inductors become very simple.</p>
+
+<h3>2.1 The two DC rules</h3>
+<p>In DC steady state nothing changes, so every rate of change is zero: d${vC}/dt = 0 and d${iL}/dt = 0. Put that into the two equations from Section 1:</p>
+<div class="rules">
+  <div class="rule rC"><h4>Capacitor → open circuit</h4>${figRule('C')}<p>${iC} = <i>C</i> × 0 = 0. No current flows through it, so treat it as a <b>gap</b> in the wire. Its voltage ${vC} can be anything — find it from the rest of the circuit.</p></div>
+  <div class="rule rL"><h4>Inductor → short circuit</h4>${figRule('L')}<p>${vL} = <i>L</i> × 0 = 0. No voltage across it, so treat it as a <b>plain wire</b>. Its current ${iL} can be anything — find it from the rest of the circuit.</p></div>
+</div>
+${reminder('three tools you will need', `<ul>
+  <li><b>Ohm's law:</b> <i>V</i> = <i>IR</i>, so <i>I</i> = ${fr('V', 'R')}.</li>
+  <li><b>Series resistors</b> (same current) add: <i>R</i><sub>T</sub> = <i>R</i>₁ + <i>R</i>₂.</li>
+  <li><b>Voltage divider:</b> the voltage across R₂ in a series pair is <i>V</i><sub>s</sub> × ${fr('<i>R</i>₂', '<i>R</i>₁ + <i>R</i>₂')}. Example: 12 V × ${fr('4', '2 + 4')} = 12 × ${fr('4', '6')} = 8 V.</li></ul>`)}
+<div data-ex="D1"></div>
+<div data-ex="D2"></div>
+
+<h3>2.2 What can jump and what cannot</h3>
+<p>At the switching instant (from t = 0⁻ to t = 0⁺) the <b>continuity rules</b> hold:</p>
+<div class="formula">${vC}(0<sup>+</sup>) = ${vC}(0<sup>−</sup>) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${iL}(0<sup>+</sup>) = ${iL}(0<sup>−</sup>)</div>
+<table class="tbl">
+<tr><th>Quantity</th><th>Can it jump at t = 0?</th></tr>
+<tr class="rowC"><td>Capacitor voltage ${vC}</td><td><b class="no">No</b> — same value at 0⁻ and 0⁺</td></tr>
+<tr class="rowC"><td>Capacitor current ${iC}</td><td>Yes</td></tr>
+<tr class="rowL"><td>Inductor current ${iL}</td><td><b class="no">No</b> — same value at 0⁻ and 0⁺</td></tr>
+<tr class="rowL"><td>Inductor voltage ${vL}</td><td>Yes</td></tr>
+<tr><td>Anything in a resistor</td><td>Yes</td></tr>
+</table>
+${key(`<b>The routine for initial and final values</b><ol>
+<li>Draw the circuit for <b>t &lt; 0</b> with C → open, L → short. Find ${vC}(0⁻) or ${iL}(0⁻).</li>
+<li>Carry it across: ${vC}(0⁺) = ${vC}(0⁻), ${iL}(0⁺) = ${iL}(0⁻).</li>
+<li>Draw the circuit for <b>t &gt; 0</b>. Other quantities at 0⁺ come from KVL / KCL with C acting as a battery of ${vC}(0⁺) or L as a current source of ${iL}(0⁺).</li>
+<li>For <b>t → ∞</b> use the t &gt; 0 circuit with C → open, L → short again.</li></ol>`)}
+<div data-ex="D3"></div>
+<div data-ex="D4"></div>
+${takeaway(['replace C by an open circuit and L by a short circuit in DC steady state', 'find <i>v</i><sub>C</sub>(0⁻) and <i>i</i><sub>L</sub>(0⁻) with Ohm\'s law and the voltage divider', 'use <i>v</i><sub>C</sub>(0⁺) = <i>v</i><sub>C</sub>(0⁻) and <i>i</i><sub>L</sub>(0⁺) = <i>i</i><sub>L</sub>(0⁻)', 'find the final values <i>v</i><sub>C</sub>(∞) and <i>i</i><sub>L</sub>(∞)'])}
+`},
+// ======================================================================================== 3
+{ id: 's3', n: 3, short: 'RC circuits', title: 'The RC circuit: charging and discharging', html: () => `
+<p class="lead">An RC circuit has one resistor and one capacitor. There are only two things that can happen: the capacitor <b>charges</b> (a source is connected) or it <b>discharges</b> (the source is removed). Both follow the same kind of curve, set by one number — the <b>time constant</b>.</p>
+
+<h3>3.1 The time constant τ = RC</h3>
+<div class="formula big">${TAU} = <i>R</i> × <i>C</i></div>
+<p>τ (the Greek letter "tau") is measured in <b>seconds</b>: ohms × farads = seconds. It tells you how <b>fast</b> the circuit is. Small τ → fast transient; large τ → slow transient. Bigger R or bigger C both make it slower.</p>
+${reminder('multiplying SI prefixes', `<p>Multiply the numbers, then multiply the prefixes by adding their powers of ten.</p>
+<table class="tbl small"><tr><th>R × C</th><th>powers of ten</th><th>result</th></tr>
+<tr><td>kΩ × µF</td><td>10<sup>3</sup> × 10<sup>−6</sup> = 10<sup>−3</sup></td><td>ms</td></tr>
+<tr><td>kΩ × mF</td><td>10<sup>3</sup> × 10<sup>−3</sup> = 10<sup>0</sup></td><td>s</td></tr>
+<tr><td>MΩ × µF</td><td>10<sup>6</sup> × 10<sup>−6</sup> = 10<sup>0</sup></td><td>s</td></tr>
+<tr><td>Ω × µF</td><td>10<sup>0</sup> × 10<sup>−6</sup> = 10<sup>−6</sup></td><td>µs</td></tr></table>
+<p>Example: 2 kΩ × 5 µF = (2 × 5) ms = 10 ms.</p>`)}
+
+<h3>3.2 The two formulas (no derivation needed)</h3>
+<div class="pair">
+  <div class="fcard rC"><h4>Charging (source connected, C starts empty)</h4>
+    <div class="formula">${vC}(t) = <i>V</i><sub>s</sub>(1 − ${ex('−t/τ')})</div><div class="formula">${iC}(t) = ${fr('<i>V</i><sub>s</sub>', '<i>R</i>')} ${ex('−t/τ')}</div>
+    ${plot({ f: t => 1 - Math.exp(-t), tmax: 5.5, ymin: 0, ymax: 1.12, yt: [[0, '0'], [0.632, '0.632V'], [1, 'V']], tt: [0, 1, 2, 3, 4, 5].map(k => [k, k ? k + 'τ' : '0']), tlab: 't', ylab: sb('v', 'C'), col: 'var(--cap)', dots: [[1, 1 - Math.exp(-1), '63.2 % at 1τ']] })}
+    <p>${vC} rises from 0 towards <i>V</i><sub>s</sub>. The current is largest at the start and dies to zero.</p></div>
+  <div class="fcard rC"><h4>Discharging (source removed, C starts at V₀)</h4>
+    <div class="formula">${vC}(t) = <i>V</i>₀ ${ex('−t/τ')}</div><div class="formula"><i>i</i>(t) = ${fr('<i>V</i>₀', '<i>R</i>')} ${ex('−t/τ')}</div>
+    ${plot({ f: t => Math.exp(-t), tmax: 5.5, ymin: 0, ymax: 1.12, yt: [[0, '0'], [0.368, '0.368V₀'], [1, 'V₀']], tt: [0, 1, 2, 3, 4, 5].map(k => [k, k ? k + 'τ' : '0']), tlab: 't', ylab: sb('v', 'C'), col: 'var(--cap)', dots: [[1, Math.exp(-1), '36.8 % at 1τ']] })}
+    <p>${vC} falls from <i>V</i>₀ towards 0. Here <i>i</i> is the current flowing out of the + plate through R.</p></div>
+</div>
+${reminder('what is e<sup>−x</sup>?', `<p><i>e</i> is a fixed number, about 2.718 (like π is about 3.142). ${ex('−x')} means ${fr('1', ex('x'))}.</p>
+<ul><li>When x = 0: ${ex('0')} = 1 (anything to the power 0 is 1).</li><li>As x gets bigger, ${ex('−x')} gets smaller and smaller, but never quite reaches 0.</li>
+<li>On a Casio calculator press <kbd>SHIFT</kbd> <kbd>ln</kbd> to get <i>e</i><sup>□</sup>. Try ${ex('−1')}: you should get 0.3679.</li>
+<li>In ${ex('−t/τ')}, always work out the exponent −t/τ first, then the e.</li></ul>`)}
+
+<h3>3.3 The magic numbers: 1τ to 5τ</h3>
+<p>Every RC (and RL) curve passes the same percentages at the same multiples of τ. You only need a calculator to get them once:</p>
+<table class="tbl center"><tr><th>time</th><th>${ex('−t/τ')}</th><th>discharging: % still left</th><th>charging: % completed</th></tr>
+${[1, 2, 3, 4, 5].map(n => `<tr><td>${n}τ</td><td>${ex('−' + n)} = ${N['e' + n]}</td><td>${N['dec' + n]} %</td><td>${N['gro' + n]} %</td></tr>`).join('')}</table>
+${key(`After <b>1τ</b> a charging capacitor is about <b>63 %</b> charged (a discharging one has about <b>37 %</b> left). After <b>5τ</b> it is more than 99 % of the way there, so we say the transient is <b>over after 5τ</b>.`)}
+
+<h3>3.4 Watch an RC circuit</h3>
+<p>12 V source, R = 10 kΩ, C = 100 µF, so τ = 1 s. Switch to <b>A</b> to charge, back to <b>B</b> to discharge. The animation is slowed down so that 1τ takes about 1.5 s.</p>
+<div data-sim="rc"></div>
+
+<h3>3.5 Worked examples</h3>
+<div data-ex="RC1"></div>
+<div data-ex="RC2"></div>
+${takeaway(['calculate τ = RC with the right prefixes', 'choose the charging or the discharging formula', 'substitute t and use the e<sup>x</sup> key correctly', 'sketch the curve using 63 % / 37 % at 1τ and "finished" at 5τ'])}
+`},
+// ======================================================================================== 4
+{ id: 's4', n: 4, short: 'RL circuits', title: 'The RL circuit: current growth and decay', html: () => `
+<p class="lead">An RL circuit has one resistor and one inductor. The inductor resists any <b>change in current</b>, so when a switch moves the current changes smoothly. You will see that everything looks just like the RC circuit — with the inductor <b>current</b> playing the part of the capacitor <b>voltage</b>.</p>
+
+<h3>4.1 The time constant τ = L/R</h3>
+<div class="formula big">${TAU} = ${fr('<i>L</i>', '<i>R</i>')}</div>
+<p>Henries ÷ ohms = seconds. Notice the difference from RC: in an RL circuit a <b>bigger R makes the transient faster</b>, because R is on the bottom of the fraction.</p>
+<div class="warnbox"><b>Common mistake:</b> writing τ = L × R. For example L = 2 H, R = 5 Ω: τ = 2/5 = 0.4 s, <b>not</b> 2 × 5 = 10 s.</div>
+
+<h3>4.2 The two formulas</h3>
+<div class="pair">
+  <div class="fcard rL"><h4>Growth (source connected, no current at first)</h4>
+    <div class="formula">${iL}(t) = ${fr('<i>V</i><sub>s</sub>', '<i>R</i>')}(1 − ${ex('−t/τ')})</div><div class="formula">${vL}(t) = <i>V</i><sub>s</sub> ${ex('−t/τ')}</div>
+    ${plot({ f: t => 1 - Math.exp(-t), tmax: 5.5, ymin: 0, ymax: 1.12, yt: [[0, '0'], [0.632, '0.632I'], [1, 'Vs/R']], tt: [0, 1, 2, 3, 4, 5].map(k => [k, k ? k + 'τ' : '0']), tlab: 't', ylab: sb('i', 'L'), col: 'var(--ind)', dots: [[1, 1 - Math.exp(-1), '63.2 % at 1τ']] })}
+    <p>${iL} rises from 0 to its final value <i>V</i><sub>s</sub>/<i>R</i>. ${vL} jumps to <i>V</i><sub>s</sub> at t = 0⁺ and dies to 0 (the inductor becomes a short circuit).</p></div>
+  <div class="fcard rL"><h4>Decay (source removed, current starts at I₀)</h4>
+    <div class="formula">${iL}(t) = <i>I</i>₀ ${ex('−t/τ')}</div><div class="formula">${vR}(t) = <i>I</i>₀<i>R</i> ${ex('−t/τ')}</div>
+    ${plot({ f: t => Math.exp(-t), tmax: 5.5, ymin: 0, ymax: 1.12, yt: [[0, '0'], [0.368, '0.368I₀'], [1, 'I₀']], tt: [0, 1, 2, 3, 4, 5].map(k => [k, k ? k + 'τ' : '0']), tlab: 't', ylab: sb('i', 'L'), col: 'var(--ind)', dots: [[1, Math.exp(-1), '36.8 % at 1τ']] })}
+    <p>${iL} keeps flowing in the <b>same direction</b> and dies away. The inductor uses its stored energy to push the current through R.</p></div>
+</div>
+<p>The 1τ … 5τ table from Section 3 works here too: after 1τ the current has done 63.2 % of its change, and after 5τ it has finished.</p>
+
+<h3>4.3 Watch an RL circuit</h3>
+<p>10 V source, R = 5 Ω, L = 2 H, so τ = 0.4 s. Switch to <b>A</b> for growth, back to <b>B</b> for decay. Watch ${vL}: it jumps, while ${iL} never does.</p>
+<div data-sim="rl"></div>
+
+<h3>4.4 Worked examples</h3>
+<div data-ex="RL1"></div>
+<div data-ex="RL2"></div>
+
+<h3>4.5 RC and RL side by side</h3>
+<table class="tbl">
+<tr><th></th><th class="cC">RC circuit</th><th class="cL">RL circuit</th></tr>
+<tr><td>Quantity that cannot jump</td><td>${vC}</td><td>${iL}</td></tr>
+<tr><td>Time constant</td><td>${TAU} = <i>RC</i></td><td>${TAU} = <i>L</i>/<i>R</i></td></tr>
+<tr><td>In DC steady state</td><td>open circuit</td><td>short circuit</td></tr>
+<tr><td>Rising curve</td><td>${vC} = <i>V</i><sub>s</sub>(1 − ${ex('−t/τ')})</td><td>${iL} = (<i>V</i><sub>s</sub>/<i>R</i>)(1 − ${ex('−t/τ')})</td></tr>
+<tr><td>Falling curve</td><td>${vC} = <i>V</i>₀${ex('−t/τ')}</td><td>${iL} = <i>I</i>₀${ex('−t/τ')}</td></tr>
+<tr><td>Quantity that jumps at t = 0⁺</td><td>${iC}</td><td>${vL}</td></tr>
+</table>
+${takeaway(['calculate τ = L/R (divide, do not multiply)', 'find the final current <i>V</i><sub>s</sub>/R using the short-circuit rule', 'use the growth and decay formulas for <i>i</i><sub>L</sub>', 'explain why <i>v</i><sub>L</sub> can jump but <i>i</i><sub>L</sub> cannot'])}
+`},
+// ======================================================================================== 5
+{ id: 's5', n: 5, short: 'One recipe', title: 'One recipe for every RC and RL problem', html: () => `
+<p class="lead">You have now met four formulas (charging, discharging, growth, decay). They are really <b>one</b> formula. Learn this one and the 4-step recipe and you can solve any first-order circuit with a switch.</p>
+
+<h3>5.1 The general formula</h3>
+<div class="formula big">x(t) = x(∞) + [ x(0<sup>+</sup>) − x(∞) ] ${ex('−t/τ')}</div>
+<p>x is whatever you are finding (${vC}, ${iL}, or any other voltage or current in the circuit). In words: <b>final value + (initial − final) × e<sup>−t/τ</sup></b>.</p>
+<p>Check that it gives the formulas you already know:</p>
+<div class="pair">
+  <div class="fcard"><h4>Charging: x(0⁺) = 0, x(∞) = V<sub>s</sub></h4>
+    <div class="mline">${vC}(t) = <i>V</i><sub>s</sub> + [0 − <i>V</i><sub>s</sub>] ${ex('−t/τ')}</div>
+    <div class="mline">= <i>V</i><sub>s</sub> − <i>V</i><sub>s</sub>${ex('−t/τ')}</div>
+    <div class="mline">= <i>V</i><sub>s</sub>(1 − ${ex('−t/τ')}) ✓ &nbsp;<span class="muted">(take out the common factor V<sub>s</sub>)</span></div></div>
+  <div class="fcard"><h4>Discharging: x(0⁺) = V₀, x(∞) = 0</h4>
+    <div class="mline">${vC}(t) = 0 + [<i>V</i>₀ − 0] ${ex('−t/τ')}</div>
+    <div class="mline">= <i>V</i>₀${ex('−t/τ')} ✓</div></div>
+</div>
+
+<h3>5.2 The 4-step recipe</h3>
+<ol class="recipe">
+  <li><b>Initial value x(0⁺).</b> Draw the t &lt; 0 circuit (C open, L short), find ${vC}(0⁻) or ${iL}(0⁻), carry it to 0⁺.</li>
+  <li><b>Final value x(∞).</b> Draw the t &gt; 0 circuit with C open, L short.</li>
+  <li><b>Time constant τ.</b> Use the t &gt; 0 circuit: τ = RC or τ = L/R, where R is the resistance connected to the C or L <i>after</i> switching.</li>
+  <li><b>Substitute</b> into x(t) = x(∞) + [x(0⁺) − x(∞)]${ex('−t/τ')} and tidy up.</li>
+</ol>
+${reminder('working out the bracket', `<p>Do the subtraction inside the square bracket first and keep its sign. Example: x(0⁺) = 2, x(∞) = 6 → [2 − 6] = −4, so x(t) = 6 + (−4)${ex('−t/τ')} = 6 − 4${ex('−t/τ')}.</p>`)}
+<div data-ex="G1"></div>
+<div data-ex="G2"></div>
+
+<h3>5.3 Mistakes to avoid</h3>
+<ul class="mist">
+  <li>Using the <b>t &lt; 0</b> circuit to find τ. Always use the circuit <b>after</b> the switch has moved.</li>
+  <li>Saying ${iC} or ${vL} cannot jump. Only ${vC} and ${iL} are continuous.</li>
+  <li>Forgetting to convert ms to s (or mixing units) before substituting t.</li>
+  <li>Writing τ = LR instead of L/R.</li>
+  <li>Rounding ${ex('−t/τ')} to 1 or 2 figures in the middle of a calculation. Keep 4 figures until the end.</li>
+</ul>
+
+<h3>5.4 One-page summary</h3>
+<div class="summary">
+  <div><h4>DC steady state</h4><p>C → open circuit, L → short circuit.</p></div>
+  <div><h4>Continuity</h4><p>${vC}(0⁺) = ${vC}(0⁻), &nbsp; ${iL}(0⁺) = ${iL}(0⁻).</p></div>
+  <div><h4>Time constant</h4><p>RC circuit: τ = RC. &nbsp; RL circuit: τ = L/R.</p></div>
+  <div><h4>Response</h4><p>x(t) = x(∞) + [x(0⁺) − x(∞)]${ex('−t/τ')}</p></div>
+  <div><h4>Speed</h4><p>63 % of the change after 1τ; finished after 5τ.</p></div>
+</div>
+${takeaway(['write the general formula from memory', 'follow the 4 steps on a new circuit', 'find τ from the circuit after switching', 'find any other voltage or current with the same τ'])}
+`},
+];
+
+'use strict';
+// Page assembly: sections, step-reveal examples, switch-flip animations, contents bar and theme button.
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+// ---------------------------------------------------------------- sections
+const main = $('main');
+main.innerHTML = SECTIONS.map(s => `<section id="${s.id}" class="sec ${s.id}"><div class="band"><span class="num">${s.n}</span><div><small>Part ${s.n} of ${SECTIONS.length}</small><h2>${s.title}</h2></div></div><div class="body">${s.html()}</div></section>`).join('');
+$('#toc').innerHTML = SECTIONS.map(s => `<a href="#${s.id}" class="chip ${s.id}"><span class="dot">${s.n}</span><span class="lbl">${s.short}</span></a>`).join('');
+
+// ---------------------------------------------------------------- step-reveal examples
+for (const host of $$('[data-ex]')) {
+  const ex = EX[host.dataset.ex], n = ex.steps.length;
+  host.className = 'ex';
+  host.innerHTML = `<h4 class="extitle">${ex.title}</h4><div class="exq"><div class="qtext"><p>${ex.q}</p><p class="tryfirst">✎ Try it on paper first, then reveal one step at a time.</p></div>${ex.fig}</div>
+  <ol class="steps">${ex.steps.map((s, k) => `<li class="step" hidden><div class="sh"><span class="sn">${k + 1}</span>${s.h}</div><div class="sm">${s.m.map(l => `<div class="mline">${l}</div>`).join('')}</div>${s.fig || ''}${s.why ? `<div class="why">Why: ${s.why}</div>` : ''}${s.tip ? `<div class="tip">${s.tip}</div>` : ''}</li>`).join('')}</ol>
+  <div class="final" hidden><b>Answer:</b> ${ex.ans}${ex.plot ? ex.plot() : ''}</div>
+  <div class="exbar"><button class="primary nx">Show step 1</button><button class="all">Show all</button><button class="rs" disabled>Start again</button><span class="cnt">0 of ${n} steps</span></div>`;
+  let k = 0;
+  const steps = $$('.step', host), fin = $('.final', host), nx = $('.nx', host), rs = $('.rs', host), cnt = $('.cnt', host);
+  const show = m => {
+    k = m; steps.forEach((s, j) => { s.hidden = j >= k; }); fin.hidden = k < n;
+    nx.disabled = k >= n; nx.textContent = k >= n ? 'All steps shown' : `Show step ${k + 1}`;
+    rs.disabled = k === 0; cnt.textContent = `${k} of ${n} steps`;
+  };
+  nx.onclick = () => { show(k + 1); (k >= n ? fin : steps[k - 1]).scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
+  $('.all', host).onclick = () => show(n);
+  rs.onclick = () => show(0);
+}
+
+// ---------------------------------------------------------------- switch-flip animation
+// Circuit: source - switch (A = source in, B = source out) - R - load - back.  One state variable x
+// (v_C for RC, i_L for RL) moves as x = x∞ + (x0 − x∞) e^(−t/τ) after each flip.
+const SIM = {
+  rc: { name: 'Resistor + capacitor', Vs: 12, R: 10e3, C: 100e-6, tau: 1, load: 'C', Rlab: 'R = 10 kΩ', Llab: ['C', '100 µF'] },
+  rl: { name: 'Resistor + inductor', Vs: 10, R: 5, L: 2, tau: 0.4, load: 'L', Rlab: 'R = 5 Ω', Llab: ['L', '2 H'] },
+  r: { name: 'Resistor only', Vs: 12, R: 10e3, R2: 10e3, tau: 1, load: 'R', Rlab: 'R = 10 kΩ', Llab: ['R₂', '10 kΩ'] },
+};
+const fmt = (x, u) => {
+  const a = Math.abs(x);
+  if (a < 1e-9) return '0 ' + u;
+  const [m, p] = a >= 1 ? [1, ''] : a >= 1e-3 ? [1e3, 'm'] : [1e6, 'µ'];
+  const v = x * m; return `${(Math.abs(v) >= 100 ? v.toFixed(0) : Math.abs(v) >= 10 ? v.toFixed(1) : v.toFixed(2)).replace('-', '−')} ${p}${u}`;
+};
+const TS = 1.5;                       // real seconds of animation per τ
+
+function simCircuit(c) {
+  const T = 50, B = 190, X = 330;
+  const load = c.load === 'C' ? two('C', X, T, X, B, { lab: c.Llab, side: -1, off: 22, cls: 'cC', lcls: 'cC', id: 'cf' })
+    : c.load === 'L' ? two('L', X, T, X, B, { lab: c.Llab, side: -1, off: 22, cls: 'cL', lcls: 'cL', id: 'coil' })
+      : two('R', X, T, X, B, { lab: c.Llab, side: -1, off: 22 });
+  const field = c.load === 'L' ? `<g class="field" opacity="0"><ellipse cx="${X}" cy="120" rx="34" ry="44"/><ellipse cx="${X}" cy="120" rx="50" ry="60"/></g>` : '';
+  const glow = c.load === 'R' ? `<circle class="glow" cx="${X}" cy="120" r="30" opacity="0"/>` : '';
+  return `<svg class="simsvg" viewBox="0 0 460 230" role="img" aria-label="${c.name} with a two-way switch"><g transform="translate(30 0)">
+  ${field}${glow}
+  ${two('V', 40, T + 20, 40, B - 20, { lab: [c.Vs + ' V'], side: 1, off: 26 })}
+  ${wire([40, T + 20], [40, T], [92, T])} ${wire([40, B - 20], [40, B], [X, B])}
+  ${wire([110, 108], [110, B])}${node(110, B)}
+  <circle class="term" cx="96" cy="${T}" r="4"/><circle class="term" cx="110" cy="104" r="4"/><circle class="term" cx="150" cy="${T}" r="4"/>
+  <line class="blade" x1="150" y1="${T}" x2="100" y2="${T}"/>
+  <text class="lab sw" x="88" y="${T - 10}" text-anchor="middle">A</text><text class="lab sw" x="96" y="112" text-anchor="end">B</text>
+  ${wire([150, T], [175, T])}${two('R', 175, T, 275, T, { lab: c.Rlab, side: -1, off: 22 })}${wire([275, T], [X, T])}
+  ${load}
+  <text class="lab val" id="lv" x="${X - 30}" y="124" text-anchor="end"></text>
+  <path class="loopA" d="M40 ${B} L40 ${T} L150 ${T} L${X} ${T} L${X} ${B} Z" fill="none" stroke="none"/>
+  <path class="loopB" d="M110 104 L150 ${T} L${X} ${T} L${X} ${B} L110 ${B} Z" fill="none" stroke="none"/>
+  <g class="dots"></g>
+  <rect class="hit" x="80" y="20" width="90" height="100" rx="10"><title>Click to flip the switch</title></rect>
+  </g></svg>`;
+}
+function graphSvg(cls, ylab, top, bot, col, unit) {
+  return `<svg class="gsvg ${cls}" viewBox="0 0 400 164" role="img" aria-label="live graph of ${ylab}">
+  <g class="gax"></g><path class="gcurve" style="stroke:${col}" d=""/><circle class="gdot" r="4.5" style="fill:${col}" cx="-10" cy="-10"/>
+  <text class="alab" x="6" y="12">${ylab}</text><text class="alab" x="394" y="160" text-anchor="end">time since the switch moved</text></svg>`;
+}
+
+for (const host of $$('[data-sim]')) {
+  const kind = host.dataset.sim, modes = kind === 'multi' ? ['r', 'rc', 'rl'] : [kind];
+  host.className = 'sim';
+  host.innerHTML = `${modes.length > 1 ? `<div class="modes" role="tablist">${modes.map((m, j) => `<button data-m="${m}" class="${j ? '' : 'on'}">${SIM[m].name}</button>`).join('')}</div>` : ''}
+  <div class="simgrid"><div class="simckt"></div><div class="simg"><div class="g1"></div><div class="g2"></div></div></div>
+  <div class="simbar"><button class="primary flip">Flip the switch to A</button><button class="pause">Pause</button><button class="reset">Reset</button><span class="status"></span></div>
+  <div class="readout"></div><div class="insight"></div>`;
+  const st = { mode: modes[0], pos: 'B', x: 0, x0: 0, xinf: 0, t: 0, run: true, trace: [], last: null, phase: 0 };
+  let c, Lp, dots, pathA, pathB, LA, LB;
+
+  function build() {
+    c = SIM[st.mode];
+    $('.simckt', host).innerHTML = simCircuit(c);
+    const isC = c.load === 'C', isL = c.load === 'L';
+    const top = isC ? ['v_C', sb('v', 'C') + ' (V)', 'var(--cap)'] : isL ? ['i_L', sb('i', 'L') + ' (A)', 'var(--ind)'] : ['i', '<tspan class="it">i</tspan> (mA)', 'var(--s1)'];
+    const bot = isC ? [sb('i', 'C') + ' (mA)', 'var(--muted)'] : isL ? [sb('v', 'L') + ' (V)', 'var(--muted)'] : null;
+    $('.g1', host).innerHTML = graphSvg('top', top[1], 0, 0, top[2]);
+    $('.g2', host).innerHTML = bot ? graphSvg('bot', bot[0], 0, 0, bot[1]) : '';
+    pathA = $('.loopA', host); pathB = $('.loopB', host); LA = pathA.getTotalLength(); LB = pathB.getTotalLength();
+    $('.dots', host).innerHTML = Array.from({ length: 16 }, () => '<circle class="edot" r="3.6" cx="-10" cy="-10"/>').join('');
+    dots = $$('.edot', host);
+    $('.hit', host).onclick = flip;
+    reset();
+  }
+  // physical quantities for the current state
+  function q() {
+    const Vsrc = st.pos === 'A' ? c.Vs : 0;
+    if (c.load === 'C') { const i = (Vsrc - st.x) / c.R; return { i, main: st.x, sec: i * 1e3, Imax: c.Vs / c.R }; }
+    if (c.load === 'L') { const vL = Vsrc - st.x * c.R; return { i: st.x, main: st.x, sec: vL, Imax: c.Vs / c.R }; }
+    const i = Vsrc / (c.R + c.R2); return { i, main: i * 1e3, sec: 0, Imax: c.Vs / (c.R + c.R2) };
+  }
+  const ranges = () => c.load === 'C' ? [[0, c.Vs], [-c.Vs / c.R * 1e3, c.Vs / c.R * 1e3]] : c.load === 'L' ? [[0, c.Vs / c.R], [-c.Vs, c.Vs]] : [[0, c.Vs / (c.R + c.R2) * 1e3], [0, 1]];
+  const GX = u => 40 + u / 6 * 350, GY = (y, r) => 22 + (r[1] - y) / (r[1] - r[0]) * 100;
+
+  function axes() {
+    const [r1, r2] = ranges(), q0 = q();
+    const ax = (r, g, extra) => {
+      let s = '';
+      for (let k = 0; k <= 6; k++) s += `<line class="grid" x1="${GX(k)}" y1="22" x2="${GX(k)}" y2="122"/><text class="tick" x="${GX(k)}" y="136" text-anchor="middle">${k ? k + 'τ' : '0'}</text>`;
+      const ys = r[0] < 0 ? [r[0], 0, r[1]] : [r[0], r[1]];
+      for (const y of ys) s += `<line class="grid" x1="40" y1="${GY(y, r)}" x2="390" y2="${GY(y, r)}"/><text class="tick" x="35" y="${GY(y, r) + 4}" text-anchor="end">${+y.toFixed(2)}</text>`;
+      s += `<line class="axis" x1="40" y1="22" x2="40" y2="122"/>` + (extra || '');
+      $('.gax', g).innerHTML = s;
+    };
+    // guide lines on the top graph: final value and the 63 % point
+    const x63 = st.x0 + (1 - Math.exp(-1)) * (st.xinf - st.x0);
+    const sc = c.load === 'R' ? 1e3 : 1;
+    const guide = c.load === 'R' || st.xinf === st.x0 ? '' :
+      `<line class="guide" x1="40" y1="${GY(st.xinf * sc, r1)}" x2="390" y2="${GY(st.xinf * sc, r1)}"/><text class="gtxt" x="388" y="${GY(st.xinf * sc, r1) - 4}" text-anchor="end">final value</text>
+       <line class="guide g63" x1="${GX(1)}" y1="${GY(x63, r1)}" x2="${GX(1)}" y2="122"/><line class="guide g63" x1="40" y1="${GY(x63, r1)}" x2="${GX(1)}" y2="${GY(x63, r1)}"/>
+       <text class="gtxt" x="${GX(1) + 4}" y="${GY(x63, r1) + (st.xinf > st.x0 ? 14 : -5)}">${st.xinf > st.x0 ? '63 % of the change' : '37 % left'}</text>`;
+    ax(r1, $('.g1 svg', host), guide);
+    if ($('.g2 svg', host)) ax(r2, $('.g2 svg', host));
+  }
+
+  function reset() {
+    st.pos = 'B'; st.x = st.x0 = st.xinf = 0; st.t = 0; st.trace = []; st.phase = 0;
+    setBlade(); axes(); draw(); $('.insight', host).innerHTML = 'The switch is at <b>B</b> and nothing is stored. Press <b>Flip the switch to A</b> or click the switch.';
+    $('.flip', host).textContent = 'Flip the switch to A';
+  }
+  function setBlade() {
+    const bl = $('.blade', host);
+    if (st.pos === 'A') { bl.setAttribute('x2', 100); bl.setAttribute('y2', 50); } else { bl.setAttribute('x2', 113); bl.setAttribute('y2', 99); }
+  }
+  function flip() {
+    const before = q();
+    st.pos = st.pos === 'A' ? 'B' : 'A';
+    st.x0 = st.x; st.t = 0; st.trace = [[0, before.main, before.sec]];     // the point just before: shows any jump at t = 0
+    st.xinf = c.load === 'C' ? (st.pos === 'A' ? c.Vs : 0) : c.load === 'L' ? (st.pos === 'A' ? c.Vs / c.R : 0) : 0;
+    setBlade(); axes();
+    $('.flip', host).textContent = `Flip the switch to ${st.pos === 'A' ? 'B' : 'A'}`;
+    const after = q();
+    $('.insight', host).innerHTML = insight(before, after);
+    st.run = true; $('.pause', host).textContent = 'Pause';
+  }
+  function insight(b, a) {
+    const toA = st.pos === 'A';
+    if (c.load === 'R') return toA ? `The current jumped <b>instantly</b> from 0 to ${fmt(a.i, 'A')}. With no C or L there is nothing to store energy, so there is <b>no transient</b>.` : 'The current dropped to 0 <b>instantly</b>. No transient.';
+    if (c.load === 'C') return toA
+      ? `${vC} starts from ${fmt(st.x0, 'V')} — it did <b>not</b> jump. The current ${iC} <b>did</b> jump, from ${fmt(b.i, 'A')} to ${fmt(a.i, 'A')}. Now ${vC} rises towards ${c.Vs} V.`
+      : `The source is out. ${vC} still starts at ${fmt(st.x0, 'V')} (no jump), but the current <b>reversed</b>: the dots now run backwards because the capacitor is pushing its charge back round through R.`;
+    return toA
+      ? `${iL} starts from ${fmt(st.x0, 'A')} — it did <b>not</b> jump. ${vL} <b>did</b> jump, to ${fmt(a.sec, 'V')}. Now ${iL} grows towards ${fmt(c.Vs / c.R, 'A')}.`
+      : `The source is out, but ${iL} keeps flowing in the <b>same direction</b> (look at the dots), starting from ${fmt(st.x0, 'A')}. ${vL} jumped to ${fmt(a.sec, 'V')}: the inductor is now the source.`;
+  }
+  function draw() {
+    const v = q(), [r1, r2] = ranges(), u = st.t;        // u = time in units of τ
+    // trace
+    if (u <= 6.01) st.trace.push([u, c.load === 'R' ? v.main : v.main, v.sec]);
+    const g1 = $('.g1 svg', host), g2 = $('.g2 svg', host);
+    const path = (r, j) => st.trace.map((p, k) => `${k ? 'L' : 'M'}${GX(p[0]).toFixed(1)} ${GY(p[j], r).toFixed(1)}`).join('');
+    $('.gcurve', g1).setAttribute('d', path(r1, 1));
+    const d1 = $('.gdot', g1); d1.setAttribute('cx', GX(Math.min(u, 6))); d1.setAttribute('cy', GY(v.main, r1));
+    if (g2) { $('.gcurve', g2).setAttribute('d', path(r2, 2)); const d2 = $('.gdot', g2); d2.setAttribute('cx', GX(Math.min(u, 6))); d2.setAttribute('cy', GY(v.sec, r2)); }
+    // element visuals
+    if (c.load === 'C') { $('[data-k=cf]', host).setAttribute('opacity', (0.15 + 0.85 * st.x / c.Vs) * (st.x > 1e-3 ? 1 : 0)); $('#lv', host).innerHTML = sb('v', 'C') + ' = ' + fmt(st.x, 'V'); }
+    if (c.load === 'L') { $('.field', host).setAttribute('opacity', st.x / (c.Vs / c.R)); $('#lv', host).innerHTML = sb('i', 'L') + ' = ' + fmt(st.x, 'A'); }
+    if (c.load === 'R') { $('.glow', host).setAttribute('opacity', v.i / v.Imax * 0.6); $('#lv', host).innerHTML = '<tspan class="it">i</tspan> = ' + fmt(v.i, 'A'); }
+    // readout
+    const secs = u * c.tau, done = u >= 5 || st.x0 === st.xinf;
+    const pct = st.xinf === st.x0 ? 100 : 100 * (st.x - st.x0) / (st.xinf - st.x0);
+    const mainTxt = c.load === 'C' ? `${vC} = ${fmt(st.x, 'V')}, &nbsp; ${iC} = ${fmt(v.i, 'A')}` : c.load === 'L' ? `${iL} = ${fmt(st.x, 'A')}, &nbsp; ${vL} = ${fmt(v.sec, 'V')}` : `<i>i</i> = ${fmt(v.i, 'A')}`;
+    $('.readout', host).innerHTML = `<span>switch at <b>${st.pos}</b></span><span>t = ${secs.toFixed(2)} s = ${u.toFixed(2)}${TAU}</span><span>${mainTxt}</span>${c.load !== 'R' && st.x0 !== st.xinf ? `<span>${pct.toFixed(1)} % of the change done</span>` : ''}`;
+    const s = $('.status', host);
+    s.textContent = c.load === 'R' ? 'no transient' : done ? 'steady state' : 'transient: changing';
+    s.className = 'status ' + (c.load === 'R' || done ? 'steady' : 'moving');
+    // moving charge dots
+    const onA = st.pos === 'A', p = onA ? pathA : pathB, L = onA ? LA : LB;
+    const n = dots.length;
+    dots.forEach((d, k) => {
+      if (Math.abs(v.i) < v.Imax * 0.004) { d.setAttribute('cx', -10); return; }
+      const pt = p.getPointAtLength((((st.phase + k * L / n) % L) + L) % L);
+      d.setAttribute('cx', pt.x); d.setAttribute('cy', pt.y);
+    });
+  }
+  function tick(now) {
+    const dt = st.last == null ? 0 : Math.min(0.05, (now - st.last) / 1000); st.last = now;
+    if (st.run && host.isConnected) {
+      st.t += dt / TS;
+      if (c.load !== 'R') st.x = st.xinf + (st.x0 - st.xinf) * Math.exp(-st.t);
+      const v = q(); st.phase += (v.i / v.Imax) * 90 * dt;
+      draw();
+    }
+    requestAnimationFrame(tick);
+  }
+  $('.flip', host).onclick = flip;
+  $('.reset', host).onclick = () => { reset(); st.run = true; $('.pause', host).textContent = 'Pause'; };
+  $('.pause', host).onclick = e => { st.run = !st.run; e.target.textContent = st.run ? 'Pause' : 'Play'; };
+  for (const b of $$('.modes button', host)) b.onclick = () => { $$('.modes button', host).forEach(x => x.classList.toggle('on', x === b)); st.mode = b.dataset.m; build(); };
+  build();
+  requestAnimationFrame(tick);
+}
+
+// ---------------------------------------------------------------- contents bar: active section + reading progress
+const chips = $$('#toc .chip');
+const obs = new IntersectionObserver(es => {
+  for (const e of es) if (e.isIntersecting) chips.forEach(c => c.classList.toggle('on', c.getAttribute('href') === '#' + e.target.id));
+}, { rootMargin: '-45% 0px -50% 0px' });
+$$('section.sec').forEach(s => obs.observe(s));
+addEventListener('scroll', () => {
+  const h = document.documentElement, f = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight);
+  $('#prog').style.width = (100 * f).toFixed(1) + '%';
+}, { passive: true });
+
+// ---------------------------------------------------------------- "before you move on" ticks (kept in this browser only)
+$$('.take input').forEach((b, k) => {
+  try { b.checked = localStorage.getItem('trs-tick-' + k) === '1'; } catch (e) { }
+  b.onchange = () => { try { localStorage.setItem('trs-tick-' + k, b.checked ? '1' : '0'); } catch (e) { } };
+});
+
+// ---------------------------------------------------------------- theme
+$('#theme').onclick = () => {
+  const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  r.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('theme', r.dataset.theme); } catch (e) { }
+};
+
+</script>
+</body>
+</html>

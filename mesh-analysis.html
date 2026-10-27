@@ -2,6 +2,7 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
+<script>try{const t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mesh Analysis</title>
 <meta name="description" content="Mesh Analysis, step by step: from one loop to the supermesh, with dependent sources.">
@@ -262,6 +263,9 @@ a.home:hover{background:rgba(255,255,255,.26)}
 a.home:focus-visible{outline:2px solid #fff;outline-offset:2px}
 a.home svg{width:16px;height:16px}
 header h1{margin-right:auto}
+#theme{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:20px;padding:5px 11px;font-weight:600;font-size:1.05rem;line-height:1.2;white-space:nowrap;transition:background .15s}
+#theme:hover{background:rgba(255,255,255,.26);border-color:rgba(255,255,255,.3)}
+#theme:focus-visible{outline:2px solid #fff;outline-offset:2px}
 </style>
 </head>
 <body>
@@ -269,6 +273,7 @@ header h1{margin-right:auto}
   <a class="home" href="index.html" aria-label="Back to all topics"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 10H3M9 4l-6 6 6 6"/></svg>All topics</a>
   <h1><span class="picon"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="6" width="24" height="20" rx="2"/><path d="M21 12.5a6 6 0 1 0 1 5" stroke-width="2.4"/><path d="M18.8 11.2l3.2 1.5-.6 3.4"/></svg></span><span>Mesh Analysis<small>Step by step, from one loop to the supermesh, with dependent sources</small></span></h1>
   <nav class="tabs" aria-label="Sections"><button data-v="method">How it works</button><button data-v="questions">Questions</button><button data-v="practice">Practice generator</button></nav>
+  <button id="theme" title="Switch between light and dark" aria-label="Switch between light and dark">◐</button>
 </header>
 <main></main>
 <footer>Developed by Muhammad 'Aasim Asyafi'ie bin Ahmad, 2026</footer>
@@ -1928,6 +1933,13 @@ document.addEventListener('keydown', e => {
 $$('nav.tabs button').forEach(b => { b.onclick = () => setView(b.dataset.v); });
 setView('questions');
 
+</script>
+<script>
+document.getElementById('theme').onclick = () => {
+  const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  r.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('theme', r.dataset.theme); } catch (e) { }
+};
 </script>
 </body>
 </html>

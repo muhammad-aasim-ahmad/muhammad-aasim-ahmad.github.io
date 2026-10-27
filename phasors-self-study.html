@@ -1,0 +1,1957 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<script>try{const t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phasors Self-Study</title>
+<meta name="description" content="Learn it yourself: why phasors, complex numbers, impedance, nodal and mesh analysis, AC power, maximum power transfer and power factor correction, in four levels with interactive pictures and step-by-step examples.">
+<style>
+:root{--bg:#f5f6fb;--card:#fff;--ink:#1b2430;--muted:#5d6a78;--line:#dfe3ec;--wire:#2c3640;--soft:#f0f2f8;
+  --s1:#6741d9;--s2:#0c8599;--s3:#1971c2;--s4:#e8590c;--s5:#2b8a3e;--cap:#1971c2;--ind:#d9480f;--bad:#c92a2a;--hl:#fff3bf;
+  --s1t:#f3f0ff;--s2t:#e3fafc;--s3t:#e7f5ff;--s4t:#fff4e6;--s5t:#ebfbee;--warn:#fff5f5;--shadow:0 1px 2px rgba(20,30,60,.06),0 6px 20px rgba(20,30,60,.07)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11151c;--card:#1a2029;--ink:#e7ecf2;--muted:#9eabb9;--line:#2f3846;--wire:#cfd8e3;--soft:#222a35;
+  --s1:#b197fc;--s2:#3bc9db;--s3:#74c0fc;--s4:#ffa94d;--s5:#69db7c;--cap:#74c0fc;--ind:#ffa94d;--bad:#ff8787;--hl:#4a3f12;
+  --s1t:#231e3a;--s2t:#132e33;--s3t:#152a3d;--s4t:#3a2614;--s5t:#16301d;--warn:#3a1d1d;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.3)}}
+:root[data-theme="dark"]{--bg:#11151c;--card:#1a2029;--ink:#e7ecf2;--muted:#9eabb9;--line:#2f3846;--wire:#cfd8e3;--soft:#222a35;
+  --s1:#b197fc;--s2:#3bc9db;--s3:#74c0fc;--s4:#ffa94d;--s5:#69db7c;--cap:#74c0fc;--ind:#ffa94d;--bad:#ff8787;--hl:#4a3f12;
+  --s1t:#231e3a;--s2t:#132e33;--s3t:#152a3d;--s4t:#3a2614;--s5t:#16301d;--warn:#3a1d1d;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.3)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+sub,sup{line-height:0}
+kbd{font:600 .8em/1 ui-monospace,Consolas,monospace;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:2px 6px;background:var(--soft)}
+button{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 16px;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--sc,var(--s1))}
+button:disabled{opacity:.45;cursor:default}
+button.primary{background:var(--sc,var(--s1));border-color:var(--sc,var(--s1));color:#fff;font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button.primary{color:#111}}
+:root[data-theme="dark"] button.primary{color:#111}
+
+/* hero */
+.hero{background:linear-gradient(120deg,#5f3dc4 0%,#1c7ed6 45%,#0c8599 70%,#e8590c 100%);color:#fff;padding:34px 20px 30px}
+.hero .in{max-width:1080px;margin:auto;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.hero h1{margin:0;font-size:2rem;line-height:1.2}
+.hero p{margin:.4em 0 0;max-width:46em;opacity:.95}
+.hero .tag{display:inline-block;background:rgba(255,255,255,.2);border-radius:999px;padding:2px 12px;font-size:.85rem;margin-bottom:8px}
+#theme{background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.4)}
+/* contents bar */
+nav.bar{position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+#toc{max-width:1080px;margin:auto;display:flex;gap:6px;padding:8px 16px;overflow-x:auto;scrollbar-width:none}
+#toc::-webkit-scrollbar{display:none}
+.chip{display:flex;align-items:center;gap:7px;text-decoration:none;color:var(--ink);padding:5px 12px 5px 5px;border-radius:999px;white-space:nowrap;font-size:.92rem;border:1px solid transparent}
+.chip .dot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:.8rem;background:var(--sc)}
+.chip.on{background:var(--sct);border-color:var(--sc)}
+#prog{height:3px;background:linear-gradient(90deg,var(--s1),var(--s2),var(--s3),var(--s4),var(--s5));width:0}
+.s1{--sc:var(--s1);--sct:var(--s1t)}.s2{--sc:var(--s2);--sct:var(--s2t)}.s3{--sc:var(--s3);--sct:var(--s3t)}.s4{--sc:var(--s4);--sct:var(--s4t)}.s5{--sc:var(--s5);--sct:var(--s5t)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip .dot{color:#111}}
+:root[data-theme="dark"] .chip .dot{color:#111}
+
+main{max-width:1080px;margin:auto;padding:22px 16px 50px}
+section.sec{background:var(--card);border-radius:18px;box-shadow:var(--shadow);margin:0 0 30px;overflow:hidden;border-top:6px solid var(--sc)}
+.band{display:flex;gap:16px;align-items:center;padding:20px 24px;background:linear-gradient(100deg,var(--sct),transparent 85%)}
+.band .num{flex:none;width:52px;height:52px;border-radius:15px;background:var(--sc);color:#fff;display:grid;place-items:center;font-size:1.6rem;font-weight:800}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .band .num{color:#111}}
+:root[data-theme="dark"] .band .num{color:#111}
+.band small{color:var(--sc);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:.75rem}
+.band h2{margin:0;font-size:1.5rem;line-height:1.25}
+.body{padding:4px 24px 24px}
+.body h3{color:var(--sc);font-size:1.2rem;margin:1.6em 0 .4em;padding-bottom:4px;border-bottom:2px solid var(--sct)}
+.lead{font-size:1.06rem}
+.muted{color:var(--muted);font-size:.93rem}
+p{margin:.55em 0}
+
+/* maths */
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.2}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .2em}
+.fr>span:last-child{padding:0 .2em}
+.formula{background:var(--sct);border-left:5px solid var(--sc);border-radius:10px;padding:10px 16px;margin:.7em 0;font-size:1.12rem;text-align:center;overflow-x:auto}
+.formula.big{font-size:1.4rem;font-weight:600}
+.ans{background:var(--hl);border-radius:6px;padding:1px 7px;font-weight:700}
+.mline{padding:3px 0;overflow-x:auto}
+.cC{color:var(--cap)}.cL{color:var(--ind)}
+.no{color:var(--bad)}
+
+/* boxes */
+.key{display:flex;gap:12px;background:var(--sct);border:1.5px solid var(--sc);border-radius:14px;padding:12px 16px;margin:1em 0}
+.key .ki{color:var(--sc);font-size:1.4rem;line-height:1.2}
+.key ol{margin:.3em 0 0;padding-left:1.3em}
+.maths{background:var(--hl);border-radius:14px;padding:10px 16px;margin:1em 0;border:1px dashed rgba(0,0,0,.18)}
+.maths h4{margin:.2em 0 .3em;font-size:1rem}
+.maths .mi{display:inline-block;background:var(--ink);color:var(--card);border-radius:6px;padding:0 6px;font-size:.85rem;margin-right:4px}
+.maths ul{margin:.3em 0;padding-left:1.2em}
+.warnbox{background:var(--warn);border-left:5px solid var(--bad);border-radius:10px;padding:10px 14px;margin:1em 0}
+.take{border:2px dashed var(--sc);border-radius:14px;padding:10px 18px;margin:1.6em 0 .4em}
+.take h4{margin:.2em 0;color:var(--sc)}
+.take ul{list-style:none;padding:0;margin:.3em 0}
+.take li{padding:3px 0}
+.take input{accent-color:var(--sc);width:18px;height:18px;vertical-align:-3px;margin-right:6px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:.8em 0}
+.tile{background:var(--sct);border-radius:14px;padding:12px 14px}
+.tile .big{font-size:1.5rem;font-weight:800;color:var(--sc)}
+.tile p{margin:.3em 0 0;font-size:.95rem}
+.rules,.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:.8em 0}
+.rule,.fcard{border-radius:14px;padding:12px 16px;border:1.5px solid var(--line);background:var(--card)}
+.rule h4,.fcard h4{margin:.1em 0 .4em}
+.rC{border-color:var(--cap);background:linear-gradient(180deg,color-mix(in srgb,var(--cap) 9%,transparent),transparent 60%)}
+.rL{border-color:var(--ind);background:linear-gradient(180deg,color-mix(in srgb,var(--ind) 9%,transparent),transparent 60%)}
+.rC h4{color:var(--cap)}.rL h4{color:var(--ind)}
+.fcard .formula{font-size:1.02rem;padding:6px 10px}
+.rC .formula{background:color-mix(in srgb,var(--cap) 10%,transparent);border-color:var(--cap)}
+.rL .formula{background:color-mix(in srgb,var(--ind) 10%,transparent);border-color:var(--ind)}
+.rulefig{width:100%;max-width:300px;display:block;margin:4px auto}
+.try{background:var(--soft);border-radius:12px;padding:10px 14px 10px 34px}
+.try li{margin:3px 0}
+.recipe{counter-reset:r;list-style:none;padding:0}
+.recipe li{counter-increment:r;position:relative;padding:10px 14px 10px 56px;margin:8px 0;background:var(--sct);border-radius:12px}
+.recipe li::before{content:counter(r);position:absolute;left:12px;top:9px;width:32px;height:32px;border-radius:50%;background:var(--sc);color:#fff;display:grid;place-items:center;font-weight:800}
+.mist li{margin:4px 0}
+.mist li::marker{content:"✗  ";color:var(--bad)}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.summary>div{border-radius:12px;padding:10px 14px;background:var(--soft);border-top:4px solid var(--sc)}
+.summary>div:nth-child(1){border-color:var(--s2)}.summary>div:nth-child(2){border-color:var(--s1)}.summary>div:nth-child(3){border-color:var(--s3)}.summary>div:nth-child(4){border-color:var(--s5)}.summary>div:nth-child(5){border-color:var(--s4)}
+.summary h4{margin:0 0 .2em}.summary p{margin:0}
+
+/* tables */
+.tbl{border-collapse:collapse;width:100%;margin:.8em 0;font-size:.96rem;display:block;overflow-x:auto}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+.tbl th{background:var(--sct);color:var(--ink)}
+.tbl.center td,.tbl.center th{text-align:center}
+.tbl.small{font-size:.9rem;width:auto}
+.tbl tr.rowC td:first-child{border-left:4px solid var(--cap)}
+.tbl tr.rowL td:first-child{border-left:4px solid var(--ind)}
+
+/* svg: circuits and plots */
+figure{margin:.8em 0}
+figure.ckt svg{width:100%;max-width:440px;display:block;margin:auto}
+figure.plot svg{width:100%;max-width:420px;display:block;margin:auto}
+figure.plot.wide svg{max-width:620px}
+figcaption{text-align:center;color:var(--muted);font-size:.86rem;margin-top:2px}
+svg .el line,svg .el path,svg .wire,svg .blade{stroke:var(--wire);stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+svg .el.cC line,svg .el.cC path{stroke:var(--cap)}
+svg .el.cL line,svg .el.cL path{stroke:var(--ind)}
+svg .el .plate{stroke-width:3.4}
+svg .el .coil{stroke-width:2.6}
+svg .cfill{fill:var(--cap)}
+svg .src{fill:var(--card);stroke:var(--wire);stroke-width:2.2}
+svg .sign{stroke:var(--wire)!important;stroke-width:1.8!important}
+svg .term{fill:var(--card);stroke:var(--wire);stroke-width:2}
+svg .term.open{stroke:var(--cap);stroke-width:2.4}
+svg .short{stroke:var(--ind)!important;stroke-width:4.5!important}
+svg .node{fill:var(--wire)}
+svg .dead,svg .dead *{opacity:.32}
+svg text{fill:var(--ink);font:14px "Segoe UI",system-ui,sans-serif}
+svg text .it,svg .it{font-style:italic}
+svg text.lab.cC{fill:var(--cap)}svg text.lab.cL{fill:var(--ind)}
+svg text.pm{font-weight:700;font-size:15px}
+svg text.note{fill:var(--bad);font-weight:600}
+svg .cur path{stroke:var(--s5);stroke-width:2;fill:none}
+svg .cur.cC path{stroke:var(--cap)}svg .cur.cL path{stroke:var(--ind)}
+svg text.cur{fill:var(--s5)}
+svg text.big{font-size:26px;fill:var(--muted)}
+svg .grid{stroke:var(--line);stroke-width:1}
+svg .axis{stroke:var(--muted);stroke-width:1.5}
+svg .curve,svg .gcurve{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+svg .guide{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:5 4}
+svg .g63{stroke:var(--sc)}
+svg text.tick{fill:var(--muted);font-size:12px}
+svg text.alab{fill:var(--muted);font-size:12.5px;font-weight:600}
+svg text.gtxt{fill:var(--muted);font-size:11.5px}
+svg text.dtxt{font-size:12.5px;font-weight:700}
+svg text.zl{font-size:13px;font-weight:700;fill:var(--ink)}
+svg .z1{fill:var(--s2t)}svg .z2{fill:var(--s1t)}svg .z3{fill:var(--s5t)}
+svg .sw{stroke:var(--bad);stroke-width:2;stroke-dasharray:4 3}
+svg text.sw{fill:var(--muted);font-weight:700;stroke:none}
+
+/* worked examples */
+.ex{border:1.5px solid var(--sc);border-radius:16px;margin:1.2em 0;overflow:hidden}
+.extitle{margin:0;padding:10px 16px;background:var(--sc);color:#fff;font-size:1.02rem}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .extitle{color:#111}}
+:root[data-theme="dark"] .extitle{color:#111}
+.exq{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;padding:12px 16px;align-items:center}
+.tryfirst{color:var(--sc);font-weight:600;font-size:.92rem}
+.steps{list-style:none;margin:0;padding:0 16px}
+.step{border-left:4px solid var(--sc);background:var(--sct);border-radius:0 12px 12px 0;padding:10px 14px;margin:10px 0;animation:pop .35s ease}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.sh{font-weight:700;margin-bottom:4px}
+.sn{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--sc);color:#fff;font-size:.8rem;margin-right:8px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sn{color:#111}}
+:root[data-theme="dark"] .sn{color:#111}
+.sm{padding-left:32px;font-size:1.04rem}
+.why{padding-left:32px;color:var(--muted);font-size:.9rem;margin-top:4px}
+.tip{margin:8px 0 2px 32px;background:var(--hl);border-radius:10px;padding:6px 12px;font-size:.92rem}
+.tip::before{content:"√x  Maths tip: ";font-weight:700}
+.step figure{margin:.5em 0}
+.final{margin:10px 16px;padding:10px 14px;border-radius:12px;background:var(--s5t);border:1.5px solid var(--s5);animation:pop .35s ease}
+.exbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 16px 14px}
+.cnt{color:var(--muted);font-size:.9rem;margin-left:auto}
+
+/* switch-flip animation */
+.sim{border:1.5px solid var(--sc);border-radius:16px;padding:12px 14px;margin:1em 0;background:linear-gradient(180deg,var(--sct),var(--card) 40%)}
+.modes{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.modes button.on{background:var(--sc);border-color:var(--sc);color:#fff;font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .modes button.on{color:#111}}
+:root[data-theme="dark"] .modes button.on{color:#111}
+.simgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center}
+.simsvg{width:100%;display:block}
+.gsvg{width:100%;display:block}
+.simsvg .hit{fill:transparent;cursor:pointer;stroke:var(--sc);stroke-dasharray:4 4;stroke-width:1.2;opacity:.7}
+.simsvg .hit:hover{fill:color-mix(in srgb,var(--sc) 10%,transparent)}
+.simsvg .blade{stroke:var(--bad);stroke-width:3.2}
+.simsvg .edot{fill:#fab005;stroke:#e67700;stroke-width:1}
+.simsvg .field ellipse{fill:none;stroke:var(--ind);stroke-width:1.5;stroke-dasharray:3 4}
+.simsvg .glow{fill:#ffd43b}
+.simsvg text.val{font-weight:700;fill:var(--sc)}
+.gsvg .gdot{stroke:var(--card);stroke-width:2}
+.simbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.status{margin-left:auto;font-weight:700;font-size:.85rem;padding:3px 12px;border-radius:999px}
+.status.moving{background:var(--s4t);color:var(--s4)}
+.status.steady{background:var(--s5t);color:var(--s5)}
+.readout{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.93rem;margin-top:8px;padding:6px 10px;background:var(--soft);border-radius:10px;font-variant-numeric:tabular-nums}
+.insight{margin-top:8px;padding:8px 12px;border-left:4px solid var(--sc);background:var(--card);border-radius:0 10px 10px 0;min-height:2.6em}
+
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:18px 16px 28px}
+
+@media (max-width:820px){
+  .exq,.simgrid,.rules,.pair{grid-template-columns:1fr}
+  .tiles{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  body{font-size:16px}
+  .hero{padding:22px 16px}.hero h1{font-size:1.5rem}
+  main{padding:14px 10px 40px}
+  .band{padding:14px 16px}.band h2{font-size:1.2rem}.band .num{width:42px;height:42px;font-size:1.3rem}
+  .body{padding:2px 14px 18px}
+  .chip .lbl{display:none}.chip.on .lbl{display:inline}
+  .sm,.why{padding-left:0}.tip{margin-left:0}
+  .formula.big{font-size:1.15rem}
+  .cnt{margin-left:0;width:100%}
+}
+
+/* Phasor page: added on top of html_trs/style.css */
+:root{--vc:#1971c2;--ic:#e8590c;--pc:#2b8a3e;--pc2:#0ca678;--qc:#ae3ec9;
+  --l1:#6741d9;--l1b:#3b5bdb;--l2:#0c8599;--l2b:#1098ad;--l3:#e8590c;--l3b:#f08c00;--l4:#2b8a3e;--l4b:#5c940d;
+  --l1t:#f3f0ff;--l2t:#e3fafc;--l3t:#fff4e6;--l4t:#ebfbee;--good:#ebfbee;--badt:#fff5f5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--vc:#74c0fc;--ic:#ffa94d;--pc:#69db7c;--pc2:#38d9a9;--qc:#e599f7;
+  --l1:#b197fc;--l1b:#91a7ff;--l2:#3bc9db;--l2b:#66d9e8;--l3:#ffa94d;--l3b:#ffd43b;--l4:#69db7c;--l4b:#a9e34b;
+  --l1t:#231e3a;--l2t:#132e33;--l3t:#3a2614;--l4t:#16301d;--good:#16301d;--badt:#3a1d1d}}
+:root[data-theme="dark"]{--vc:#74c0fc;--ic:#ffa94d;--pc:#69db7c;--pc2:#38d9a9;--qc:#e599f7;
+  --l1:#b197fc;--l1b:#91a7ff;--l2:#3bc9db;--l2b:#66d9e8;--l3:#ffa94d;--l3b:#ffd43b;--l4:#69db7c;--l4b:#a9e34b;
+  --l1t:#231e3a;--l2t:#132e33;--l3t:#3a2614;--l4t:#16301d;--good:#16301d;--badt:#3a1d1d}
+
+.hero{background:linear-gradient(115deg,#5f3dc4 0%,#1c7ed6 35%,#0c8599 60%,#e8590c 85%,#2b8a3e 100%)}
+.hero .wave{opacity:.25;position:absolute;inset:auto 0 0 0;height:60px;width:100%}
+.hero{position:relative;overflow:hidden}
+
+/* level tabs */
+#levels{max-width:1080px;margin:18px auto 0;padding:0 16px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.lvl{display:flex;gap:12px;align-items:flex-start;text-decoration:none;color:var(--ink);background:var(--card);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);border:2px solid transparent;transition:transform .15s,border-color .15s}
+.lvl:hover{transform:translateY(-2px)}
+.lvl .lic,.lvhead .lic{flex:none;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:1.25rem;background:linear-gradient(135deg,var(--lc),var(--lcb))}
+.lvl small{display:block;color:var(--lc);font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:.7rem}
+.lvl b{display:block;line-height:1.25}
+.lvl em{display:block;font-style:normal;color:var(--muted);font-size:.8rem;line-height:1.35;margin-top:3px}
+.lvl.on{border-color:var(--lc);background:linear-gradient(160deg,var(--lct),var(--card) 70%)}
+.lv1{--lc:var(--l1);--lcb:var(--l1b);--lct:var(--l1t)}.lv2{--lc:var(--l2);--lcb:var(--l2b);--lct:var(--l2t)}
+.lv3{--lc:var(--l3);--lcb:var(--l3b);--lct:var(--l3t)}.lv4{--lc:var(--l4);--lcb:var(--l4b);--lct:var(--l4t)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .lic{color:#111!important}}
+:root[data-theme="dark"] .lic{color:#111!important}
+body[data-level="1"] #prog{background:linear-gradient(90deg,var(--l1),var(--l1b))}
+body[data-level="2"] #prog{background:linear-gradient(90deg,var(--l2),var(--l2b))}
+body[data-level="3"] #prog{background:linear-gradient(90deg,var(--l3),var(--l3b))}
+body[data-level="4"] #prog{background:linear-gradient(90deg,var(--l4),var(--l4b))}
+.lvhead{display:flex;gap:16px;align-items:center;padding:18px 22px;margin:0 0 22px;border-radius:18px;background:linear-gradient(110deg,var(--lct),var(--card) 80%);border:2px solid var(--lc)}
+.lvhead .lic{width:60px;height:60px;font-size:1.6rem;border-radius:16px}
+.lvhead small{color:var(--lc);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:.78rem}
+.lvhead h2{margin:0;font-size:1.7rem;line-height:1.2}
+.lvhead p{margin:.2em 0 0;color:var(--muted)}
+.lvnav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:10px 0 0}
+.lvbtn{display:inline-block;text-decoration:none;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:10px 20px;font-weight:600}
+.lvbtn.next{background:linear-gradient(120deg,var(--lc),var(--lcb));color:#fff;border:0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .lvbtn.next{color:#111}}
+:root[data-theme="dark"] .lvbtn.next{color:#111}
+.lvnav .done{font-weight:700;color:var(--pc)}
+
+/* notation */
+b.phv,b.phi,b.phz,b.phs{font-family:Georgia,"Times New Roman",serif;font-weight:700}
+b.phv{color:var(--vc)}b.phi{color:var(--ic)}b.phs{color:var(--s1)}
+.ov{border-top:1.5px solid currentColor;padding:0 2px}
+.hlt{background:var(--hl);border-radius:6px;padding:1px 7px;font-weight:700}
+.idgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:.8em 0}
+.idc{background:var(--sct);border-radius:14px;padding:10px 12px;border-top:4px solid var(--sc)}
+.idc .big{font-size:1.25rem;font-weight:800;color:var(--sc)}
+.idc p{margin:.3em 0 0;font-size:.88rem;color:var(--muted)}
+.euler{background:linear-gradient(100deg,var(--s1t),var(--s3t));border-radius:14px;padding:10px 16px;margin:1em 0;border:1.5px dashed var(--s1)}
+.fcard.good{border-color:var(--pc);background:linear-gradient(180deg,var(--good),transparent 70%)}
+.fcard.bad{border-color:var(--bad);background:linear-gradient(180deg,var(--badt),transparent 70%)}
+.fcard.good h4{color:var(--pc)}.fcard.bad h4{color:var(--bad)}
+.jobadd{border-color:var(--s2)}.jobmul{border-color:var(--s4)}.jobadd h4{color:var(--s2)}.jobmul h4{color:var(--s4)}
+.why4{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:.8em 0}
+.tariff{border:2px solid var(--s4);background:var(--s4t);border-radius:14px;padding:10px 18px;margin:1em 0}
+.tariff h4{margin:.3em 0;color:var(--s4)}
+.tariff li{margin:5px 0}
+figure.pdf svg{width:100%;max-width:280px;display:block;margin:auto}
+figure.pdf.tri svg{max-width:400px}
+svg text.plab{font-weight:700;font-size:14px}
+svg .acw{fill:none;stroke:var(--wire);stroke-width:2}
+svg .gnd{stroke:var(--wire);stroke-width:2;fill:none}
+svg .zbox{fill:none;stroke:var(--muted);stroke-width:1.3;stroke-dasharray:5 4}
+svg .mloop path{fill:none;stroke:var(--s1);stroke-width:2}
+svg text.mlab{fill:var(--s1);font-weight:700}
+svg text.vnode{fill:var(--vc);font-weight:700;font-style:italic}
+.exq.nofig{grid-template-columns:1fr}
+
+/* side-by-side comparison */
+.vs{border:1.5px solid var(--sc);border-radius:16px;margin:1.2em 0;overflow:hidden}
+.vsq{padding:10px 16px}
+.vcols{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--line)}
+.vcol{padding:6px 0 4px;min-width:0}
+.vcol h5{margin:6px 16px 0;font-size:1rem;padding:6px 12px;border-radius:10px;display:inline-block}
+.vcol.left{border-right:1px solid var(--line);--sc:var(--bad);--sct:var(--badt)}
+.vcol.right{--sc:var(--pc);--sct:var(--good)}
+.vcol.left h5{background:var(--badt);color:var(--bad)}.vcol.right h5{background:var(--good);color:var(--pc)}
+.vcol .steps{padding:0 12px}.vcol .exbar{padding:8px 12px 10px}
+.vcol .sm{padding-left:0;font-size:.98rem}.vcol .why,.vcol .tip{padding-left:0;margin-left:0}
+.same{margin:0;padding:12px 18px;background:linear-gradient(90deg,var(--good),var(--s3t));border-top:2px solid var(--pc);font-size:1.02rem;animation:pop .35s ease}
+
+/* quiz */
+.quiz{display:grid;gap:12px;margin:.6em 0}
+.qq{background:var(--soft);border-radius:14px;padding:10px 14px}
+.qq p{margin:.2em 0 .5em}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opts button{border-radius:10px}
+.opts button.right{background:var(--good);border-color:var(--pc);color:var(--pc);font-weight:700}
+.opts button.wrong{background:var(--badt);border-color:var(--bad);color:var(--bad);text-decoration:line-through}
+.fb{margin-top:8px;padding:6px 12px;border-radius:10px;font-size:.94rem}
+.fb.ok{background:var(--good)}.fb.no{background:var(--badt)}
+.score{font-weight:700;color:var(--sc);margin:0}
+
+/* interactive pictures */
+.viz{border:1.5px solid var(--sc);border-radius:16px;padding:12px 14px;margin:1em 0;background:linear-gradient(180deg,var(--sct),var(--card) 45%)}
+.vgrid{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;align-items:center}
+.vgrid1{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center}
+.vsvg{width:100%;display:block}
+.vsvg.wide{max-width:760px;margin:auto}
+.vsvg.plane{max-width:420px;margin:auto}
+.vside{display:flex;flex-direction:column;gap:8px}
+.vrow{display:flex;flex-wrap:wrap;gap:4px 18px;align-items:center;margin:6px 0}
+.sl{display:flex;align-items:center;gap:8px;font-size:.9rem;flex:1 1 230px;min-width:0}
+.sl span{flex:none;min-width:7.5em;color:var(--muted)}
+.sl input{flex:1;min-width:80px;accent-color:var(--sc)}
+.sl output{min-width:2.8em;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.sl em{font-style:normal;color:var(--muted);font-size:.85rem}
+.vbtns{display:flex;gap:8px;flex-wrap:wrap}
+.readout.big{font-size:1.02rem}
+.readout.col{flex-direction:column}
+svg .orbit{fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:4 4}
+svg .proj,svg .drop{stroke:var(--vc);stroke-width:1.2;stroke-dasharray:3 4}
+svg .shadow{fill:var(--vc)}
+svg .wave{fill:none;stroke:var(--vc);stroke-width:3}
+svg text.vt{fill:var(--muted);font-size:13px;font-weight:600}
+svg .vcurve{fill:none;stroke-width:2.2;stroke-linecap:round}
+svg .vcurve.thick{stroke-width:3.2}
+svg .cursor{stroke:var(--muted);stroke-width:1.3;stroke-dasharray:4 4}
+svg text.lg,svg text.plab,svg text.gtxt,svg text.lab{paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
+svg text.lg{font-size:12.5px;font-weight:700}
+svg .dash{stroke-width:1.6;stroke-dasharray:5 4}
+svg .grid.g5{stroke:var(--muted);opacity:.45}
+svg .drag{fill:var(--s4);stroke:var(--card);stroke-width:3;pointer-events:none}
+svg .hitall{fill:transparent;cursor:crosshair;touch-action:none}
+svg .parea.pos{fill:var(--pc);opacity:.18}svg .parea.neg{fill:var(--bad);opacity:.22}
+svg .avg{stroke:var(--bad);stroke-width:2;stroke-dasharray:7 5}
+.meter{height:30px;border-radius:999px;background:var(--soft);position:relative;overflow:hidden;border:1px solid var(--line);margin-bottom:6px}
+.meter .fill{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--s4),var(--pc));transition:width .15s}
+.meter .mtxt{position:relative;display:block;text-align:center;line-height:30px;font-weight:700;font-size:.9rem}
+.bars{display:flex;flex-direction:column;gap:8px}
+.pfbar{display:grid;grid-template-columns:9.5em 1fr 5.5em;gap:8px;align-items:center;font-size:.9rem}
+.pfbar>div{height:16px;background:var(--soft);border-radius:999px;overflow:hidden}
+.pfbar i{display:block;height:100%;border-radius:999px;transition:width .15s}
+.pfbar b{text-align:right;font-variant-numeric:tabular-nums}
+.pen{margin:4px 0 0;padding:6px 10px;border-radius:10px;background:var(--good);font-weight:600;font-size:.9rem}
+.pen.on{background:var(--badt);color:var(--bad)}
+
+@media (max-width:900px){#levels{grid-template-columns:1fr 1fr}.idgrid{grid-template-columns:1fr 1fr}}
+@media (max-width:820px){.vcols,.vgrid,.vgrid1,.why4{grid-template-columns:1fr}.vcol.left{border-right:0;border-bottom:1px solid var(--line)}}
+@media (max-width:600px){
+  #levels{gap:8px;padding:0 10px}.lvl{padding:9px 10px;gap:8px}.lvl em{display:none}.lvl .lic{width:34px;height:34px;font-size:1rem}
+  .lvhead{padding:12px 14px}.lvhead h2{font-size:1.3rem}.lvhead .lic{width:44px;height:44px;font-size:1.2rem}
+  .pfbar{grid-template-columns:7em 1fr 4.6em;font-size:.82rem}
+  .sl span{min-width:6em}
+}
+
+a.home{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;font-weight:600;font-size:.9rem;text-decoration:none;white-space:nowrap;transition:background .15s}
+a.home:hover{background:rgba(255,255,255,.26)}
+a.home:focus-visible{outline:2px solid #fff;outline-offset:2px}
+a.home svg{width:16px;height:16px}
+.hero a.home{display:flex;width:max-content;margin-bottom:12px}
+</style>
+</head>
+<body>
+<header class="hero"><div class="in"><div><a class="home" href="index.html" aria-label="Back to all topics"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 10H3M9 4l-6 6 6 6"/></svg>All topics</a>
+
+<h1>Phasors and AC circuits — learn it yourself</h1>
+<p>Four levels, from "what is a phasor?" to the power factor correction that saves factories money. Pick a level below, work through the parts in order, and have a calculator ready.</p></div>
+<button id="theme" title="Switch between light and dark">◐ Light / dark</button></div></header>
+<nav id="levels" aria-label="Levels"></nav>
+<nav class="bar" aria-label="Parts of this level"><div id="toc"></div><div id="prog"></div></nav>
+<main></main>
+<footer>Developed by Muhammad 'Aasim Asyafi'ie bin Ahmad, 2026 · Reference: Alexander &amp; Sadiku, <i>Fundamentals of Electric Circuits</i>, Ch. 9–11</footer>
+<script>
+// written by check.py - do not edit
+const N = {
+"t_a1": "6.928",
+"t_a2": "3",
+"t_b1": "4",
+"t_b2": "5.196",
+"t_A": "9.928",
+"t_B": "−1.196",
+"t_C": "10",
+"t_th": "−6.87",
+"c30": "0.8660",
+"s30": "0.5",
+"c60": "0.5",
+"s60": "0.8660",
+"p1_x": "6.928",
+"p1_y": "4",
+"p2_x": "3",
+"p2_y": "−5.196",
+"ps_x": "9.928",
+"ps_y": "−1.196",
+"ps_m": "10",
+"ps_a": "−6.87",
+"ps_x2": "98.57",
+"ps_y2": "1.431",
+"ps_r2": "100",
+"ps_ratio": "−0.1205",
+"z34_m": "5",
+"z34_a": "53.13",
+"atan43": "53.13",
+"zm34_m": "5",
+"zm34_a": "126.87",
+"calc_m34": "−53.13",
+"zmm_m": "5",
+"zmm_a": "−126.87",
+"calc_mm": "53.13",
+"r10_30_x": "8.660",
+"r10_30_y": "5",
+"r10_m120_x": "−5",
+"r10_m120_y": "−8.660",
+"c120": "−0.5",
+"s120": "−0.8660",
+"add_x": "8",
+"add_y": "2",
+"add_m": "8.25",
+"add_a": "14.04",
+"z2_x": "1.732",
+"z2_y": "1",
+"mul_x": "1.196",
+"mul_y": "9.928",
+"mul_m": "10",
+"mul_a": "83.13",
+"mul_t1": "5.196",
+"mul_t2": "4",
+"mul_t3": "6.928",
+"div_m": "5",
+"div_a": "45",
+"n60_x": "5",
+"n60_y": "8.660",
+"d15_x": "1.932",
+"d15_y": "0.5176",
+"divnum_x": "14.14",
+"divnum_y": "14.14",
+"dv_rr": "9.659",
+"dv_ii": "4.483",
+"dv_ir": "16.73",
+"dv_ri": "2.588",
+"divden": "4",
+"divq_x": "3.536",
+"divq_y": "3.536",
+"I1_m": "5",
+"I1_a": "−53.13",
+"V2_m": "10",
+"V2_a": "126.87",
+"calc_V2": "−53.13",
+"XL": "3",
+"Zrl_m": "5",
+"Zrl_a": "36.87",
+"Irl_m": "2",
+"Irl_a": "−36.87",
+"cal_A": "1.6",
+"cal_B": "1.2",
+"cal_C": "2",
+"cal_th": "36.87",
+"XC": "4",
+"nod_x": "8",
+"nod_y": "−4",
+"nod_m": "8.94",
+"nod_a": "−26.57",
+"nod_IC_m": "2.24",
+"nod_IC_a": "63.43",
+"nod_IR_m": "2.24",
+"nod_IR_a": "−26.57",
+"nod_IC_x": "1",
+"nod_IC_y": "2",
+"nod_IR_x": "2",
+"nod_IR_y": "−1",
+"nod_I1_m": "3.16",
+"nod_I1_a": "18.43",
+"nod_I1_x": "3",
+"nod_I1_y": "1",
+"mk_x": "−0.5",
+"mk_y": "0.5",
+"mk_m": "0.7071",
+"mk_a": "135",
+"m_I1_m": "2.36",
+"m_I1_a": "−45",
+"m_I2_m": "1.67",
+"m_I2_a": "90",
+"m_I1_x": "1.667",
+"m_I1_y": "−1.667",
+"m_I2_x": "0",
+"m_I2_y": "1.667",
+"m_Ish_m": "3.73",
+"m_Ish_a": "−63.43",
+"m_33_m": "4.24",
+"m_33_a": "45",
+"vm230": "325",
+"w50": "314.2",
+"sqrt2": "1.414",
+"T50": "20",
+"pr_I": "5",
+"pr_P": "250",
+"Z86_m": "10",
+"Z86_a": "36.87",
+"I86_m": "10",
+"I86_a": "−36.87",
+"S86_x": "400",
+"S86_y": "300",
+"S86_m": "500",
+"S86_a": "36.87",
+"wrong86": "500",
+"pf86": "0.8",
+"Vrms86": "70.71",
+"Irms86": "7.071",
+"PR86": "400",
+"QL86": "300",
+"vrms68": "7.071",
+"Vth_m": "14.1",
+"Vth_a": "45",
+"Zth_x": "2",
+"Zth_y": "2",
+"Zth_m": "2.83",
+"Zth_a": "45",
+"d44_m": "5.66",
+"d44_a": "45",
+"Pmax": "12.5",
+"IL_mpt_m": "3.54",
+"IL_mpt_a": "45",
+"Vth2": "200",
+"P_Ronly": "10.4",
+"R_only": "2.83",
+"Ipf100": "20",
+"Lpf100": "1",
+"Ipf95": "21.1",
+"Lpf95": "1.11",
+"Ipf85": "23.5",
+"Lpf85": "1.38",
+"Ipf70": "28.6",
+"Lpf70": "2.04",
+"Ipf50": "40",
+"Lpf50": "4",
+"pen_steps": "5",
+"pen_pct": "7.5",
+"pen_rm": "1500",
+"th1": "41.41",
+"th2": "18.19",
+"tan1": "0.8819",
+"tan2": "0.3287",
+"S1": "13.33",
+"S2": "10.53",
+"Q1": "8.819",
+"Q2": "3.287",
+"Qc": "5.532",
+"Qc_var": "5532",
+"wv2": "16620000",
+"V2": "52900",
+"Cuf": "333",
+"Iold": "57.97",
+"Inew": "45.77",
+"loss_ratio": "0.623",
+"loss_cut": "37.7",
+"Icut": "21.1",
+"ILp_m": "58.0",
+"ILp_a": "−41.41",
+"ICp_m": "24.1",
+"ICp_a": "90",
+"ICp_x": "0",
+"ICp_y": "24.05",
+"Inew_p_m": "45.8",
+"Inew_p_a": "−18.19",
+"ILp_x": "43.48",
+"ILp_y": "−38.34",
+"Inew_p_x": "43.48",
+"Inew_p_y": "−14.29",
+"Vpk_cap": "325",
+"C_unity": "531"
+};
+
+'use strict';
+// Drawing helpers for the self-study page: maths snippets, circuit symbols (SVG strings) and static response plots.
+
+// ---------------------------------------------------------------- maths snippets
+const fr = (a, b) => `<span class="fr"><span>${a}</span><span>${b}</span></span>`;
+const ex = s => `<i>e</i><sup>${s}</sup>`;
+const V = (n, s) => `<i>${n}</i>${s ? `<sub>${s}</sub>` : ''}`;           // V('v','C') -> v_C
+const vC = V('v', 'C'), iC = V('i', 'C'), vL = V('v', 'L'), iL = V('i', 'L'), vR = V('v', 'R'), iR = V('i', 'R');
+const TAU = '<i>τ</i>';
+const t0m = '0<sup>−</sup>', t0p = '0<sup>+</sup>', INF = '∞';
+const box = s => `<span class="ans">${s}</span>`;
+
+// inside SVG text: italic letter with a subscript (no HTML tags allowed there)
+const sb = (n, s) => `<tspan class="it">${n}</tspan><tspan dy="4" font-size="72%">${s}</tspan><tspan dy="-4">​</tspan>`;
+
+// ---------------------------------------------------------------- circuit symbols
+// two(kind, x1, y1, x2, y2, o): a two-terminal element between two points, drawn along the x axis and rotated.
+// kinds: R C L V (voltage source, first point is +) SWo SWc (switch open / closed) OPEN SHORT W
+// o: { lab: 'R₁ = 2 kΩ' or [line1, line2], side: 1 | -1, off: px, cls: extra class, pm: true (+/− beside it), id }
+function two(kind, x1, y1, x2, y2, o = {}) {
+  const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy), ang = Math.atan2(dy, dx) * 180 / Math.PI;
+  const b = o.body || (kind === 'V' ? 40 : kind === 'C' ? 12 : 48), s = (len - b) / 2, e = s + b, m = len / 2;
+  let g = '';
+  const lead = (a, c) => `<line x1="${a}" y1="0" x2="${c}" y2="0"/>`;
+  switch (kind) {
+    case 'R': {
+      let p = `M${s} 0`; const n = 6, w = b / n;
+      for (let k = 0; k < n; k++) p += ` L${s + w * (k + 0.5)} ${k % 2 ? 8 : -8}`;
+      p += ` L${e} 0`;
+      g = lead(0, s) + `<path d="${p}"/>` + lead(e, len); break;
+    }
+    case 'C':
+      g = lead(0, s) + lead(e, len) + `<rect class="cfill" ${o.id ? `data-k="${o.id}"` : ''} x="${s}" y="-14" width="${b}" height="28" opacity="0"/>`
+        + `<line class="plate" x1="${s}" y1="-15" x2="${s}" y2="15"/><line class="plate" x1="${e}" y1="-15" x2="${e}" y2="15"/>`; break;
+    case 'L': {
+      let p = `M${s} 0`; const n = 4, w = b / n;
+      for (let k = 0; k < n; k++) p += ` a${w / 2} ${w / 2} 0 0 1 ${w} 0`;
+      g = lead(0, s) + `<path class="coil" ${o.id ? `data-k="${o.id}"` : ''} d="${p}"/>` + lead(e, len); break;
+    }
+    case 'V':
+      g = lead(0, s) + lead(e, len) + `<circle class="src" cx="${m}" cy="0" r="${b / 2}"/>`
+        + `<path class="sign" d="M${s + 7} -5v10M${s + 2} 0h10M${e - 12} -5v10"/>`;
+      break;     // '+' near the first point, '−' near the second (drawn across the axis so it reads after rotation)
+    case 'SWo':
+      g = lead(0, s) + lead(e, len) + `<circle class="term" cx="${s}" cy="0" r="3"/><circle class="term" cx="${e}" cy="0" r="3"/>`
+        + `<line x1="${s}" y1="0" x2="${e - 4}" y2="-20"/>`; break;
+    case 'SWc':
+      g = lead(0, s) + lead(e, len) + `<circle class="term" cx="${s}" cy="0" r="3"/><circle class="term" cx="${e}" cy="0" r="3"/>`
+        + `<line x1="${s}" y1="0" x2="${e}" y2="-3"/>`; break;
+    case 'OPEN':
+      g = lead(0, s) + lead(e, len) + `<circle class="term open" cx="${s}" cy="0" r="4"/><circle class="term open" cx="${e}" cy="0" r="4"/>`; break;
+    case 'SHORT':
+      g = `<line class="short" x1="0" y1="0" x2="${len}" y2="0"/>`; break;
+    default:
+      g = lead(0, len);
+  }
+  let out = `<g class="el el-${kind} ${o.cls || ''}" transform="translate(${x1} ${y1}) rotate(${ang})">${g}</g>`;
+  if (o.lab) out += label(x1, y1, x2, y2, o);
+  return out;
+}
+function label(x1, y1, x2, y2, o) {
+  const len = Math.hypot(x2 - x1, y2 - y1), side = o.side || 1, off = o.off || 24;
+  const nx = -(y2 - y1) / len * side, ny = (x2 - x1) / len * side;
+  const mx = (x1 + x2) / 2 + nx * off, my = (y1 + y2) / 2 + ny * off;
+  const lines = Array.isArray(o.lab) ? o.lab : [o.lab];
+  const anc = Math.abs(nx) < 0.3 ? 'middle' : nx > 0 ? 'start' : 'end';
+  const y0 = my - (lines.length - 1) * 8 + (Math.abs(nx) < 0.3 ? 5 : 5);
+  let t = lines.map((l, k) => `<tspan x="${mx}" y="${y0 + k * 17}">${l}</tspan>`).join('');
+  let s = `<text class="lab ${o.lcls || ''}" text-anchor="${anc}">${t}</text>`;
+  if (o.pm) {          // + at the first end, − at the second end, on the label side
+    const px = (k) => x1 + (x2 - x1) * k + nx * 13, py = (k) => y1 + (y2 - y1) * k + ny * 13 + 5;
+    s += `<text class="pm" x="${px(0.18)}" y="${py(0.18)}" text-anchor="middle">+</text><text class="pm" x="${px(0.82)}" y="${py(0.82)}" text-anchor="middle">−</text>`;
+  }
+  return s;
+}
+const wire = (...p) => `<polyline class="wire" points="${p.map(q => q.join(',')).join(' ')}"/>`;
+const node = (x, y) => `<circle class="node" cx="${x}" cy="${y}" r="3.5"/>`;
+const txt = (x, y, s, cls = '', anc = 'middle') => `<text class="${cls}" x="${x}" y="${y}" text-anchor="${anc}">${s}</text>`;
+function arrow(x, y, dir, lab, cls = 'cur') {        // small current arrow: dir 'r' 'l' 'u' 'd'
+  const r = { r: 0, d: 90, l: 180, u: 270 }[dir];
+  const lx = dir === 'r' || dir === 'l' ? x : x + 12, ly = dir === 'r' || dir === 'l' ? y - 10 : y + 4;
+  return `<g class="${cls}" transform="translate(${x} ${y}) rotate(${r})"><path d="M-9 0H7M2 -5L8 0L2 5"/></g>`
+    + (lab ? `<text class="lab ${cls}" x="${lx}" y="${ly}" text-anchor="${dir === 'r' || dir === 'l' ? 'middle' : 'start'}">${lab}</text>` : '');
+}
+const fig = (w, h, inner, cap) => `<figure class="ckt"><svg viewBox="0 0 ${w + 30} ${h}" role="img" aria-label="${(cap || 'circuit').replace(/<[^>]+>/g, '')}"><g transform="translate(30 0)">${inner}</g></svg>${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
+
+// ---------------------------------------------------------------- static response plots
+// plot({ f, tmax, ymin, ymax, yt: [[value,label]], tt: [[t,label]], ylab, tlab, col, guide: [[y,label]], dots: [[t,y,label]] })
+function plot(o) {
+  const W = 360, H = 210, L = 52, R = 14, T = 16, B = 40, pw = W - L - R, ph = H - T - B;
+  const X = t => L + t / o.tmax * pw, Y = y => T + (o.ymax - y) / (o.ymax - o.ymin) * ph;
+  let s = '';
+  for (const [t, l] of o.tt || []) s += `<line class="grid" x1="${X(t)}" y1="${T}" x2="${X(t)}" y2="${T + ph}"/><text class="tick" x="${X(t)}" y="${T + ph + 16}" text-anchor="middle">${l}</text>`;
+  for (const [y, l] of o.yt || []) s += `<line class="grid" x1="${L}" y1="${Y(y)}" x2="${L + pw}" y2="${Y(y)}"/><text class="tick" x="${L - 6}" y="${Y(y) + 4}" text-anchor="end">${l}</text>`;
+  for (const [y, l] of o.guide || []) s += `<line class="guide" x1="${L}" y1="${Y(y)}" x2="${L + pw}" y2="${Y(y)}"/><text class="gtxt" x="${L + pw - 4}" y="${Y(y) - 5}" text-anchor="end">${l}</text>`;
+  s += `<line class="axis" x1="${L}" y1="${T}" x2="${L}" y2="${T + ph}"/><line class="axis" x1="${L}" y1="${Y(Math.max(0, o.ymin))}" x2="${L + pw}" y2="${Y(Math.max(0, o.ymin))}"/>`;
+  let p = ''; for (let k = 0; k <= 160; k++) { const t = o.tmax * k / 160; p += `${k ? 'L' : 'M'}${X(t).toFixed(1)} ${Y(o.f(t)).toFixed(1)}`; }
+  s += `<path class="curve" style="stroke:${o.col}" d="${p}"/>`;
+  for (const [t, y, l] of o.dots || []) {        // label below-right of a rising curve, above-right of a falling one (the empty side)
+    const up = o.f(t + o.tmax / 100) > o.f(t);
+    s += `<circle cx="${X(t)}" cy="${Y(y)}" r="4.5" style="fill:${o.col}"/><text class="dtxt" x="${X(t) + 9}" y="${Y(y) + (up ? 19 : -9)}">${l}</text>`;
+  }
+  s += `<text class="alab" x="${L + pw}" y="${H - 4}" text-anchor="end">${o.tlab || 't (s)'}</text><text class="alab" x="8" y="${T - 4}">${o.ylab}</text>`;
+  return `<figure class="plot"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="graph of ${o.ylab.replace(/<[^>]+>/g, '')}">${s}</svg>${o.cap ? `<figcaption>${o.cap}</figcaption>` : ''}</figure>`;
+}
+
+'use strict';
+// Phasor helpers on top of html_trs/lib.js: notation snippets, an AC source symbol, arrows and static phasor diagrams.
+
+// ---------------------------------------------------------------- notation
+const J = '<i>j</i>', W = '<i>ω</i>', TH = '<i>θ</i>', PHI = '<i>φ</i>';
+const Vp = '<b class="phv">V</b>', Ip = '<b class="phi">I</b>', Zp = '<b class="phz">Z</b>', Sp = '<b class="phs">S</b>';
+const bv = (n, s) => `<b class="phv">${n}</b>${s ? `<sub>${s}</sub>` : ''}`;       // bold phasor with subscript
+const bi = (n, s) => `<b class="phi">${n}</b>${s ? `<sub>${s}</sub>` : ''}`;
+const an = (m, a, u = '') => `${m}∠${a}°${u ? ' ' + u : ''}`;                      // 10∠30° V
+const cx = (x, y, u = '') => {                                                      // 3 + j4, 3 − j4 (x, y are strings from N)
+  const neg = String(y).startsWith('−'), ya = neg ? String(y).slice(1) : y;
+  if (String(x) === '0') return `${neg ? '−' : ''}${J}${ya}${u ? ' ' + u : ''}`;
+  return `${x} ${neg ? '−' : '+'} ${J}${ya}${u ? ' ' + u : ''}`;
+};
+const cosw = (m, w, a, u = '') => {                                                 // 10 cos(100t − 6.87°) V
+  const neg = String(a).startsWith('−'), aa = neg ? String(a).slice(1) : a;
+  return `${m} cos(${w}<i>t</i>${String(a) === '0' ? '' : ` ${neg ? '−' : '+'} ${aa}°`})${u ? ' ' + u : ''}`;
+};
+const sinw = (m, w, a, u = '') => cosw(m, w, a, u).replace('cos', 'sin');
+const sq = s => `√<span class="ov">${s}</span>`;
+const atan = s => `tan<sup>−1</sup>(${s})`;
+const hl = s => `<span class="hlt">${s}</span>`;
+
+// ---------------------------------------------------------------- circuit pieces
+// vertical AC source between (x, y1) top (+) and (x, y2) bottom
+function ac(x, y1, y2, lab, o = {}) {
+  const m = (y1 + y2) / 2, r = 20;
+  return `<g class="el"><line x1="${x}" y1="${y1}" x2="${x}" y2="${m - r}"/><line x1="${x}" y1="${m + r}" x2="${x}" y2="${y2}"/></g>
+  <circle class="src" cx="${x}" cy="${m}" r="${r}"/><path class="acw" d="M${x - 11} ${m} q5.5 -11 11 0 t11 0"/>
+  <text class="pm" x="${x + (o.pmx || 0) + 0}" y="${m - r - 5}" text-anchor="middle" font-size="13">+</text>
+  ${lab ? (Array.isArray(lab) ? lab : [lab]).map((l, k) => `<text class="lab" x="${x - r - 6}" y="${m + 5 + (k - (Array.isArray(lab) ? lab.length - 1 : 0) / 2) * 17}" text-anchor="end">${l}</text>`).join('') : ''}`;
+}
+const gnd = (x, y) => `<path class="gnd" d="M${x - 12} ${y}h24M${x - 7} ${y + 5}h14M${x - 2} ${y + 10}h4"/>`;
+function term(x, y, lab, side = 'end') {
+  return `<circle class="term" cx="${x}" cy="${y}" r="4"/>${lab ? `<text class="lab" x="${x + (side === 'end' ? -9 : 9)}" y="${y + 5}" text-anchor="${side}">${lab}</text>` : ''}`;
+}
+function loop(x, y, r, lab, cls = 'mloop') {        // clockwise mesh-current arrow
+  return `<g class="${cls}"><path d="M${x - r * 0.7} ${y - r * 0.7} A${r} ${r} 0 1 1 ${x - r} ${y + 4}"/><path d="M${x - r - 5} ${y - 4} L${x - r} ${y + 5} L${x - r + 6} ${y - 3}"/></g>
+  <text class="lab mlab" x="${x}" y="${y + 6}" text-anchor="middle">${lab}</text>`;
+}
+
+// ---------------------------------------------------------------- arrows and phasor diagrams
+function arrowLine(x1, y1, x2, y2, col, w = 3, cls = '') {
+  const a = Math.atan2(y2 - y1, x2 - x1), h = 9 + w, L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 2) return '';
+  const hx = x2 - h * Math.cos(a), hy = y2 - h * Math.sin(a);
+  const p1 = [hx + 0.45 * h * Math.sin(a), hy - 0.45 * h * Math.cos(a)], p2 = [hx - 0.45 * h * Math.sin(a), hy + 0.45 * h * Math.cos(a)];
+  return `<g class="parr ${cls}"><line x1="${x1}" y1="${y1}" x2="${(hx + x2) / 2}" y2="${(hy + y2) / 2}" style="stroke:${col};stroke-width:${w}"/><polygon points="${x2},${y2} ${p1} ${p2}" style="fill:${col}"/></g>`;
+}
+// pd({ size, R (axis range), items: [{ x, y, from: [x, y], col, lab, dash }], arcs: [{ a1, a2, r, lab, col }], axes labels })
+// o.bl: power-triangle style, origin at the bottom left and only the first quadrant shown (size o.w × o.h)
+function pd(o) {
+  const S = o.size || 260, Wd = o.bl ? (o.w || 360) : S, Ht = o.bl ? (o.h || 250) : S;
+  const c = S / 2, ox = o.bl ? 40 : c, oy = o.bl ? Ht - 34 : c, k = o.bl ? Math.min((Wd - 120) / o.R, (Ht - 60) / (o.Rq || o.R)) : (S / 2 - 22) / o.R;
+  const X = x => ox + x * k, Y = y => oy - y * k;
+  let s = o.bl ? `<line class="axis" x1="${ox}" y1="${oy}" x2="${Wd - 10}" y2="${oy}"/><line class="axis" x1="${ox}" y1="${oy}" x2="${ox}" y2="10"/>
+  <text class="alab" x="${Wd - 8}" y="${oy + 18}" text-anchor="end">Re</text><text class="alab" x="${ox - 6}" y="18" text-anchor="end">Im</text>`
+    : `<line class="axis" x1="10" y1="${c}" x2="${S - 10}" y2="${c}"/><line class="axis" x1="${c}" y1="10" x2="${c}" y2="${S - 10}"/>
+  <text class="alab" x="${S - 8}" y="${c - 6}" text-anchor="end">Re</text><text class="alab" x="${c + 6}" y="18">Im</text>`;
+  for (const g of o.grid ? [...Array(2 * o.grid + 1).keys()].map(i => (i - o.grid) * o.R / o.grid) : []) if (g)
+    s += `<line class="grid" x1="${X(g)}" y1="10" x2="${X(g)}" y2="${S - 10}"/><line class="grid" x1="10" y1="${Y(g)}" x2="${S - 10}" y2="${Y(g)}"/>`;
+  for (const a of o.arcs || []) {
+    const r = a.r, p = d => [ox + r * Math.cos(d * Math.PI / 180), oy - r * Math.sin(d * Math.PI / 180)];
+    const [x1, y1] = p(a.a1), [x2, y2] = p(a.a2), big = Math.abs(a.a2 - a.a1) > 180 ? 1 : 0, sw = a.a2 > a.a1 ? 0 : 1;
+    const lp = [ox + (r + 16) * Math.cos((a.a1 + a.a2) / 2 * Math.PI / 180), oy - (r + 16) * Math.sin((a.a1 + a.a2) / 2 * Math.PI / 180)];
+    s += `<path d="M${x1} ${y1} A${r} ${r} 0 ${big} ${sw} ${x2} ${y2}" style="fill:none;stroke:${a.col || 'var(--muted)'};stroke-width:1.6"/><text class="tick" x="${lp[0]}" y="${lp[1] + 4}" text-anchor="middle" style="fill:${a.col || 'var(--muted)'}">${a.lab}</text>`;
+  }
+  for (const it of o.items) {
+    const f = it.from || [0, 0];
+    if (it.dash) s += `<line x1="${X(f[0])}" y1="${Y(f[1])}" x2="${X(it.x)}" y2="${Y(it.y)}" style="stroke:${it.col};stroke-width:1.6;stroke-dasharray:5 4"/>`;
+    else s += arrowLine(X(f[0]), Y(f[1]), X(it.x), Y(it.y), it.col, it.w || 3);
+    if (it.lab) {
+      const lx = it.lx != null ? X(it.lx) : X(it.x) + (it.dx || 8), ly = it.ly != null ? Y(it.ly) : Y(it.y) + (it.dy || -6);
+      s += `<text class="plab" x="${lx}" y="${ly}" text-anchor="${it.anc || 'start'}" style="fill:${it.col}">${it.lab}</text>`;
+    }
+  }
+  for (const d of o.dots || []) s += `<circle cx="${X(d[0])}" cy="${Y(d[1])}" r="4" style="fill:${d[2]}"/>` + (d[3] ? `<text class="tick" x="${X(d[0]) + 7}" y="${Y(d[1]) - 6}">${d[3]}</text>` : '');
+  return `<figure class="pdf${o.bl ? ' tri' : ''}"><svg viewBox="0 0 ${Wd} ${Ht}" role="img" aria-label="${(o.cap || 'phasor diagram').replace(/<[^>]+>/g, '')}">${s}</svg>${o.cap ? `<figcaption>${o.cap}</figcaption>` : ''}</figure>`;
+}
+
+'use strict';
+// Circuit diagrams (SVG strings) for the phasor self-study page.  Values match check.py.
+// SVG labels must use <tspan> only: an HTML tag such as <b> inside SVG breaks the whole drawing.
+
+// like fig() in html_trs/lib.js, but with room on the left for source labels and on the right for element labels
+const figp = (w, h, inner, cap, padL = 100, padR = 70) => `<figure class="ckt"><svg viewBox="0 0 ${w + padL + padR} ${h}" role="img" aria-label="${(cap || 'circuit').replace(/<[^>]+>/g, '')}"><g transform="translate(${padL} 0)">${inner}</g></svg>${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
+const VB = '<tspan font-weight="700" font-family="Georgia,serif">V</tspan>';
+
+function figRL(phasor) {
+  const T = 50, B = 190;
+  return figp(300, 230, `
+  ${ac(40, T, B, phasor ? [`${VB}<tspan dy="4" font-size="72%">s</tspan><tspan dy="-4"> =</tspan>`, '10∠0° V'] : ['v<tspan dy="4" font-size="72%">s</tspan><tspan dy="-4"> =</tspan>', '10 cos 100t V'])}
+  ${wire([40, T], [100, T])}${two('R', 100, T, 200, T, { lab: phasor ? '4 Ω' : 'R = 4 Ω', side: -1, off: 20 })}${wire([200, T], [280, T])}
+  ${two('L', 280, T, 280, B, { lab: phasor ? ['jωL = j3 Ω'] : ['L = 30 mH'], side: -1, off: 20, cls: 'cL', lcls: 'cL' })}
+  ${wire([280, B], [40, B])}${arrow(70, T, 'r', phasor ? 'I' : 'i(t)')}`,
+    phasor ? 'Phasor domain: every element becomes an impedance' : 'Time domain: series RL circuit', 100, 130);
+}
+
+function figNodal() {
+  const T = 50, B = 190;
+  return figp(330, 235, `
+  ${ac(40, T, B, ['20∠0° V'])}
+  ${wire([40, T], [80, T])}${two('R', 80, T, 180, T, { lab: '4 Ω', side: -1, off: 20 })}${wire([180, T], [320, T])}
+  ${two('C', 220, T, 220, B, { lab: ['−j4 Ω'], side: -1, off: 18, cls: 'cC', lcls: 'cC' })}
+  ${two('R', 320, T, 320, B, { lab: '4 Ω', side: -1, off: 18 })}
+  ${wire([320, B], [40, B])}${node(220, T)}${node(220, B)}${gnd(220, B + 6)}
+  <text class="lab vnode" x="220" y="${T - 12}" text-anchor="middle">V</text>
+  ${arrow(140, T + 22, 'r', '', 'cur')}<text class="lab cur" x="140" y="${T + 42}" text-anchor="middle">I₁</text>
+  ${arrow(206, 150, 'd', '', 'cur cC')}<text class="lab cur" x="196" y="160" text-anchor="end">I<tspan dy="4" font-size="72%">C</tspan></text>
+  ${arrow(306, 150, 'd', '', 'cur')}<text class="lab cur" x="296" y="160" text-anchor="end">I<tspan dy="4" font-size="72%">R</tspan></text>`,
+    'Find the node voltage V (all values already in the phasor domain)');
+}
+
+function figMesh() {
+  const T = 50, B = 190;
+  return figp(380, 235, `
+  ${ac(40, T, B, ['10∠0° V'])}
+  ${wire([40, T], [80, T])}${two('R', 80, T, 170, T, { lab: '2 Ω', side: -1, off: 20 })}${wire([170, T], [250, T])}
+  ${two('L', 210, T, 210, B, { lab: ['j2 Ω'], side: 1, off: 18, cls: 'cL', lcls: 'cL' })}
+  ${two('R', 250, T, 340, T, { lab: '2 Ω', side: -1, off: 20 })}${wire([340, T], [380, T])}
+  ${two('C', 380, T, 380, B, { lab: ['−j4 Ω'], side: -1, off: 18, cls: 'cC', lcls: 'cC' })}
+  ${wire([380, B], [40, B])}${node(210, T)}${node(210, B)}
+  ${loop(125, 122, 30, 'I₁')}${loop(295, 122, 30, 'I₂')}`,
+    'Two meshes: find the mesh currents I₁ and I₂');
+}
+
+function figThev(stage) {
+  const T = 50, B = 190;
+  if (stage === 'eq') return figp(300, 235, `
+  ${ac(40, T, B, [`${VB}<tspan dy="4" font-size="72%">Th</tspan><tspan dy="-4"> =</tspan>`, `${N.Vth_m}∠${N.Vth_a}° V`])}
+  ${wire([40, T], [80, T])}${two('R', 80, T, 160, T, { lab: '2 Ω', side: -1, off: 20 })}${two('L', 160, T, 240, T, { lab: 'j2 Ω', side: -1, off: 20, cls: 'cL', lcls: 'cL' })}
+  ${wire([240, T], [280, T])}${term(280, T, '')}${term(280, B, '')}${wire([280, B], [40, B])}
+  <text class="lab" x="292" y="${T + 5}">a</text><text class="lab" x="292" y="${B + 5}">b</text>
+  <rect class="zbox" x="64" y="18" width="192" height="64" rx="10"/><text class="tick" x="160" y="104" text-anchor="middle">Z<tspan dy="4" font-size="72%">Th</tspan><tspan dy="-4"> = 2 + j2 Ω</tspan></text>`,
+    'The Thevenin equivalent seen from a–b');
+  return figp(310, 235, `
+  ${ac(40, T, B, ['20∠0° V'])}
+  ${wire([40, T], [80, T])}${two('R', 80, T, 180, T, { lab: '4 Ω', side: -1, off: 20 })}${wire([180, T], [290, T])}
+  ${two('L', 220, T, 220, B, { lab: ['j4 Ω'], side: -1, off: 18, cls: 'cL', lcls: 'cL' })}
+  ${node(220, T)}${node(220, B)}${term(290, T, '')}${term(290, B, '')}${wire([290, B], [40, B])}
+  <text class="lab" x="302" y="${T + 5}">a</text><text class="lab" x="302" y="${B + 5}">b</text>`,
+    'Find the Thevenin equivalent seen from terminals a–b');
+}
+
+function figPFC(withC) {
+  const T = 50, B = 200, X = 190, XC = 400;
+  return figp(withC ? 430 : 330, 245, `
+  ${ac(40, T, B, ['230 V rms', '50 Hz'])}
+  ${wire([40, T], [withC ? XC : X, T])}${wire([40, B], [withC ? XC : X, B])}
+  ${two('R', X, T, X, 125, { lab: '', side: 1 })}${two('L', X, 125, X, B, { cls: 'cL' })}
+  <rect class="zbox" x="${X - 34}" y="${T + 12}" width="68" height="${B - T - 24}" rx="10"/>
+  <text class="lab" x="${X + 40}" y="${T + 52}">motor load</text><text class="tick" x="${X + 40}" y="${T + 72}">10 kW</text><text class="tick" x="${X + 40}" y="${T + 90}">pf 0.75 lagging</text>
+  ${withC ? `${two('C', XC, T, XC, B, { lab: ['C = ?'], side: -1, off: 18, cls: 'cC', lcls: 'cC' })}${node(X, T)}${node(X, B)}` : ''}
+  ${arrow(110, T, 'r', withC ? 'I (smaller)' : 'I')}`,
+    withC ? 'A capacitor connected in parallel with the load' : 'An inductive load straight on the supply');
+}
+
+'use strict';
+// Worked examples (EX: step reveal), side-by-side comparisons (VS) and self-check questions (QUIZ).
+// Every number comes from N (nums.js, written by check.py).
+// step: { h: heading, m: [maths lines], why: one-line reason, tip: maths reminder, fig }
+
+const EX = {}, VS = {}, QUIZ = {};
+
+// ================================================================ LEVEL 1
+VS.add = {
+  title: 'Add two voltages that are out of phase',
+  q: `Two sources in series give <i>v</i>₁ = ${cosw(8, 100, 30, 'V')} and <i>v</i>₂ = ${cosw(6, 100, '−60', 'V')}. Find the total <i>v</i> = <i>v</i>₁ + <i>v</i>₂.`,
+  L: { name: 'The trigonometry way', steps: [
+    { h: 'Expand v₁ with the identity cos(A + B) = cos A cos B − sin A sin B', m: [
+      `<i>v</i>₁ = 8 cos 30° cos 100<i>t</i> − 8 sin 30° sin 100<i>t</i>`,
+      `= (8 × ${N.c30}) cos 100<i>t</i> − (8 × ${N.s30}) sin 100<i>t</i>`,
+      `= ${N.t_a1} cos 100<i>t</i> − ${N.t_b1} sin 100<i>t</i>`] },
+    { h: 'Expand v₂ the same way (the angle is −60°)', m: [
+      `<i>v</i>₂ = 6 cos(−60°) cos 100<i>t</i> − 6 sin(−60°) sin 100<i>t</i>`,
+      `= (6 × ${N.c60}) cos 100<i>t</i> + (6 × ${N.s60}) sin 100<i>t</i>`,
+      `= ${N.t_a2} cos 100<i>t</i> + ${N.t_b2} sin 100<i>t</i>`],
+      tip: 'cos(−60°) = +cos 60° = 0.5 but sin(−60°) = −sin 60° = −0.866. Two minus signs make a plus.' },
+    { h: 'Add the cos terms together and the sin terms together', m: [
+      `<i>v</i> = (${N.t_a1} + ${N.t_a2}) cos 100<i>t</i> + (−${N.t_b1} + ${N.t_b2}) sin 100<i>t</i>`,
+      `= ${N.t_A} cos 100<i>t</i> + ${N.t_B.replace('−', '')} sin 100<i>t</i>`] },
+    { h: 'Squeeze cos + sin back into one cosine', m: [
+      `Rule: <i>A</i> cos <i>x</i> + <i>B</i> sin <i>x</i> = <i>C</i> cos(<i>x</i> − <i>θ</i>), &nbsp; <i>C</i> = ${sq('<i>A</i>² + <i>B</i>²')}, &nbsp; <i>θ</i> = ${atan('<i>B</i>/<i>A</i>')}`,
+      `<i>C</i> = ${sq(`${N.t_A}² + ${N.t_B.replace('−', '')}²`)} = ${sq(`${N.ps_x2} + ${N.ps_y2}`)} = ${sq(N.ps_r2)} = ${N.t_C} V`,
+      `<i>θ</i> = ${atan(`${N.t_B.replace('−', '')} / ${N.t_A}`)} = ${N.t_th.replace('−', '')}°`,
+      `<i>v</i> = ${cosw(N.t_C, 100, N.t_th, 'V')}`],
+      why: 'This rule is one more formula to remember (textbook Eq. 9.11–9.12).' },
+  ] },
+  R: { name: 'The phasor way', steps: [
+    { h: 'Write each voltage as a phasor (amplitude ∠ angle)', m: [`${bv('V', '1')} = 8∠30° V`, `${bv('V', '2')} = 6∠−60° V`], why: 'Both are already cosines with positive amplitudes.' },
+    { h: 'Change each phasor to rectangular form', m: [
+      `8∠30° = 8 cos 30° + ${J}8 sin 30° = ${cx(N.p1_x, N.p1_y)}`,
+      `6∠−60° = 6 cos(−60°) + ${J}6 sin(−60°) = ${cx(N.p2_x, N.p2_y)}`] },
+    { h: 'Add real parts and imaginary parts', m: [
+      `${Vp} = (${N.p1_x} + ${N.p2_x}) + ${J}(${N.p1_y} − ${N.p2_y.replace('−', '')})`, `= ${cx(N.ps_x, N.ps_y, 'V')}`] },
+    { h: 'Change back to polar form', m: [
+      `|${Vp}| = ${sq(`${N.ps_x}² + ${N.ps_y.replace('−', '')}²`)} = ${N.ps_m} V`,
+      `angle = ${atan(`${N.ps_y} / ${N.ps_x}`)} = ${N.ps_a}°`, `${Vp} = ${an(N.ps_m, N.ps_a, 'V')}`] },
+    { h: 'Write it back as a cosine', m: [`<i>v</i> = ${cosw(N.ps_m, 100, N.ps_a, 'V')}`] },
+  ] },
+  ans: `Both ways give <b><i>v</i> = ${cosw(N.t_C, 100, N.t_th, 'V')}</b>. The phasor way used no trigonometric identities at all: just "convert, add, convert back".`,
+};
+
+EX.s2p = {
+  title: 'Example 1.1 · Sinusoid → phasor',
+  q: `Write each sinusoid as a phasor:<br>(a) <i>v</i> = ${cosw(12, 100, 40, 'V')} &nbsp; (b) <i>i</i> = ${sinw(5, 100, 30, 'A')}<br>(c) <i>v</i> = −${cosw(8, 100, 20, 'V')} &nbsp; (d) <i>i</i> = −${sinw(4, 100, '−30', 'A')}`,
+  fig: '',
+  steps: [
+    { h: '(a) Is it a cosine with a positive amplitude? Yes.', m: [`<i>v</i> = ${cosw(12, 100, 40, 'V')}`, `amplitude = 12, angle = 40° &nbsp;⇒&nbsp; ${Vp} = ${hl('12∠40° V')}`],
+      why: 'Read the amplitude and the angle. Drop the 100t — the frequency is the same for everything in the circuit.' },
+    { h: '(b) It is a sine: turn it into a cosine by subtracting 90°', m: [`sin <i>x</i> = cos(<i>x</i> − 90°)`, `<i>i</i> = 5 cos(100<i>t</i> + 30° − 90°) = ${cosw(5, 100, '−60', 'A')}`, `${Ip} = ${hl('5∠−60° A')}`],
+      tip: '30 − 90 = −60. Think of a number line: start at 30, move 90 to the left.' },
+    { h: '(c) The amplitude is negative: add or subtract 180°', m: [`−cos <i>x</i> = cos(<i>x</i> − 180°)`, `<i>v</i> = 8 cos(100<i>t</i> + 20° − 180°) = ${cosw(8, 100, '−160', 'V')}`, `${Vp} = ${hl('8∠−160° V')}`],
+      why: 'A minus sign flips the wave upside down, which is the same as shifting it by half a cycle (180°). We chose −180° so the angle stays between −180° and +180°.' },
+    { h: '(d) Negative AND sine: use −sin x = cos(x + 90°)', m: [`<i>i</i> = 4 cos(100<i>t</i> − 30° + 90°) = ${cosw(4, 100, 60, 'A')}`, `${Ip} = ${hl('4∠60° A')}`],
+      tip: 'Check with the two rules one after the other: −sin x = −cos(x − 90°) = cos(x − 90° + 180°) = cos(x + 90°).' },
+  ],
+  ans: `(a) 12∠40° V &nbsp; (b) 5∠−60° A &nbsp; (c) 8∠−160° V &nbsp; (d) 4∠60° A`,
+};
+
+EX.r2p = {
+  title: 'Example 1.2 · Rectangular → polar (watch the quadrant!)',
+  q: `Change to polar form: (a) <i>z</i> = 3 + ${J}4 &nbsp; (b) <i>z</i> = −3 + ${J}4 &nbsp; (c) <i>z</i> = −3 − ${J}4`,
+  fig: '',
+  steps: [
+    { h: '(a) Magnitude: Pythagoras', m: [`<i>r</i> = ${sq('<i>x</i>² + <i>y</i>²')} = ${sq('3² + 4²')} = ${sq('9 + 16')} = ${sq('25')} = ${N.z34_m}`] },
+    { h: '(a) Angle', m: [`<i>φ</i> = ${atan('<i>y</i> / <i>x</i>')} = ${atan('4 / 3')} = ${N.atan43}°`, `<i>z</i> = ${hl(an(N.z34_m, N.z34_a))}`],
+      why: 'x is positive, so the calculator answer is already correct (first quadrant).' },
+    { h: '(b) Same magnitude, but the calculator angle is wrong', m: [`<i>r</i> = ${sq('(−3)² + 4²')} = ${N.zm34_m}`, `calculator: ${atan('4 / −3')} = ${N.calc_m34}° &nbsp;<span class="no">✗ points down-right</span>`],
+      why: 'The point (−3, 4) is up and to the LEFT (second quadrant). A calculator cannot tell 4/−3 from −4/3, so it gives the wrong quadrant.' },
+    { h: '(b) Fix it: x is negative, so add 180°', m: [`<i>φ</i> = ${N.calc_m34}° + 180° = ${N.zm34_a}°`, `<i>z</i> = ${hl(an(N.zm34_m, N.zm34_a))}`] },
+    { h: '(c) x negative again: calculator angle ± 180°', m: [`calculator: ${atan('−4 / −3')} = ${N.calc_mm}° &nbsp;<span class="no">✗</span>`, `<i>φ</i> = ${N.calc_mm}° − 180° = ${N.zmm_a}°`, `<i>z</i> = ${hl(an(N.zmm_m, N.zmm_a))}`],
+      tip: 'Adding 180° would give 233.13°, which is the same direction. We subtract to keep the angle between −180° and 180°.' },
+  ],
+  ans: `(a) ${an(N.z34_m, N.z34_a)} &nbsp; (b) ${an(N.zm34_m, N.zm34_a)} &nbsp; (c) ${an(N.zmm_m, N.zmm_a)}`,
+};
+
+EX.p2r = {
+  title: 'Example 1.3 · Polar → rectangular',
+  q: `Change to rectangular form: (a) 10∠30° &nbsp; (b) 10∠−120°`,
+  fig: '',
+  steps: [
+    { h: '(a) Use x = r cos φ and y = r sin φ', m: [`<i>x</i> = 10 cos 30° = 10 × ${N.c30} = ${N.r10_30_x}`, `<i>y</i> = 10 sin 30° = 10 × ${N.s30} = ${N.r10_30_y}`, `10∠30° = ${hl(cx(N.r10_30_x, N.r10_30_y))}`] },
+    { h: '(b) Same formulas: the calculator handles the signs', m: [`<i>x</i> = 10 cos(−120°) = 10 × (${N.c120}) = ${N.r10_m120_x}`, `<i>y</i> = 10 sin(−120°) = 10 × (${N.s120}) = ${N.r10_m120_y}`, `10∠−120° = ${hl(cx(N.r10_m120_x, N.r10_m120_y))}`],
+      why: 'Going this way (polar → rectangular) never has a quadrant problem.', tip: 'Make sure your calculator is in DEG mode, not RAD.' },
+  ],
+  ans: `(a) ${cx(N.r10_30_x, N.r10_30_y)} &nbsp; (b) ${cx(N.r10_m120_x, N.r10_m120_y)}`,
+};
+
+VS.mul = {
+  title: 'Multiply (3 + j4) × 2∠30°',
+  q: `Find (3 + ${J}4) × 2∠30° and give the answer in polar form.`,
+  L: { name: 'In rectangular form', steps: [
+    { h: 'Convert 2∠30° to rectangular', m: [`2∠30° = 2 cos 30° + ${J}2 sin 30° = ${cx(N.z2_x, N.z2_y)}`] },
+    { h: 'Expand the brackets (four products)', m: [`(3 + ${J}4)(${N.z2_x} + ${J}1)`, `= 3(${N.z2_x}) + 3(${J}1) + ${J}4(${N.z2_x}) + ${J}4(${J}1)`, `= ${N.mul_t1} + ${J}3 + ${J}${N.mul_t3} + ${J}²4`] },
+    { h: 'Replace j² by −1 and collect', m: [`= ${N.mul_t1} − 4 + ${J}(3 + ${N.mul_t3})`, `= ${cx(N.mul_x, N.mul_y)}`], tip: `${J}² = −1, so ${J}²4 = −4 moves into the real part.` },
+    { h: 'Convert to polar', m: [`<i>r</i> = ${sq(`${N.mul_x}² + ${N.mul_y}²`)} = ${N.mul_m}`, `<i>φ</i> = ${atan(`${N.mul_y} / ${N.mul_x}`)} = ${N.mul_a}°`, `= ${an(N.mul_m, N.mul_a)}`] },
+  ] },
+  R: { name: 'In polar form', steps: [
+    { h: 'Convert 3 + j4 to polar (Example 1.2)', m: [`3 + ${J}4 = ${an(N.z34_m, N.z34_a)}`] },
+    { h: 'Multiply the magnitudes, ADD the angles', m: [`${an(N.z34_m, N.z34_a)} × 2∠30° = (5 × 2)∠(${N.z34_a}° + 30°)`, `= ${an(N.mul_m, N.mul_a)}`] },
+  ] },
+  ans: `Same answer, <b>${an(N.mul_m, N.mul_a)}</b>. Polar needed two short lines; rectangular needed four steps and a ${J}² trick.`,
+};
+
+VS.div = {
+  title: 'Divide 10∠60° by 2∠15°',
+  q: `Find 10∠60° ÷ 2∠15°.`,
+  L: { name: 'In rectangular form', steps: [
+    { h: 'Convert both numbers', m: [`10∠60° = ${cx(N.n60_x, N.n60_y)}`, `2∠15° = ${cx(N.d15_x, N.d15_y)}`] },
+    { h: 'You cannot divide by a complex number directly: multiply top and bottom by the conjugate of the bottom', m: [
+      fr(`(${cx(N.n60_x, N.n60_y)})(${N.d15_x} − ${J}${N.d15_y})`, `(${N.d15_x} + ${J}${N.d15_y})(${N.d15_x} − ${J}${N.d15_y})`)],
+      tip: `The conjugate of <i>x</i> + ${J}<i>y</i> is <i>x</i> − ${J}<i>y</i>. (<i>x</i> + ${J}<i>y</i>)(<i>x</i> − ${J}<i>y</i>) = <i>x</i>² + <i>y</i>², a plain real number.` },
+    { h: 'Bottom', m: [`${N.d15_x}² + ${N.d15_y}² = ${N.divden}`] },
+    { h: 'Top (four products, j² = −1)', m: [`= ${N.dv_rr} − ${J}${N.dv_ri} + ${J}${N.dv_ir} + ${N.dv_ii}`, `= ${cx(N.divnum_x, N.divnum_y)}`] },
+    { h: 'Divide and convert to polar', m: [`${fr(cx(N.divnum_x, N.divnum_y), N.divden)} = ${cx(N.divq_x, N.divq_y)} = ${an(N.div_m, N.div_a)}`] },
+  ] },
+  R: { name: 'In polar form', steps: [
+    { h: 'Divide the magnitudes, SUBTRACT the angles', m: [`${fr('10∠60°', '2∠15°')} = ${fr(10, 2)}∠(60° − 15°) = ${an(N.div_m, N.div_a)}`] },
+  ] },
+  ans: `Same answer, <b>${an(N.div_m, N.div_a)}</b>. In polar form it is one line.`,
+};
+
+EX.p2s = {
+  title: 'Example 1.4 · Phasor → sinusoid',
+  q: `Write the sinusoid for each phasor: (a) ${Ip} = ${cx(3, '−4', 'A')} at <i>ω</i> = 50 rad/s &nbsp; (b) ${Vp} = ${cx('−6', 8, 'V')} at <i>ω</i> = 100 rad/s`,
+  fig: '',
+  steps: [
+    { h: '(a) Change to polar form first', m: [`|${Ip}| = ${sq('3² + 4²')} = ${N.I1_m} A`, `angle = ${atan('−4 / 3')} = ${N.I1_a}°  &nbsp;(x positive, calculator is fine)`, `${Ip} = ${an(N.I1_m, N.I1_a, 'A')}`] },
+    { h: '(a) Put the amplitude and the angle into a cosine', m: [`<i>i</i>(<i>t</i>) = ${hl(cosw(N.I1_m, 50, N.I1_a, 'A'))}`], why: 'Phasor Vm∠φ ⇔ Vm cos(ωt + φ). Put ω back in.' },
+    { h: '(b) Polar form: x is negative, so fix the angle', m: [`|${Vp}| = ${sq('6² + 8²')} = ${N.V2_m} V`, `calculator: ${atan('8 / −6')} = ${N.calc_V2}° → ${N.calc_V2}° + 180° = ${N.V2_a}°`, `${Vp} = ${an(N.V2_m, N.V2_a, 'V')}`] },
+    { h: '(b) Write the cosine', m: [`<i>v</i>(<i>t</i>) = ${hl(cosw(N.V2_m, 100, N.V2_a, 'V'))}`] },
+  ],
+  ans: `(a) <i>i</i>(<i>t</i>) = ${cosw(N.I1_m, 50, N.I1_a, 'A')} &nbsp; (b) <i>v</i>(<i>t</i>) = ${cosw(N.V2_m, 100, N.V2_a, 'V')}`,
+};
+
+QUIZ.L1 = [
+  { q: `What is the phasor of <i>v</i> = ${sinw(10, 100, 20, 'V')}?`, o: ['10∠20° V', '10∠−70° V', '10∠110° V', '10∠−20° V'], a: 1, why: 'Sine → cosine: subtract 90°. 20° − 90° = −70°.' },
+  { q: `Which form makes <b>adding</b> two phasors easy?`, o: ['Polar', 'Rectangular', 'Both equally', 'Neither'], a: 1, why: 'Add the real parts together and the imaginary parts together. There is no rule for adding magnitudes and angles.' },
+  { q: `(4∠50°) × (3∠−20°) = ?`, o: ['12∠30°', '7∠30°', '12∠70°', '1.33∠70°'], a: 0, why: 'Multiply magnitudes (4 × 3 = 12), add angles (50° + (−20°) = 30°).' },
+  { q: `−5 + ${J}5 in polar form is…`, o: ['7.07∠−45°', '7.07∠45°', '7.07∠135°', '5∠135°'], a: 2, why: 'r = √50 = 7.07. The calculator gives −45°, but x is negative, so add 180°: 135°.' },
+  { q: `1/${J} equals…`, o: [J, `−${J}`, '1', '−1'], a: 1, why: `Multiply top and bottom by ${J}: ${J}/${J}² = ${J}/(−1) = −${J}.` },
+];
+
+// ================================================================ LEVEL 2
+VS.deriv = {
+  title: 'The voltage across L = 30 mH when i = 2 cos(100t) A',
+  q: `A current <i>i</i> = ${cosw(2, 100, 0, 'A')} flows in an inductor <i>L</i> = 30 mH. Find the voltage <i>v</i> across it.`,
+  L: { name: 'With calculus: v = L di/dt', steps: [
+    { h: 'Differentiate the current', m: [`${fr('d<i>i</i>', 'd<i>t</i>')} = 2 × (−100 sin 100<i>t</i>) = −200 sin 100<i>t</i>`], tip: 'd/dt [cos(at)] = −a sin(at). The inside number a comes out in front.' },
+    { h: 'Multiply by L', m: [`<i>v</i> = 0.03 × (−200 sin 100<i>t</i>) = −6 sin 100<i>t</i>`] },
+    { h: 'Change −sin into a cosine', m: [`−sin <i>x</i> = cos(<i>x</i> + 90°)`, `<i>v</i> = ${cosw(6, 100, 90, 'V')}`] },
+  ] },
+  R: { name: 'With phasors: V = jωL I', steps: [
+    { h: 'Current phasor and impedance', m: [`${Ip} = 2∠0° A`, `${J}<i>ωL</i> = ${J}(100)(0.03) = ${J}3 Ω`] },
+    { h: 'Multiply (no calculus!)', m: [`${Vp} = ${J}3 × 2∠0° = ${J}6 = 6∠90° V`], tip: `${J} = 1∠90°, so multiplying by ${J} just adds 90° to the angle.` },
+    { h: 'Back to time', m: [`<i>v</i> = ${cosw(6, 100, 90, 'V')}`] },
+  ] },
+  ans: `Same answer, <b><i>v</i> = ${cosw(6, 100, 90, 'V')}</b>. Differentiating became "multiply by ${J}ω".`,
+};
+
+VS.rl = {
+  title: 'Steady-state current in a series RL circuit',
+  q: `A source <i>v</i><sub>s</sub> = ${cosw(10, 100, 0, 'V')} drives <i>R</i> = 4 Ω in series with <i>L</i> = 30 mH. Find the steady-state current <i>i</i>(<i>t</i>).`,
+  fig: () => `<div class="pair">${figRL(false)}${figRL(true)}</div>`,
+  L: { name: 'With calculus (differential equation)', steps: [
+    { h: 'KVL round the loop', m: [`<i>Ri</i> + <i>L</i> ${fr('d<i>i</i>', 'd<i>t</i>')} = <i>v</i><sub>s</sub>`, `4<i>i</i> + 0.03 ${fr('d<i>i</i>', 'd<i>t</i>')} = 10 cos 100<i>t</i>`] },
+    { h: 'Guess the form of the answer', m: [`<i>i</i> = <i>A</i> cos 100<i>t</i> + <i>B</i> sin 100<i>t</i>`], why: 'In steady state the current has the same frequency as the source, but we do not know its size or phase yet.' },
+    { h: 'Differentiate the guess', m: [`${fr('d<i>i</i>', 'd<i>t</i>')} = −100<i>A</i> sin 100<i>t</i> + 100<i>B</i> cos 100<i>t</i>`] },
+    { h: 'Substitute into the KVL equation', m: [`4<i>A</i> cos + 4<i>B</i> sin + 0.03(−100<i>A</i> sin + 100<i>B</i> cos) = 10 cos`, `(4<i>A</i> + 3<i>B</i>) cos 100<i>t</i> + (4<i>B</i> − 3<i>A</i>) sin 100<i>t</i> = 10 cos 100<i>t</i>`] },
+    { h: 'Match the cos terms and the sin terms', m: [`cos: &nbsp;4<i>A</i> + 3<i>B</i> = 10`, `sin: &nbsp;4<i>B</i> − 3<i>A</i> = 0`], why: 'Left and right must be equal at every instant, so each part must match.' },
+    { h: 'Solve the two simultaneous equations', m: [`From sin: <i>B</i> = 0.75<i>A</i>`, `4<i>A</i> + 3(0.75<i>A</i>) = 10 ⇒ 6.25<i>A</i> = 10`, `<i>A</i> = ${N.cal_A}, &nbsp; <i>B</i> = ${N.cal_B}`] },
+    { h: 'Combine into one cosine', m: [`<i>C</i> = ${sq(`${N.cal_A}² + ${N.cal_B}²`)} = ${sq('2.56 + 1.44')} = ${N.cal_C}`, `<i>θ</i> = ${atan(`${N.cal_B}/${N.cal_A}`)} = ${N.cal_th}°`, `<i>i</i> = ${cosw(N.cal_C, 100, '−' + N.cal_th, 'A')}`] },
+  ] },
+  R: { name: 'With phasors (just Ohm\'s law)', steps: [
+    { h: 'Change everything to the phasor domain', m: [`${bv('V', 's')} = 10∠0° V`, `<i>Z<sub>R</sub></i> = 4 Ω, &nbsp; <i>Z<sub>L</sub></i> = ${J}<i>ωL</i> = ${J}(100)(0.03) = ${J}${N.XL} Ω`] },
+    { h: 'Series: add the impedances', m: [`${Zp} = 4 + ${J}3 = ${an(N.Zrl_m, N.Zrl_a, 'Ω')}`] },
+    { h: 'Ohm\'s law: divide', m: [`${Ip} = ${fr(bv('V', 's'), Zp)} = ${fr('10∠0°', an(N.Zrl_m, N.Zrl_a))} = ${an(N.Irl_m, N.Irl_a, 'A')}`] },
+    { h: 'Back to time', m: [`<i>i</i> = ${cosw(N.Irl_m, 100, N.Irl_a, 'A')}`] },
+  ] },
+  ans: `Same answer, <b><i>i</i>(<i>t</i>) = ${cosw(N.Irl_m, 100, N.Irl_a, 'A')}</b>. The calculus way needed a guess, a derivative and two simultaneous equations; the phasor way needed one division.`,
+};
+
+EX.nod = {
+  title: 'Example 2.1 · Nodal analysis with phasors',
+  q: `Find the node voltage ${Vp} and the three branch currents. The source is <i>v</i><sub>s</sub> = ${cosw(20, 1000, 0, 'V')} and the capacitor is 250 µF, so <i>X<sub>C</sub></i> = 1/(<i>ωC</i>) = 1/(1000 × 250 × 10<sup>−6</sup>) = ${N.XC} Ω.`,
+  fig: figNodal(),
+  steps: [
+    { h: 'KCL at the node: currents leaving add up to zero', m: [`${fr(`${Vp} − 20`, '4')} + ${fr(Vp, `−${J}4`)} + ${fr(Vp, '4')} = 0`], why: 'Same rule as in DC. Each current = (voltage across the element) ÷ (its impedance).' },
+    { h: 'Tidy the capacitor term', m: [`${fr(1, `−${J}`)} = ${J} &nbsp; so &nbsp; ${fr(Vp, `−${J}4`)} = ${fr(`${J}${Vp}`, 4)}`], tip: `1/${J} = −${J}, so 1/(−${J}) = +${J}. Dividing by −${J} is the same as multiplying by ${J}.` },
+    { h: 'Multiply every term by 4 to clear the fractions', m: [`(${Vp} − 20) + ${J}${Vp} + ${Vp} = 0`] },
+    { h: 'Collect the V terms', m: [`${Vp}(2 + ${J}) = 20 &nbsp;⇒&nbsp; ${Vp} = ${fr(20, `2 + ${J}`)}`] },
+    { h: 'Divide: multiply top and bottom by the conjugate 2 − j', m: [`${Vp} = ${fr(`20(2 − ${J})`, `(2 + ${J})(2 − ${J})`)} = ${fr(`40 − ${J}20`, '4 + 1')} = ${cx(N.nod_x, N.nod_y, 'V')}`], tip: `(2 + ${J})(2 − ${J}) = 4 − ${J}² = 4 + 1 = 5` },
+    { h: 'Polar form and time domain', m: [`${Vp} = ${an(N.nod_m, N.nod_a, 'V')}`, `<i>v</i>(<i>t</i>) = ${cosw(N.nod_m, 1000, N.nod_a, 'V')}`] },
+    { h: 'Branch currents (Ohm\'s law on each element)', m: [
+      `${bi('I', 'C')} = ${fr(Vp, `−${J}4`)} = ${fr(an(N.nod_m, N.nod_a), '4∠−90°')} = ${an(N.nod_IC_m, N.nod_IC_a, 'A')} = ${cx(N.nod_IC_x, N.nod_IC_y, 'A')}`,
+      `${bi('I', 'R')} = ${fr(Vp, 4)} = ${an(N.nod_IR_m, N.nod_IR_a, 'A')} = ${cx(N.nod_IR_x, N.nod_IR_y, 'A')}`,
+      `${bi('I', '1')} = ${fr(`20 − ${Vp}`, 4)} = ${fr(`12 + ${J}4`, 4)} = ${cx(N.nod_I1_x, N.nod_I1_y, 'A')} = ${an(N.nod_I1_m, N.nod_I1_a, 'A')}`] },
+    { h: 'Check with KCL', m: [`${bi('I', 'C')} + ${bi('I', 'R')} = (${N.nod_IC_x} + ${N.nod_IR_x}) + ${J}(${N.nod_IC_y} − 1) = ${cx(N.nod_I1_x, N.nod_I1_y)} = ${bi('I', '1')} ✓`] },
+  ],
+  ans: `${Vp} = ${an(N.nod_m, N.nod_a, 'V')}; ${bi('I', '1')} = ${an(N.nod_I1_m, N.nod_I1_a, 'A')}, ${bi('I', 'C')} = ${an(N.nod_IC_m, N.nod_IC_a, 'A')}, ${bi('I', 'R')} = ${an(N.nod_IR_m, N.nod_IR_a, 'A')}`,
+};
+
+EX.mesh = {
+  title: 'Example 2.2 · Mesh analysis with phasors',
+  q: `Find the mesh currents ${bi('I', '1')} and ${bi('I', '2')} (both clockwise), and the current in the shared inductor.`,
+  fig: figMesh(),
+  steps: [
+    { h: 'KVL in mesh 1', m: [`2${bi('I', '1')} + ${J}2(${bi('I', '1')} − ${bi('I', '2')}) = 10`, `(2 + ${J}2)${bi('I', '1')} − ${J}2${bi('I', '2')} = 10 &nbsp; …(1)`], why: 'The shared inductor carries I₁ − I₂ when we go round mesh 1.' },
+    { h: 'KVL in mesh 2', m: [`${J}2(${bi('I', '2')} − ${bi('I', '1')}) + 2${bi('I', '2')} − ${J}4${bi('I', '2')} = 0`, `−${J}2${bi('I', '1')} + (2 − ${J}2)${bi('I', '2')} = 0 &nbsp; …(2)`], tip: `${J}2 − ${J}4 = −${J}2: add the ${J} parts like ordinary numbers.` },
+    { h: 'From (2), write I₂ in terms of I₁', m: [`${bi('I', '2')} = ${fr(`${J}2`, `2 − ${J}2`)} ${bi('I', '1')} = ${fr(`${J}2(2 + ${J}2)`, '(2 − j2)(2 + j2)')} ${bi('I', '1')} = ${fr(`−4 + ${J}4`, 8)} ${bi('I', '1')}`, `${bi('I', '2')} = (${cx(N.mk_x, N.mk_y)}) ${bi('I', '1')}`],
+      tip: `${J}2 × ${J}2 = ${J}² × 4 = −4, and (2 − ${J}2)(2 + ${J}2) = 4 + 4 = 8.` },
+    { h: 'Substitute into (1)', m: [`(2 + ${J}2)${bi('I', '1')} − ${J}2(${cx(N.mk_x, N.mk_y)})${bi('I', '1')} = 10`, `−${J}2(−0.5 + ${J}0.5) = ${J}1 − ${J}²1 = 1 + ${J}1`, `(2 + ${J}2 + 1 + ${J}1)${bi('I', '1')} = (3 + ${J}3)${bi('I', '1')} = 10`] },
+    { h: 'Solve for I₁', m: [`${bi('I', '1')} = ${fr('10∠0°', `3 + ${J}3`)} = ${fr('10∠0°', an(N.m_33_m, N.m_33_a))} = ${an(N.m_I1_m, N.m_I1_a, 'A')}`] },
+    { h: 'Find I₂ (multiply in polar form)', m: [`${bi('I', '2')} = (${an(N.mk_m, N.mk_a)}) × (${an(N.m_I1_m, N.m_I1_a)}) = ${an(N.m_I2_m, N.m_I2_a, 'A')}`] },
+    { h: 'Current in the shared inductor', m: [`${bi('I', '1')} − ${bi('I', '2')} = (${cx(N.m_I1_x, N.m_I1_y)}) − (${J}${N.m_I2_y}) = ${an(N.m_Ish_m, N.m_Ish_a, 'A')}`] },
+  ],
+  ans: `${bi('I', '1')} = ${an(N.m_I1_m, N.m_I1_a, 'A')}, &nbsp; ${bi('I', '2')} = ${an(N.m_I2_m, N.m_I2_a, 'A')}, &nbsp; inductor current ${an(N.m_Ish_m, N.m_Ish_a, 'A')} (downwards)`,
+};
+
+QUIZ.L2 = [
+  { q: `The impedance of a 0.2 H inductor at ω = 50 rad/s is…`, o: ['10 Ω', `${J}10 Ω`, `−${J}10 Ω`, `${J}0.1 Ω`], a: 1, why: `Z<sub>L</sub> = ${J}ωL = ${J}(50)(0.2) = ${J}10 Ω.` },
+  { q: `The impedance of a 100 µF capacitor at ω = 1000 rad/s is…`, o: [`${J}10 Ω`, `−${J}10 Ω`, '10 Ω', `−${J}0.1 Ω`], a: 1, why: `Z<sub>C</sub> = 1/(${J}ωC) = −${J}/(ωC) = −${J}/(1000 × 100×10⁻⁶) = −${J}10 Ω.` },
+  { q: `In the phasor domain, differentiating d/dt becomes…`, o: [`multiply by ${J}ω`, `divide by ${J}ω`, 'multiply by ω', 'add 90° then divide by ω'], a: 0, why: 'd/dt ⇔ ×jω, and ∫dt ⇔ ÷jω.' },
+  { q: `In an inductor, the current…`, o: ['is in phase with the voltage', 'leads the voltage by 90°', 'lags the voltage by 90°', 'lags by 45°'], a: 2, why: 'V = jωL I: the voltage is 90° ahead of the current, so the current lags ("ELI": E before I in L).' },
+];
+
+// ================================================================ LEVEL 3
+EX.pow = {
+  title: 'Example 3.1 · Average and reactive power with phasors',
+  q: `A voltage <i>v</i> = ${cosw(100, 100, 0, 'V')} is applied to a load ${Zp} = 8 + ${J}6 Ω (a resistor in series with an inductor). Find the average power <i>P</i>, the reactive power <i>Q</i>, the apparent power and the power factor.`,
+  fig: '',
+  steps: [
+    { h: 'Phasors', m: [`${Vp} = 100∠0° V`, `${Zp} = 8 + ${J}6 = ${an(N.Z86_m, N.Z86_a, 'Ω')}`] },
+    { h: 'Current', m: [`${Ip} = ${fr(Vp, Zp)} = ${fr('100∠0°', an(N.Z86_m, N.Z86_a))} = ${an(N.I86_m, N.I86_a, 'A')}`] },
+    { h: 'Conjugate of the current: flip the sign of the angle', m: [`${Ip}* = ${an(N.I86_m, N.I86_a.replace('−', ''), 'A')}`], tip: 'In polar form the conjugate keeps the magnitude and changes the sign of the angle. In rectangular form, change the sign of the j part.' },
+    { h: 'Complex power S = ½ V I*', m: [`${Sp} = ½ × 100∠0° × ${an(N.I86_m, N.I86_a.replace('−', ''))}`, `= ${an(N.S86_m, N.S86_a, 'VA')}`] },
+    { h: 'Change S to rectangular form', m: [`${Sp} = ${N.S86_m} cos ${N.S86_a}° + ${J}${N.S86_m} sin ${N.S86_a}° = ${cx(N.S86_x, N.S86_y, 'VA')}`] },
+    { h: 'Read off everything', m: [
+      `average power &nbsp;<i>P</i> = Re ${Sp} = ${hl(N.S86_x + ' W')}`,
+      `reactive power <i>Q</i> = Im ${Sp} = ${hl(N.S86_y + ' VAR')}`,
+      `apparent power |${Sp}| = ${hl(N.S86_m + ' VA')}`,
+      `power factor = cos ${N.S86_a}° = ${hl(N.pf86 + ' lagging')}`], why: 'Q is positive, so the load is inductive and the current lags the voltage: "lagging".' },
+    { h: 'Check element by element', m: [`resistor: <i>P</i> = ½|${Ip}|²<i>R</i> = ½ × ${N.I86_m}² × 8 = ${N.PR86} W ✓`, `inductor: <i>Q</i> = ½|${Ip}|²<i>X</i> = ½ × ${N.I86_m}² × 6 = ${N.QL86} VAR ✓`],
+      why: 'All the average power goes into the resistor; all the reactive power goes into the inductor.' },
+  ],
+  ans: `<i>P</i> = ${N.S86_x} W, <i>Q</i> = ${N.S86_y} VAR, |${Sp}| = ${N.S86_m} VA, pf = ${N.pf86} lagging`,
+};
+
+EX.thev = {
+  title: 'Example 3.2 · Thevenin equivalent and maximum power transfer',
+  q: `For the circuit below, find the Thevenin equivalent at a–b, the load that receives maximum average power, and that maximum power.`,
+  fig: figThev(),
+  steps: [
+    { h: 'V_Th: open-circuit voltage (voltage divider)', m: [`${bv('V', 'Th')} = 20∠0° × ${fr(`${J}4`, `4 + ${J}4`)}`], why: 'With a–b open, no current flows out, so the j4 Ω and 4 Ω share the source voltage.' },
+    { h: 'Work it out in polar form', m: [`${J}4 = 4∠90°, &nbsp; 4 + ${J}4 = ${an(N.d44_m, N.d44_a)}`, `${bv('V', 'Th')} = 20 × ${fr(4, N.d44_m)} ∠(90° − 45°) = ${an(N.Vth_m, N.Vth_a, 'V')}`] },
+    { h: 'Z_Th: switch off the source (short it) and look in from a–b', m: [`${bv('Z', 'Th')} = 4 ∥ ${J}4 = ${fr(`4 × ${J}4`, `4 + ${J}4`)} = ${fr('16∠90°', an(N.d44_m, N.d44_a))} = ${an(N.Zth_m, N.Zth_a)} = ${cx(N.Zth_x, N.Zth_y, 'Ω')}`], tip: 'Product over sum works for impedances exactly as it does for resistors.' },
+    { h: 'Maximum power: the load is the conjugate of Z_Th', m: [`${bv('Z', 'L')} = ${bv('Z', 'Th')}* = ${cx(N.Zth_x, '−' + N.Zth_y, 'Ω')}`], why: `The load's −${J}2 cancels the +${J}2 inside the source, so the current is as large as possible; then R<sub>L</sub> = R<sub>Th</sub> shares the power best.` },
+    { h: 'The maximum power', m: [`<i>P</i><sub>max</sub> = ${fr(`|${bv('V', 'Th')}|²`, '8<i>R</i><sub>Th</sub>')} = ${fr(`${N.Vth_m}²`, '8 × 2')} = ${fr(N.Vth2, 16)} = ${N.Pmax} W`], tip: 'Use 8R<sub>Th</sub> when V<sub>Th</sub> is an amplitude; use 4R<sub>Th</sub> when it is an rms value. Both give the same watts.' },
+    { h: 'Compare: a plain resistor load', m: [`best resistor alone: <i>R</i> = |${bv('Z', 'Th')}| = ${N.R_only} Ω gives only ${N.P_Ronly} W`], why: 'Without the capacitor part, the +j2 inside the source is not cancelled.' },
+  ],
+  ans: `${bv('V', 'Th')} = ${an(N.Vth_m, N.Vth_a, 'V')}, ${bv('Z', 'Th')} = ${cx(N.Zth_x, N.Zth_y, 'Ω')}; ${bv('Z', 'L')} = ${cx(N.Zth_x, '−' + N.Zth_y, 'Ω')}; <i>P</i><sub>max</sub> = ${N.Pmax} W`,
+};
+
+QUIZ.L3 = [
+  { q: `The Malaysian supply is 230 V rms. Its peak value V<sub>m</sub> is about…`, o: ['163 V', '230 V', '325 V', '460 V'], a: 2, why: `V<sub>m</sub> = √2 × V<sub>rms</sub> = 1.414 × 230 = ${N.vm230} V.` },
+  { q: `A capacitor connected to an AC supply absorbs an average power of…`, o: ['½V<sub>m</sub>I<sub>m</sub>', 'V<sub>rms</sub>I<sub>rms</sub>', 'zero', 'it depends on C'], a: 2, why: 'The angle between V and I is 90°, and cos 90° = 0. It stores energy and gives it all back every cycle.' },
+  { q: `If ${Sp} = 600 − ${J}800 VA, the load is…`, o: ['inductive, pf 0.6 lagging', 'capacitive, pf 0.6 leading', 'capacitive, pf 0.8 leading', 'resistive'], a: 1, why: 'Q is negative ⇒ capacitive ⇒ leading. pf = P/|S| = 600/1000 = 0.6.' },
+  { q: `For maximum average power, the load impedance should be…`, o: [`${bv('Z', 'Th')}`, `${bv('Z', 'Th')}*`, `|${bv('Z', 'Th')}|`, 'as large as possible'], a: 1, why: 'Z<sub>L</sub> = Z<sub>Th</sub>* (the complex conjugate). If only a resistor is allowed, use R<sub>L</sub> = |Z<sub>Th</sub>|.' },
+];
+
+// ================================================================ LEVEL 4
+EX.pfc = {
+  title: 'Example 4.1 · Raise the power factor to 0.95',
+  q: `A workshop motor load takes <b>10 kW at a power factor of 0.75 lagging</b> from the 230 V rms, 50 Hz supply. Find the capacitor that must be connected in parallel to raise the power factor to <b>0.95 lagging</b>, and how much the supply current falls.`,
+  fig: `<div class="pair">${figPFC(false)}${figPFC(true)}</div>`,
+  wide: true,
+  steps: [
+    { h: 'Old angle from the old power factor', m: [`cos <i>θ</i>₁ = 0.75 ⇒ <i>θ</i>₁ = cos<sup>−1</sup>(0.75) = ${N.th1}°`] },
+    { h: 'Old reactive power', m: [`<i>Q</i>₁ = <i>P</i> tan <i>θ</i>₁ = 10 kW × tan ${N.th1}° = 10 × ${N.tan1} = ${N.Q1} kVAR`, `(apparent power before: |<i>S</i>₁| = <i>P</i>/pf = 10/0.75 = ${N.S1} kVA)`], why: 'From the power triangle: tan θ = opposite/adjacent = Q/P.' },
+    { h: 'New angle from the target power factor', m: [`cos <i>θ</i>₂ = 0.95 ⇒ <i>θ</i>₂ = cos<sup>−1</sup>(0.95) = ${N.th2}°`] },
+    { h: 'New reactive power (P does not change)', m: [`<i>Q</i>₂ = <i>P</i> tan <i>θ</i>₂ = 10 × ${N.tan2} = ${N.Q2} kVAR`, `(apparent power after: |<i>S</i>₂| = 10/0.95 = ${N.S2} kVA)`], why: 'The capacitor takes no average power, so the motor still gets its 10 kW.' },
+    { h: 'Reactive power the capacitor must supply', m: [`<i>Q<sub>C</sub></i> = <i>Q</i>₁ − <i>Q</i>₂ = ${N.Q1} − ${N.Q2} = ${N.Qc} kVAR`] },
+    { h: 'Capacitor size', m: [`<i>Q<sub>C</sub></i> = <i>ωC V</i><sub>rms</sub>² &nbsp;⇒&nbsp; <i>C</i> = ${fr('<i>Q<sub>C</sub></i>', '<i>ω V</i><sub>rms</sub>²')}`, `<i>C</i> = ${fr(N.Qc_var, `2π × 50 × 230²`)} = ${fr(N.Qc_var, `${N.w50} × ${N.V2}`)} = ${fr(N.Qc_var, '1.662 × 10<sup>7</sup>')}`, `<i>C</i> = ${hl(N.Cuf + ' µF')}`],
+      tip: 'Always use kVAR → VAR (× 1000) and rms volts here. ω = 2πf = 2π × 50 = 314.2 rad/s.' },
+    { h: 'How much does the supply current fall?', m: [`before: <i>I</i> = ${fr('<i>P</i>', '<i>V</i> × pf')} = ${fr(10000, '230 × 0.75')} = ${N.Iold} A`, `after: <i>I</i> = ${fr(10000, '230 × 0.95')} = ${N.Inew} A &nbsp;(${N.Icut} % less current)`, `cable loss ∝ <i>I</i>²: (${N.Inew}/${N.Iold})² = ${N.loss_ratio} ⇒ ${hl(N.loss_cut + ' % less loss')}`] },
+    { h: 'Phasor check (rms phasors, V = 230∠0° V)', m: [
+      `load: ${bi('I', 'L')} = ${an(N.ILp_m, N.ILp_a, 'A')} = ${cx(N.ILp_x, N.ILp_y, 'A')}`,
+      `capacitor: ${bi('I', 'C')} = ${J}<i>ωC</i>${Vp} = ${an(N.ICp_m, N.ICp_a, 'A')} = ${J}${N.ICp_y} A`,
+      `supply: ${Ip} = ${bi('I', 'L')} + ${bi('I', 'C')} = ${cx(N.Inew_p_x, N.Inew_p_y, 'A')} = ${an(N.Inew_p_m, N.Inew_p_a, 'A')}`,
+      `pf = cos ${N.Inew_p_a.replace('−', '')}° = 0.95 ✓`], why: 'The capacitor current points straight up (+90°) and cancels part of the downward (lagging) part of the load current.' },
+  ],
+  ans: `<i>C</i> ≈ ${N.Cuf} µF (rated for at least the ${N.Vpk_cap} V peak, e.g. a 400 V AC capacitor). Supply current falls from ${N.Iold} A to ${N.Inew} A and cable losses fall by about ${N.loss_cut} %.`,
+};
+
+QUIZ.L4 = [
+  { q: `Why does the utility care about a low power factor if the kWh used are the same?`, o: ['The meter runs faster', 'More current flows for the same power, so cables and transformers heat up and fill up', 'The voltage rises', 'It does not care'], a: 1, why: 'I = P/(V × pf). Lower pf ⇒ more current ⇒ more I²R loss and less spare capacity, all paid for by the utility.' },
+  { q: `Most factory loads are motors. To correct their power factor you connect…`, o: ['a resistor in series', 'an inductor in parallel', 'a capacitor in parallel', 'a capacitor in series'], a: 2, why: 'Motors are inductive (positive Q). A capacitor supplies negative Q and cancels it; in parallel it leaves the motor voltage unchanged.' },
+  { q: `After power factor correction, the average power taken by the motor…`, o: ['goes up', 'goes down', 'stays the same', 'becomes zero'], a: 2, why: 'The capacitor takes zero average power. Only Q and the supply current change.' },
+  { q: `Q₁ = 6 kVAR and the target Q₂ = 2 kVAR. The capacitor must provide…`, o: ['8 kVAR', '4 kVAR', '3 kVAR', '2 kVAR'], a: 1, why: 'Q<sub>C</sub> = Q₁ − Q₂ = 6 − 2 = 4 kVAR.' },
+];
+
+'use strict';
+// Page text: four levels, each a list of sections.  Placeholders filled by app.js:
+// <div data-ex="ID"> step-reveal example (EX), <div data-vs="ID"> side-by-side comparison (VS),
+// <div data-viz="KIND"> interactive picture (viz.js), <div data-quiz="ID"> self-check questions (QUIZ).
+
+const reminder = (title, body) => `<aside class="maths"><h4><span class="mi">√x</span> Maths reminder · ${title}</h4>${body}</aside>`;
+const key = body => `<div class="key"><span class="ki">★</span><div>${body}</div></div>`;
+const takeaway = items => `<div class="take"><h4>Before you move on, make sure you can…</h4><ul>${items.map(s => `<li><label><input type="checkbox"> ${s}</label></li>`).join('')}</ul></div>`;
+const warn = body => `<div class="warnbox">${body}</div>`;
+
+const LEVELS = [
+// ============================================================================================ LEVEL 1
+{ id: 'L1', n: 1, tag: 'Basic', name: 'Phasor basics', blurb: 'What a phasor is, why we need it, and the complex-number maths behind it.', icon: '∠',
+  sections: [
+{ short: 'Why phasors?', title: 'Why do we need phasors?', html: () => `
+<p class="lead">In an AC circuit every voltage and current is a sinusoid with the <b>same frequency</b>. They differ in only two things: their <b>size</b> (amplitude) and their <b>timing</b> (phase). The trouble starts when two of them are out of phase and we have to add them.</p>
+<h3>1.1 A sinusoid has three numbers</h3>
+<div class="formula big"><i>v</i>(<i>t</i>) = <i>V</i><sub>m</sub> cos(<i>ωt</i> + <i>φ</i>)</div>
+<div class="tiles">
+  <div class="tile"><div class="big"><i>V</i><sub>m</sub></div><p><b>Amplitude</b> (peak value), in volts or amps.</p></div>
+  <div class="tile"><div class="big"><i>ω</i></div><p><b>Angular frequency</b> in rad/s. <i>ω</i> = 2π<i>f</i>; in Malaysia <i>f</i> = 50 Hz, so <i>ω</i> = ${N.w50} rad/s.</p></div>
+  <div class="tile"><div class="big"><i>φ</i></div><p><b>Phase</b> in degrees: how far the wave is shifted. A bigger <i>φ</i> means the wave peaks <b>earlier</b> (it <b>leads</b>).</p></div>
+</div>
+<p>In one circuit <i>ω</i> is the same everywhere, so the only things we really need to keep track of are <i>V</i><sub>m</sub> and <i>φ</i>. A <b>phasor</b> is a way of carrying just those two numbers.</p>
+
+<h3>1.2 The problem: adding waves that are out of phase</h3>
+<p>Below are two voltages, <i>v</i>₁ = ${cosw(8, 100, 30, 'V')} and <i>v</i>₂ = ${cosw(6, 100, '−60', 'V')}. Their peaks happen at different times, so the total is <b>not</b> 8 + 6 = 14 V. Move the slider to see the waves add up instant by instant.</p>
+<div data-viz="add"></div>
+${warn('<b>Common mistake:</b> adding the amplitudes (8 + 6 = 14 V). That is only true when the two waves are exactly in phase. Here the real peak of the total is only 10 V.')}
+
+<h3>1.3 Two ways to find the total</h3>
+<p>Work through both columns. The left column uses trigonometric identities; the right column uses phasors. Reveal the steps one at a time and compare.</p>
+<div data-vs="add"></div>
+${key('A <b>phasor</b> is a complex number that holds the <b>amplitude</b> and the <b>phase</b> of a sinusoid. It turns "add two waves" into "add two numbers". In a circuit with many elements, this saves you pages of trigonometry.')}
+<p class="muted">The phasor method was introduced by Charles Steinmetz in 1893 (Alexander &amp; Sadiku, §9.3). It only works when all the sinusoids have the same frequency, which is always true in the circuits in this course.</p>
+${takeaway(['explain why 8 V + 6 V is not 14 V for these two waves', 'name the three numbers in V<sub>m</sub> cos(ωt + φ)', 'say what information a phasor carries (amplitude and phase)'])}
+` },
+
+{ short: 'Sinusoid → phasor', title: 'Changing a sinusoid into a phasor', html: () => `
+<p class="lead">Picture an arrow of length <i>V</i><sub>m</sub> spinning anticlockwise at <i>ω</i> rad/s. Its shadow on the horizontal (real) axis is exactly <i>V</i><sub>m</sub> cos(<i>ωt</i> + <i>φ</i>). The <b>phasor</b> is a snapshot of that arrow at <i>t</i> = 0: length <i>V</i><sub>m</sub>, angle <i>φ</i>.</p>
+<div data-viz="rot"></div>
+<ul class="try">
+  <li>Change the <b>angle φ</b>. The whole wave slides earlier (bigger φ) or later (smaller φ).</li>
+  <li>Press <b>Snap to t = 0</b>. The arrow you see is the phasor <i>V</i><sub>m</sub>∠<i>φ</i>.</li>
+</ul>
+
+<h3>2.1 The rule</h3>
+<div class="formula big"><i>V</i><sub>m</sub> cos(<i>ωt</i> + <i>φ</i>) &nbsp;⇔&nbsp; ${Vp} = <i>V</i><sub>m</sub>∠<i>φ</i></div>
+<p>The rule only works for a <b>cosine</b> with a <b>positive</b> amplitude. Anything else must be rewritten first using these four identities (textbook Eq. 9.10):</p>
+<table class="tbl">
+<tr><th>If you have…</th><th>rewrite it as…</th><th>in words</th></tr>
+<tr><td>sin <i>x</i></td><td>cos(<i>x</i> − 90°)</td><td>sine → cosine: <b>subtract 90°</b></td></tr>
+<tr><td>−cos <i>x</i></td><td>cos(<i>x</i> ± 180°)</td><td>minus sign → <b>add or subtract 180°</b></td></tr>
+<tr><td>−sin <i>x</i></td><td>cos(<i>x</i> + 90°)</td><td>minus sine → <b>add 90°</b></td></tr>
+<tr><td>cos <i>x</i></td><td>cos <i>x</i></td><td>already fine</td></tr>
+</table>
+<ol class="recipe">
+  <li>Make it a <b>cosine</b> (use the table if it is a sine).</li>
+  <li>Make the amplitude <b>positive</b> (use ±180° if there is a minus sign).</li>
+  <li>Read off the amplitude and the angle. Write <b>amplitude∠angle</b> with the unit.</li>
+</ol>
+${reminder('working with angles', `<ul><li>Keep angles between −180° and +180°. If you get 200°, subtract 360° (→ −160°).</li><li>Add and subtract angles like ordinary signed numbers: 30° − 90° = −60°.</li></ul>`)}
+<div data-ex="s2p"></div>
+${takeaway(['turn a cosine into a phasor', 'turn a sine into a phasor by subtracting 90°', 'handle a negative amplitude with ±180°'])}
+` },
+
+{ short: 'Complex numbers', title: 'The maths: complex numbers', html: () => `
+<p class="lead">A phasor is a complex number. You only need a small set of complex-number skills for this course, and this section covers all of them.</p>
+<h3>3.1 The imaginary unit j</h3>
+<p>Engineers use <b>${J}</b> (not <i>i</i>, which is taken by current) for the number whose square is −1.</p>
+<div class="idgrid">
+  <div class="idc"><div class="big">${J} = √−1</div><p>definition</p></div>
+  <div class="idc"><div class="big">${J}² = −1</div><p>use this to tidy products</p></div>
+  <div class="idc"><div class="big">${J}³ = −${J}</div><p>${J}² × ${J} = −1 × ${J}</p></div>
+  <div class="idc"><div class="big">${J}⁴ = 1</div><p>${J}² × ${J}² = (−1)(−1)</p></div>
+  <div class="idc"><div class="big">1/${J} = −${J}</div><p>${fr('1', J)} × ${fr(J, J)} = ${fr(J, `${J}²`)} = ${fr(J, '−1')} = −${J}</p></div>
+  <div class="idc"><div class="big">${J} = 1∠90°</div><p>multiplying by ${J} turns an arrow 90° anticlockwise</p></div>
+  <div class="idc"><div class="big">−${J} = 1∠−90°</div><p>multiplying by −${J} turns it 90° clockwise</p></div>
+  <div class="idc"><div class="big">−1 = 1∠180°</div><p>a minus sign turns it round by 180°</p></div>
+</div>
+
+<h3>3.2 Two ways to write the same number</h3>
+<div class="pair">
+  <div class="fcard"><h4>Rectangular form</h4><div class="formula"><i>z</i> = <i>x</i> + ${J}<i>y</i></div><p><i>x</i> = real part (how far right), <i>y</i> = imaginary part (how far up).</p></div>
+  <div class="fcard"><h4>Polar form</h4><div class="formula"><i>z</i> = <i>r</i>∠<i>φ</i></div><p><i>r</i> = magnitude (length of the arrow), <i>φ</i> = angle from the positive real axis.</p></div>
+</div>
+<aside class="euler"><b>Why "∠" works (Euler's identity, no proof needed):</b> &nbsp; <i>e</i><sup>${J}<i>φ</i></sup> = cos <i>φ</i> + ${J} sin <i>φ</i>. So <i>r</i>∠<i>φ</i> is short for <i>r e</i><sup>${J}<i>φ</i></sup> = <i>r</i> cos <i>φ</i> + ${J}<i>r</i> sin <i>φ</i>. The real part of this is the cosine — which is why phasors use cosines.</aside>
+<p>Drag the point around the plane and watch both forms change together.</p>
+<div data-viz="plane"></div>
+
+<h3>3.3 Rectangular → polar</h3>
+<div class="formula"><i>r</i> = ${sq('<i>x</i>² + <i>y</i>²')} &nbsp;&nbsp;&nbsp; <i>φ</i> = ${atan('<i>y</i> / <i>x</i>')} &nbsp;<span class="muted">(+ or − 180° if <i>x</i> is negative)</span></div>
+<div data-ex="r2p"></div>
+<table class="tbl small center"><tr><th>where is the point?</th><th>sign of x</th><th>what to do with the calculator angle</th></tr>
+<tr><td>right half (1st, 4th quadrant)</td><td>+</td><td>use it as it is</td></tr>
+<tr><td>upper left (2nd quadrant)</td><td>−</td><td>add 180°</td></tr>
+<tr><td>lower left (3rd quadrant)</td><td>−</td><td>subtract 180°</td></tr></table>
+
+<h3>3.4 Polar → rectangular</h3>
+<div class="formula"><i>x</i> = <i>r</i> cos <i>φ</i> &nbsp;&nbsp;&nbsp; <i>y</i> = <i>r</i> sin <i>φ</i></div>
+<div data-ex="p2r"></div>
+${takeaway([`use ${J}² = −1 and 1/${J} = −${J}`, 'convert rectangular → polar, fixing the angle when x is negative', 'convert polar → rectangular'])}
+` },
+
+{ short: 'Right form, right job', title: 'Use the right form for the job', html: () => `
+<p class="lead">Both forms describe the same number, but each one makes a different operation easy (Alexander &amp; Sadiku, §9.3):</p>
+<div class="pair">
+  <div class="fcard jobadd"><h4>➕ Add / subtract → rectangular</h4><div class="formula">(<i>x</i>₁ + ${J}<i>y</i>₁) + (<i>x</i>₂ + ${J}<i>y</i>₂) = (<i>x</i>₁ + <i>x</i>₂) + ${J}(<i>y</i>₁ + <i>y</i>₂)</div><p>Real with real, imaginary with imaginary.</p></div>
+  <div class="fcard jobmul"><h4>✖ Multiply / divide → polar</h4><div class="formula"><i>r</i>₁∠<i>φ</i>₁ × <i>r</i>₂∠<i>φ</i>₂ = <i>r</i>₁<i>r</i>₂∠(<i>φ</i>₁ + <i>φ</i>₂)<br>${fr('<i>r</i>₁∠<i>φ</i>₁', '<i>r</i>₂∠<i>φ</i>₂')} = ${fr('<i>r</i>₁', '<i>r</i>₂')}∠(<i>φ</i>₁ − <i>φ</i>₂)</div><p>Multiply/divide the sizes, add/subtract the angles.</p></div>
+</div>
+
+<h3>4.1 Adding: only rectangular works</h3>
+<div class="pair">
+  <div class="fcard"><h4>Rectangular ✓</h4><p>(3 + ${J}4) + (5 − ${J}2) = (3 + 5) + ${J}(4 − 2) = <b>${cx(N.add_x, N.add_y)}</b></p></div>
+  <div class="fcard"><h4>Polar ✗</h4><p>${an(N.z34_m, N.z34_a)} + 5.39∠−21.80° = ? &nbsp;There is <b>no rule</b> for this. You must change both to rectangular first.</p></div>
+</div>
+${warn(`<b>Common mistake:</b> 5∠53° + 5∠−22° ≠ 10∠31°. Never add magnitudes and angles.`)}
+
+<h3>4.2 Multiplying: compare both ways</h3>
+<div data-vs="mul"></div>
+<h3>4.3 Dividing: compare both ways</h3>
+<div data-vs="div"></div>
+${key('In a circuit problem you will keep switching: <b>rectangular to add</b> (series impedances, KCL sums), <b>polar to multiply and divide</b> (Ohm\'s law, voltage dividers). Get fast at converting.')}
+${takeaway(['add complex numbers in rectangular form', 'multiply and divide in polar form', 'explain why polar numbers cannot be added directly'])}
+` },
+
+{ short: 'Phasor → sinusoid', title: 'Changing a phasor back into a sinusoid', html: () => `
+<p class="lead">At the end of a phasor calculation you usually need the answer as a real, time-varying signal again. This is the easiest step of all.</p>
+<ol class="recipe">
+  <li>If the phasor is in rectangular form, change it to <b>polar</b> form (watch the quadrant).</li>
+  <li>Write <b>amplitude cos(ωt + angle)</b>, putting back the ω of the circuit.</li>
+  <li>Add the unit.</li>
+</ol>
+<div class="formula big">${Vp} = <i>V</i><sub>m</sub>∠<i>φ</i> &nbsp;⇒&nbsp; <i>v</i>(<i>t</i>) = <i>V</i><sub>m</sub> cos(<i>ωt</i> + <i>φ</i>)</div>
+<div data-ex="p2s"></div>
+<p>That is exactly how we finished Section 1: ${Vp} = ${an(N.ps_m, N.ps_a, 'V')} at <i>ω</i> = 100 rad/s became <i>v</i> = ${cosw(N.ps_m, 100, N.ps_a, 'V')}.</p>
+<div class="summary">
+  <div><h4>Time domain</h4><p><i>v</i>(<i>t</i>) changes with time and is always real.</p></div>
+  <div><h4>Phasor domain</h4><p>${Vp} does not depend on time and is usually complex.</p></div>
+  <div><h4>The bridge</h4><p><i>V</i><sub>m</sub> cos(<i>ωt</i> + <i>φ</i>) ⇔ <i>V</i><sub>m</sub>∠<i>φ</i></p></div>
+  <div><h4>The catch</h4><p>Only for sinusoids of one frequency, in steady state.</p></div>
+</div>
+<h3>Check yourself</h3>
+<div data-quiz="L1"></div>
+${takeaway(['turn a rectangular phasor back into a cosine', 'explain the difference between v(t) and V'])}
+` },
+  ] },
+
+// ============================================================================================ LEVEL 2
+{ id: 'L2', n: 2, tag: 'Intermediate', name: 'Phasors in circuits', blurb: 'R, L and C become impedances; calculus disappears; nodal and mesh analysis work as in DC.', icon: 'Z',
+  sections: [
+{ short: 'R, L, C → Z', title: 'Resistors, inductors and capacitors become impedances', html: () => `
+<p class="lead">In the time domain, inductors and capacitors are described with calculus. In the phasor domain the calculus turns into multiplication by ${J}ω — and every element obeys a simple Ohm's law, ${Vp} = ${Zp}${Ip}.</p>
+<h3>1.1 Why calculus disappears</h3>
+<p>Differentiate a cosine and you get a cosine that is <i>ω</i> times bigger and 90° ahead. In phasor language, "times <i>ω</i> and +90°" is just "multiply by ${J}<i>ω</i>" (because ${J} = 1∠90°).</p>
+<div class="pair">
+  <div class="fcard"><h4>Time domain</h4><div class="formula">${fr('d<i>v</i>', 'd<i>t</i>')} &nbsp;&nbsp;&nbsp; ∫<i>v</i> d<i>t</i></div></div>
+  <div class="fcard"><h4>Phasor domain</h4><div class="formula">${J}<i>ω</i>${Vp} &nbsp;&nbsp;&nbsp; ${fr(Vp, `${J}<i>ω</i>`)}</div></div>
+</div>
+<div data-vs="deriv"></div>
+
+<h3>1.2 The three impedances</h3>
+<table class="tbl">
+<tr><th>Element</th><th>Time domain</th><th>Phasor domain</th><th>Impedance <b>Z</b></th><th>Phase</th></tr>
+<tr><td>Resistor</td><td><i>v</i> = <i>Ri</i></td><td>${Vp} = <i>R</i>${Ip}</td><td><i>R</i></td><td><i>v</i> and <i>i</i> in phase</td></tr>
+<tr class="rowL"><td>Inductor</td><td><i>v</i> = <i>L</i> ${fr('d<i>i</i>', 'd<i>t</i>')}</td><td>${Vp} = ${J}<i>ωL</i>${Ip}</td><td>${J}<i>ωL</i></td><td><i>i</i> lags <i>v</i> by 90°</td></tr>
+<tr class="rowC"><td>Capacitor</td><td><i>i</i> = <i>C</i> ${fr('d<i>v</i>', 'd<i>t</i>')}</td><td>${Vp} = ${fr(Ip, `${J}<i>ωC</i>`)}</td><td>${fr(1, `${J}<i>ωC</i>`)} = ${fr(`−${J}`, '<i>ωC</i>')}</td><td><i>i</i> leads <i>v</i> by 90°</td></tr>
+</table>
+${reminder(`why 1/(jωC) = −j/(ωC)`, `<p>${fr(1, `${J}<i>ωC</i>`)} = ${fr(1, J)} × ${fr(1, '<i>ωC</i>')} and ${fr(1, J)} = −${J}. So a capacitor's impedance is always a <b>negative</b> imaginary number, and an inductor's is <b>positive</b>.</p>`)}
+<p>Pick an element and watch the voltage (blue) and current (orange). Change ω to see how the impedance of L and C depends on frequency.</p>
+<div data-viz="rlc"></div>
+${key(`Memory aid <b>"ELI the ICE man"</b>: in L, E (voltage) comes before I; in C, I comes before E.`)}
+<h3>1.3 Impedances combine like resistors</h3>
+<div class="pair">
+  <div class="fcard"><h4>Series</h4><div class="formula">${Zp} = ${bv('Z', '1')} + ${bv('Z', '2')} + …</div><p>Add in rectangular form.</p></div>
+  <div class="fcard"><h4>Parallel (two)</h4><div class="formula">${Zp} = ${fr(`${bv('Z', '1')}${bv('Z', '2')}`, `${bv('Z', '1')} + ${bv('Z', '2')}`)}</div><p>Product over sum.</p></div>
+</div>
+${takeaway([`write Z for R, L and C`, `explain why d/dt becomes ×${J}ω`, 'say whether the current leads or lags in L and in C'])}
+` },
+
+{ short: 'Calculus vs phasor', title: 'The same circuit: calculus versus phasors', html: () => `
+<p class="lead">Here is the real reason engineers use phasors. The circuit below is the simplest AC circuit with an inductor. Solve it both ways and compare the effort.</p>
+<div data-vs="rl"></div>
+${key('With phasors, an AC circuit is solved exactly like a DC circuit: <b>Ohm\'s law, KVL, KCL, series, parallel, dividers</b> — only the numbers are complex. No differential equations, no guessing.')}
+${warn('<b>Remember:</b> phasors give the <b>steady-state</b> answer only (after any switching transients have died away). For switching, use the methods of the transient and Laplace topics.')}
+${takeaway(['transform a circuit into the phasor domain', 'solve a series RL or RC circuit with one division'])}
+` },
+
+{ short: 'Nodal analysis', title: 'Nodal analysis with phasors', html: () => `
+<p class="lead">Nodal analysis is the same KCL method you used in DC circuits. The only differences: sources are phasors and elements are impedances (Alexander &amp; Sadiku, §10.2).</p>
+<ol class="recipe">
+  <li>Change the circuit to the phasor domain (sources → phasors, L → ${J}ωL, C → −${J}/(ωC)).</li>
+  <li>Choose a reference node and label the unknown node voltages.</li>
+  <li>Write KCL at each unknown node: sum of (node voltage − neighbour voltage)/<b>Z</b> = 0.</li>
+  <li>Solve the equation(s) with complex arithmetic.</li>
+  <li>Change the answers back to the time domain if asked.</li>
+</ol>
+<div data-ex="nod"></div>
+${takeaway(['write a KCL equation with complex impedances', `use 1/(−${J}) = ${J} to tidy capacitor terms`, 'check the answer with KCL'])}
+` },
+
+{ short: 'Mesh analysis', title: 'Mesh analysis with phasors', html: () => `
+<p class="lead">Mesh analysis is KVL round each window of the circuit, exactly as in DC (Alexander &amp; Sadiku, §10.3).</p>
+<ol class="recipe">
+  <li>Change the circuit to the phasor domain.</li>
+  <li>Give every mesh a clockwise current ${bi('I', '1')}, ${bi('I', '2')}, …</li>
+  <li>Write KVL round each mesh. A shared element carries the <b>difference</b> of the two mesh currents.</li>
+  <li>Solve (substitution works well for two meshes).</li>
+</ol>
+<div data-ex="mesh"></div>
+${reminder('solving two equations by substitution', `<p>Make one unknown the subject of the simpler equation, then put it into the other equation. With complex numbers the steps are the same — just keep ${J}² = −1 in mind.</p>`)}
+<h3>Check yourself</h3>
+<div data-quiz="L2"></div>
+${takeaway(['write mesh equations with complex impedances', 'find the current in a shared element'])}
+` },
+  ] },
+
+// ============================================================================================ LEVEL 3
+{ id: 'L3', n: 3, tag: 'Advanced', name: 'AC power', blurb: 'Peak and rms values, average and reactive power, and maximum power transfer — all with phasors.', icon: 'P',
+  sections: [
+{ short: 'Vm and Vrms', title: 'Peak value and rms value', html: () => `
+<p class="lead">The socket in your room is "230 V". But the voltage is a sinusoid that swings between +325 V and −325 V fifty times a second. So which number is 230 V?</p>
+${plot({ f: t => 325 * Math.cos(2 * Math.PI * 50 * t), tmax: 0.04, ymin: -340, ymax: 340, yt: [[-325, '−325'], [0, '0'], [325, '325']], tt: [[0, '0'], [0.01, '10'], [0.02, '20'], [0.03, '30'], [0.04, '40']], ylab: 'v (V)', tlab: 't (ms)', col: 'var(--vc)', guide: [[230, 'V<tspan dy="3" font-size="70%">rms</tspan><tspan dy="-3"> = 230 V</tspan>']], cap: 'The Malaysian supply: 230 V rms, 50 Hz', wide: 1 })}
+<div class="pair">
+  <div class="fcard"><h4><i>V</i><sub>m</sub> — peak (amplitude)</h4><p>The highest value the wave reaches. It is the number in front of the cosine and the magnitude of the phasor.</p></div>
+  <div class="fcard"><h4><i>V</i><sub>rms</sub> — effective (rms)</h4><p>The DC voltage that would heat a resistor <b>by the same amount</b>. Meters and nameplates show rms.</p></div>
+</div>
+<div class="formula big"><i>V</i><sub>rms</sub> = ${fr('<i>V</i><sub>m</sub>', '√2')} &nbsp;&nbsp; <i>I</i><sub>rms</sub> = ${fr('<i>I</i><sub>m</sub>', '√2')} &nbsp;&nbsp;<span class="muted">(sinusoids only)</span></div>
+<p>Malaysian supply: <i>V</i><sub>m</sub> = √2 × 230 = ${N.sqrt2} × 230 = <b>${N.vm230} V</b>. Period <i>T</i> = 1/50 = ${N.T50} ms.</p>
+${takeaway(['explain what "230 V" means for an AC socket', 'convert between peak and rms'])}
+` },
+
+{ short: 'Power in time', title: 'Average power in the time domain', html: () => `
+<p class="lead">The <b>instantaneous power</b> is <i>p</i>(<i>t</i>) = <i>v</i>(<i>t</i>) × <i>i</i>(<i>t</i>). It goes up and down twice every cycle. The number that matters for your electricity bill is its <b>average</b> <i>P</i>.</p>
+<div class="formula"><i>P</i> = ${fr(1, '<i>T</i>')}∫<sub>0</sub><sup><i>T</i></sup> <i>v</i>(<i>t</i>) <i>i</i>(<i>t</i>) d<i>t</i></div>
+<p>Change the angle between voltage and current and watch <i>p</i>(<i>t</i>). Green areas are energy going <b>into</b> the load; red areas are energy coming <b>back out</b> to the source.</p>
+<div data-viz="pwr"></div>
+<h3>2.1 For a resistor, the time domain is easy</h3>
+<p>For a resistor <i>v</i> and <i>i</i> are in phase, so <i>p</i>(<i>t</i>) is never negative, and the average works out to exactly half the peak:</p>
+<div class="formula"><i>P</i> = ½<i>V</i><sub>m</sub><i>I</i><sub>m</sub> = ½<i>I</i><sub>m</sub>²<i>R</i> = ${fr('<i>V</i><sub>rms</sub>²', '<i>R</i>')}</div>
+<p>Example: 100 V peak across 20 Ω gives <i>I</i><sub>m</sub> = 100/20 = ${N.pr_I} A and <i>P</i> = ½ × 100 × ${N.pr_I} = ${N.pr_P} W.</p>
+<h3>2.2 For anything else, the shortcut fails</h3>
+<p>Take a load of 8 Ω in series with an inductor of ${J}6 Ω, driven by 100 V peak. The current amplitude is 10 A.</p>
+<div class="pair">
+  <div class="fcard bad"><h4>Resistor shortcut ✗</h4><p>½<i>V</i><sub>m</sub><i>I</i><sub>m</sub> = ½ × 100 × 10 = <b>${N.wrong86} W</b></p><p class="muted">Wrong: it ignores that the current lags by ${N.Z86_a}°.</p></div>
+  <div class="fcard good"><h4>Correct answer</h4><p><i>P</i> = <b>${N.S86_x} W</b></p><p class="muted">Part of the energy goes back and forth into the inductor and is returned every cycle.</p></div>
+</div>
+<p>To get the correct answer in the time domain you must multiply two cosines, use cos <i>A</i> cos <i>B</i> = ½[cos(<i>A</i> − <i>B</i>) + cos(<i>A</i> + <i>B</i>)], and integrate over a period (textbook Eq. 11.3–11.8). The result is:</p>
+<div class="formula big"><i>P</i> = ½<i>V</i><sub>m</sub><i>I</i><sub>m</sub> cos(<i>θ<sub>v</sub></i> − <i>θ<sub>i</sub></i>)</div>
+${key('<b>Inductors and capacitors absorb zero average power.</b> Only resistors turn electrical energy into heat or work. The "simple" time-domain formulas (½I<sub>m</sub>²R, V<sub>rms</sub>²/R) only give you the power in a <b>resistor</b>.')}
+${takeaway(['say why ½V<sub>m</sub>I<sub>m</sub> is wrong for an RL load', 'state the average power absorbed by L and by C'])}
+` },
+
+{ short: 'Power with phasors', title: 'Phasors make power easy', html: () => `
+<p class="lead">Everything in the formula ½<i>V</i><sub>m</sub><i>I</i><sub>m</sub> cos(<i>θ<sub>v</sub></i> − <i>θ<sub>i</sub></i>) is already inside the phasors ${Vp} = <i>V</i><sub>m</sub>∠<i>θ<sub>v</sub></i> and ${Ip} = <i>I</i><sub>m</sub>∠<i>θ<sub>i</sub></i>. One multiplication gives it all.</p>
+<h3>3.1 Complex power</h3>
+<div class="formula big">${Sp} = ½ ${Vp} ${Ip}* = <i>P</i> + ${J}<i>Q</i></div>
+<p>${Ip}* is the <b>complex conjugate</b> of the current (same size, angle with the opposite sign). Multiplying gives ½<i>V</i><sub>m</sub><i>I</i><sub>m</sub>∠(<i>θ<sub>v</sub></i> − <i>θ<sub>i</sub></i>) — exactly the angle we need.</p>
+<table class="tbl">
+<tr><th>Quantity</th><th>From ${Sp}</th><th>Unit</th><th>Meaning</th></tr>
+<tr><td>Average (real) power <i>P</i></td><td>Re ${Sp}</td><td>W</td><td>energy actually used: heat, light, motion</td></tr>
+<tr><td>Reactive power <i>Q</i></td><td>Im ${Sp}</td><td>VAR</td><td>energy that sloshes back and forth into L and C</td></tr>
+<tr><td>Apparent power |${Sp}|</td><td>|${Sp}|</td><td>VA</td><td>what the cables and transformers must carry</td></tr>
+<tr><td>Power factor</td><td><i>P</i>/|${Sp}| = cos(<i>θ<sub>v</sub></i> − <i>θ<sub>i</sub></i>)</td><td>—</td><td>how much of |S| is useful</td></tr>
+</table>
+<h3>3.2 rms from a phasor</h3>
+<p>The magnitude of a phasor is the peak value, so the rms value is just |${Vp}|/√2 — no integration needed. Example: ${Vp} = 6 + ${J}8 V ⇒ |${Vp}| = ${sq('36 + 64')} = 10 V ⇒ <i>V</i><sub>rms</sub> = 10/√2 = ${N.vrms68} V.</p>
+<div class="pair">
+  <div class="fcard"><h4>With peak phasors</h4><div class="formula">${Sp} = ½ ${Vp} ${Ip}*</div></div>
+  <div class="fcard"><h4>With rms phasors</h4><div class="formula">${Sp} = ${bv('V', 'rms')} ${bi('I', 'rms')}*</div><p>The ½ disappears because (1/√2)(1/√2) = ½.</p></div>
+</div>
+${warn('<b>Do not mix them.</b> Decide at the start whether your phasors are peak or rms. Power system problems (like Level 4) usually use rms.')}
+${takeaway(['write S = ½VI*', 'read P, Q, |S| and pf from S', 'find V<sub>rms</sub> from a phasor'])}
+` },
+
+{ short: 'Step-by-step P & Q', title: 'Step by step: average and reactive power', html: () => `
+<p class="lead">This is the same 8 + ${J}6 Ω load from Section 2. Now we find its power properly with phasors.</p>
+<div data-ex="pow"></div>
+${pd({ bl: 1, w: 380, h: 250, R: 400, Rq: 300, items: [{ x: 400, y: 0, col: 'var(--pc)', lab: `P = ${N.S86_x} W`, dx: -110, dy: 20 }, { x: 400, y: 300, from: [400, 0], col: 'var(--qc)', lab: `Q = ${N.S86_y} VAR`, dx: 8, dy: 90 }, { x: 400, y: 300, col: 'var(--s1)', lab: `|S| = ${N.S86_m} VA`, lx: 150, ly: 160, anc: 'end' }], arcs: [{ a1: 0, a2: 36.87, r: 60, lab: `${N.S86_a}°` }], cap: 'The power triangle for this load' })}
+<p>The power triangle is just ${Sp} drawn on the complex plane: <i>P</i> along the real axis, <i>Q</i> straight up, |${Sp}| as the long side, and the angle is the impedance angle.</p>
+${takeaway(['find I, I*, S, P, Q, |S| and pf for a load', 'check P with ½|I|²R'])}
+` },
+
+{ short: 'Thevenin & max power', title: 'Thevenin equivalent and maximum power transfer', html: () => `
+<p class="lead">Thevenin's theorem works in AC exactly as in DC: any linear circuit seen from two terminals is a source ${bv('V', 'Th')} in series with an impedance ${bv('Z', 'Th')} (Alexander &amp; Sadiku, §10.6). The new idea is how to choose the load for the most power (§11.3).</p>
+<div class="pair">
+  <div class="fcard"><h4>DC</h4><div class="formula"><i>R<sub>L</sub></i> = <i>R</i><sub>Th</sub></div></div>
+  <div class="fcard"><h4>AC</h4><div class="formula">${bv('Z', 'L')} = ${bv('Z', 'Th')}* &nbsp;&nbsp; <i>P</i><sub>max</sub> = ${fr(`|${bv('V', 'Th')}|²`, '8<i>R</i><sub>Th</sub>')}</div></div>
+</div>
+<div data-ex="thev"></div>
+${figThev('eq')}
+<p>Try it: change the load's resistance and reactance. The power peaks when the load reactance cancels the source's +${J}2 Ω and the resistance equals 2 Ω.</p>
+<div data-viz="mpt"></div>
+<h3>Check yourself</h3>
+<div data-quiz="L3"></div>
+${takeaway(['find V<sub>Th</sub> with a voltage divider and Z<sub>Th</sub> with product over sum', 'choose Z<sub>L</sub> = Z<sub>Th</sub>* and find P<sub>max</sub>'])}
+` },
+  ] },
+
+// ============================================================================================ LEVEL 4
+{ id: 'L4', n: 4, tag: 'Expert', name: 'Power factor correction', blurb: 'Why TNB and Sarawak Energy charge for low power factor, why the fix is a capacitor, and how to size it.', icon: 'pf',
+  sections: [
+{ short: 'Power factor', title: 'Power factor: how much of the current is useful', html: () => `
+<p class="lead">From Level 3: the power factor is pf = <i>P</i>/|${Sp}| = cos <i>θ</i>, where <i>θ</i> is the angle between voltage and current. A pf of 1 means every amp does useful work; a pf of 0.5 means you need twice the current for the same work.</p>
+<div class="tiles">
+  <div class="tile"><div class="big">pf = 1</div><p>Pure resistance: heaters, kettles, filament lamps. Current in phase with voltage.</p></div>
+  <div class="tile"><div class="big">lagging</div><p>Inductive (Q &gt; 0): motors, air-conditioner and fridge compressors, pumps, fans, transformers. Current lags.</p></div>
+  <div class="tile"><div class="big">leading</div><p>Capacitive (Q &lt; 0): capacitor banks, some lightly loaded cables. Current leads.</p></div>
+</div>
+<p>Most real loads — and almost all factory loads — are motors, so they run at a <b>lagging</b> power factor of about 0.7–0.85 (Alexander &amp; Sadiku, §11.8). A motor needs reactive power to build up its magnetic field every cycle, then gives it back: that energy flows back and forth along the supply cables without doing any work.</p>
+${takeaway(['say what lagging and leading mean', 'name typical loads with a low lagging power factor'])}
+` },
+
+{ short: 'Why TNB penalises', title: 'Why the electricity company penalises a low power factor', html: () => `
+<p class="lead">Your kWh meter only charges you for the <b>real energy</b> (<i>P</i> × time). But the utility has to deliver the <b>current</b>, and with a low power factor the current is bigger for the same kW. Slide the power factor and see what happens to a 4.6 kW load on 230 V.</p>
+<div data-viz="pf"></div>
+<table class="tbl center">
+<tr><th>Power factor</th><th>1.00</th><th>0.95</th><th>0.85</th><th>0.70</th><th>0.50</th></tr>
+<tr><td>Current <i>I</i> = <i>P</i>/(<i>V</i> × pf)</td><td>${N.Ipf100} A</td><td>${N.Ipf95} A</td><td>${N.Ipf85} A</td><td>${N.Ipf70} A</td><td>${N.Ipf50} A</td></tr>
+<tr><td>Cable loss (× the loss at pf 1)</td><td>${N.Lpf100}×</td><td>${N.Lpf95}×</td><td>${N.Lpf85}×</td><td>${N.Lpf70}×</td><td>${N.Lpf50}×</td></tr>
+</table>
+<h3>2.1 The reasons, one by one</h3>
+<ol class="recipe">
+  <li><b>More current for the same energy.</b> <i>I</i> = <i>P</i>/(<i>V</i> × pf). At pf 0.5 the current is double.</li>
+  <li><b>More losses, paid by the utility.</b> Cables and transformers lose <i>I</i>²<i>R</i>. Double the current ⇒ four times the loss. These losses happen on the utility's side of your meter, so you do not pay for them in kWh.</li>
+  <li><b>Wasted capacity.</b> Generators, transformers and cables are rated in <b>kVA</b> (current), not kW. A low-pf customer fills them up without buying more energy, so the utility must build bigger equipment.</li>
+  <li><b>Bigger voltage drop.</b> More current means a bigger drop along the line, so the voltage for your neighbours falls.</li>
+</ol>
+${key('The utility recovers these costs with a <b>power-factor surcharge</b>: if your power factor is below a set limit, a percentage is added to your bill for every 0.01 below the limit (textbook §11.9.2).')}
+<aside class="tariff"><h4>⚑ The Malaysian rules (rates change, so check the current tariff book)</h4>
+<ul>
+<li><b>TNB</b> (Peninsular Malaysia): applies to commercial and industrial customers, not domestic homes. Limit: pf <b>0.85</b> for supply below 132 kV, <b>0.90</b> at 132 kV and above. Surcharge: <b>1.5 %</b> of the bill for every 0.01 below the limit, and <b>3 %</b> for every 0.01 below 0.75.</li>
+<li><b>Sarawak Energy</b>: commercial and industrial tariffs carry a similar surcharge when the power factor falls below <b>0.85</b>.</li>
+</ul>
+<p class="muted">Illustration with the TNB rule above: a factory with a RM 20 000 monthly bill at pf 0.80 is ${N.pen_steps} steps below 0.85 ⇒ ${N.pen_steps} × 1.5 % = ${N.pen_pct} % ⇒ a surcharge of <b>RM ${N.pen_rm.replace(/(\d)(\d{3})$/, '$1 $2')}</b> every month.</p></aside>
+<p class="muted">Why are homes not charged? A domestic meter only records kWh, and home loads are small and mixed. Large customers have meters that record both kWh and kVARh, so the utility can calculate their power factor.</p>
+${takeaway(['explain why low power factor means more current', 'give three reasons why it costs the utility money', 'describe how the power-factor surcharge works'])}
+` },
+
+{ short: 'Why a capacitor?', title: 'Why the fix is a capacitor (in parallel)', html: () => `
+<p class="lead">The motor needs its reactive power — we cannot take that away. What we can do is supply it <b>locally</b>, right next to the motor, so it no longer has to travel through the utility's cables. A capacitor does exactly that.</p>
+<div class="why4">
+  <div class="fcard good"><h4>✓ Capacitor</h4><p>A capacitor absorbs <b>negative</b> Q (it supplies reactive power). It cancels the motor's positive Q. It takes <b>zero average power</b>, so it adds nothing to the kWh bill. Cheap, no moving parts, long life.</p></div>
+  <div class="fcard bad"><h4>✗ Resistor</h4><p>Adding a resistor raises the pf <i>number</i>, but only by burning extra real power. Q stays the same and you pay for more kWh. A bad trade.</p></div>
+  <div class="fcard bad"><h4>✗ Inductor</h4><p>An inductor absorbs <b>positive</b> Q, the same as the motor. It makes the power factor <b>worse</b>. (It is used only when a load is capacitive.)</p></div>
+  <div class="fcard bad"><h4>✗ Capacitor in series</h4><p>In series, the motor's voltage and current would change and it would not run as designed. In <b>parallel</b>, the motor still sees the full 230 V and works exactly as before.</p></div>
+</div>
+<p>With the capacitor in place, the reactive energy flows back and forth between the motor and the capacitor only. The utility's cables carry just the useful part of the current. Use the slider to add capacitance and watch the supply current shrink.</p>
+<div data-viz="pfc"></div>
+${warn(`<b>Do not overdo it.</b> Too much capacitance makes the power factor <b>leading</b>, and it can drop again. Most designs aim for about <b>0.95</b>, not 1: for this load, 0.95 needs ${N.Cuf} µF but 1.00 needs ${N.C_unity} µF. That last little bit of power factor costs a lot of extra capacitor.`)}
+${takeaway(['explain why only a capacitor fixes a lagging power factor', 'explain why the capacitor is connected in parallel', 'say why the target is usually 0.95 and not 1'])}
+` },
+
+{ short: 'Correct to 0.95', title: 'Step by step: correcting the power factor to 0.95', html: () => `
+<p class="lead">This is the calculation an engineer does before buying a capacitor bank. It uses only the power triangle and one formula for the capacitor (Alexander &amp; Sadiku, Eq. 11.57–11.60).</p>
+<div class="pair">
+  ${pd({ bl: 1, w: 360, h: 290, R: 10, Rq: 8.82, items: [{ x: 10, y: 0, col: 'var(--pc)', lab: 'P = 10 kW', dx: -100, dy: 20 }, { x: 10, y: 3.29, from: [10, 0], col: 'var(--qc)', lab: 'Q₂', dx: 10, dy: 40 }, { x: 10, y: 8.82, from: [10, 3.29], col: 'var(--cap)', lab: 'Q<tspan dy="3" font-size="70%">C</tspan>', dx: 10, dy: 70, w: 4 }, { x: 10, y: 8.82, col: 'var(--bad)', lab: '|S₁| before', lx: 3.2, ly: 4.6, anc: 'end' }, { x: 10, y: 3.29, col: 'var(--pc2)', lab: '|S₂| after', lx: 6.5, ly: 1.2, anc: 'start' }], arcs: [{ a1: 0, a2: 41.4, r: 58, lab: 'θ₁' }, { a1: 0, a2: 18.2, r: 105, lab: 'θ₂' }], cap: 'The capacitor removes Q<sub>C</sub>; P stays the same' })}
+  <div><ol class="recipe">
+    <li><i>θ</i>₁ = cos<sup>−1</sup>(old pf), &nbsp;<i>Q</i>₁ = <i>P</i> tan <i>θ</i>₁</li>
+    <li><i>θ</i>₂ = cos<sup>−1</sup>(new pf), &nbsp;<i>Q</i>₂ = <i>P</i> tan <i>θ</i>₂</li>
+    <li><i>Q<sub>C</sub></i> = <i>Q</i>₁ − <i>Q</i>₂</li>
+    <li><i>C</i> = ${fr('<i>Q<sub>C</sub></i>', '<i>ω V</i><sub>rms</sub>²')}</li>
+  </ol></div>
+</div>
+${reminder('cos⁻¹ and tan on the calculator', `<ul><li>Calculator in <b>DEG</b> mode. cos<sup>−1</sup> is usually <kbd>SHIFT</kbd> <kbd>cos</kbd>.</li><li>You can skip the angle: tan θ = ${sq('1 − pf²')}/pf. For pf = 0.75: ${sq('1 − 0.5625')}/0.75 = ${N.tan1}.</li></ul>`)}
+<div data-ex="pfc"></div>
+${key(`Power factor correction changes <b>nothing</b> for the motor (same voltage, same ${'10'} kW) but cuts the supply current by ${N.Icut} % — and the utility's losses by ${N.loss_cut} %. That is why the utility rewards it and penalises the opposite.`)}
+<h3>Check yourself</h3>
+<div data-quiz="L4"></div>
+${takeaway(['find Q<sub>1</sub>, Q<sub>2</sub> and Q<sub>C</sub> from P and two power factors', 'size the parallel capacitor with C = Q<sub>C</sub>/(ωV<sub>rms</sub>²)', 'show the supply current falls after correction'])}
+` },
+  ] },
+];
+
+'use strict';
+// Interactive pictures.  Each VIZ[kind](host) fills <div data-viz="kind"> and wires its own controls.
+// Animations run only while their level is on screen (host.isConnected).
+
+const VIZ = {};
+const R2D = 180 / Math.PI, D2R = Math.PI / 180;
+const f1 = x => (Math.abs(x) < 0.005 ? 0 : x).toFixed(Math.abs(x) >= 100 ? 0 : Math.abs(x) >= 10 ? 1 : 2).replace('-', '−');
+const fa = x => (Math.abs(x) < 0.05 ? 0 : x).toFixed(1).replace('-', '−');
+const slider = (id, lab, min, max, step, val, unit = '') => `<label class="sl"><span>${lab}</span><input type="range" data-k="${id}" min="${min}" max="${max}" step="${step}" value="${val}"><output data-o="${id}"></output>${unit ? `<em>${unit}</em>` : ''}</label>`;
+function anim(host, fn) {          // requestAnimationFrame loop that stops when host leaves the page
+  let last = null;
+  const tick = now => { if (!host.isConnected) return; const dt = last == null ? 0 : Math.min(0.05, (now - last) / 1000); last = now; fn(dt); requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+}
+function wireSliders(host, st, onchange) {
+  for (const inp of host.querySelectorAll('input[type=range]')) {
+    const k = inp.dataset.k, out = host.querySelector(`[data-o="${k}"]`);
+    const set = () => { st[k] = +inp.value; if (out) out.textContent = (+inp.value).toString().replace('-', '−'); onchange && onchange(k); };
+    inp.oninput = set; st[k] = +inp.value; if (out) out.textContent = String(+inp.value).replace('-', '−');
+  }
+  onchange && onchange();                            // draw once, after every slider has its value
+}
+const pathOf = (pts) => pts.map((p, k) => `${k ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join('');
+
+// ---------------------------------------------------------------- rotating phasor and its shadow
+VIZ.rot = host => {
+  host.innerHTML = `<div class="vgrid1"><svg class="vsvg" viewBox="0 0 420 430" role="img" aria-label="rotating phasor with its projection drawn as a cosine wave below">
+    <line class="axis" x1="70" y1="120" x2="350" y2="120"/><line class="axis" x1="210" y1="10" x2="210" y2="230"/>
+    <text class="alab" x="352" y="116">Re</text><text class="alab" x="216" y="20">Im</text>
+    <circle class="orbit" cx="210" cy="120" r="100"/>
+    <line class="proj" x1="0" y1="0" x2="0" y2="0"/><line class="drop" x1="0" y1="0" x2="0" y2="0"/>
+    <g class="arr"></g><circle class="shadow" r="6" cx="0" cy="120"/>
+    <line class="axis" x1="210" y1="240" x2="210" y2="425"/><line class="grid" x1="110" y1="240" x2="110" y2="425"/><line class="grid" x1="310" y1="240" x2="310" y2="425"/>
+    <text class="tick" x="110" y="252" text-anchor="middle">−V<tspan dy="3" font-size="70%">m</tspan></text><text class="tick" x="310" y="252" text-anchor="middle">+V<tspan dy="3" font-size="70%">m</tspan></text>
+    <text class="alab" x="322" y="420">earlier ↓</text>
+    <path class="wave" d=""/><text class="vt" x="14" y="24"></text>
+  </svg>
+  <div class="vside">
+    ${slider('A', 'Amplitude V<sub>m</sub>', 2, 10, 1, 8, 'V')}
+    ${slider('phi', 'Angle φ', -180, 180, 5, 30, '°')}
+    <div class="vbtns"><button class="primary play">Pause</button><button class="snap">Snap to t = 0</button></div>
+    <div class="readout big"></div>
+    <div class="insight">The arrow spins anticlockwise. Its <b>shadow on the real axis</b> (the dot) moves left and right — that movement, drawn downwards in time, is the cosine wave.</div>
+  </div></div>`;
+  const st = { A: 8, phi: 30, wt: 0, run: true }, svg = host.querySelector('svg');
+  const k = 100 / 10;
+  wireSliders(host, st, () => draw());
+  const play = host.querySelector('.play');
+  play.onclick = () => { st.run = !st.run; play.textContent = st.run ? 'Pause' : 'Play'; };
+  host.querySelector('.snap').onclick = () => { st.run = false; play.textContent = 'Play'; st.wt = 0; draw(); };
+  function draw() {
+    const a = st.wt + st.phi * D2R, x = 210 + st.A * k * Math.cos(a), y = 120 - st.A * k * Math.sin(a);
+    svg.querySelector('.arr').innerHTML = arrowLine(210, 120, x, y, 'var(--vc)', 4);
+    const sh = svg.querySelector('.shadow'); sh.setAttribute('cx', x);
+    const pj = svg.querySelector('.proj'); pj.setAttribute('x1', x); pj.setAttribute('y1', y); pj.setAttribute('x2', x); pj.setAttribute('y2', 120);
+    const dr = svg.querySelector('.drop'); dr.setAttribute('x1', x); dr.setAttribute('y1', 120); dr.setAttribute('x2', x); dr.setAttribute('y2', 262);
+    // wave: the newest point is at the top (y = 262); a point n pixels lower is from 0.04n rad earlier
+    const pts = []; for (let n = 0; n < 160; n++) pts.push([210 + st.A * k * Math.cos(st.wt - n * 0.04 + st.phi * D2R), 262 + n]);
+    svg.querySelector('.wave').setAttribute('d', pathOf(pts));
+    const deg = ((st.wt * R2D) % 360).toFixed(0);
+    svg.querySelector('.vt').textContent = `ωt = ${deg}°`;
+    host.querySelector('.readout').innerHTML = `<span><i>v</i>(<i>t</i>) = ${cosw(st.A, '', st.phi === 0 ? 0 : String(st.phi).replace('-', '−'), 'V').replace('<i>t</i>', '<i>ωt</i>')} &nbsp;⇔&nbsp; ${Vp} = ${st.A}∠${String(st.phi).replace('-', '−')}° V</span>`;
+  }
+  anim(host, dt => { if (!st.run) return; st.wt += dt * 1.6; draw(); });
+  draw();
+};
+
+// ---------------------------------------------------------------- adding two sinusoids
+VIZ.add = host => {
+  host.innerHTML = `<div class="vgrid"><div><svg class="vsvg" viewBox="0 0 440 250" role="img" aria-label="two sinusoids and their sum against time"><g class="g"></g></svg></div>
+  <div><svg class="vsvg pdv" viewBox="0 0 250 250" role="img" aria-label="phasor diagram of the two voltages and their sum, drawn tip to tail"><g class="p"></g></svg></div></div>
+  <div class="vrow">${slider('t', 'Time t', 0, 62.8, 0.4, 0, 'ms')}</div>
+  <div class="vrow">${slider('A1', 'V₁ amplitude', 1, 10, 1, 8, 'V')}${slider('p1', 'V₁ angle', -180, 180, 5, 30, '°')}${slider('A2', 'V₂ amplitude', 1, 10, 1, 6, 'V')}${slider('p2', 'V₂ angle', -180, 180, 5, -60, '°')}</div>
+  <div class="readout"></div><div class="insight"></div>`;
+  const st = {};
+  wireSliders(host, st, draw);
+  function draw() {
+    const w = 100, z1 = { x: st.A1 * Math.cos(st.p1 * D2R), y: st.A1 * Math.sin(st.p1 * D2R) }, z2 = { x: st.A2 * Math.cos(st.p2 * D2R), y: st.A2 * Math.sin(st.p2 * D2R) };
+    const zs = { x: z1.x + z2.x, y: z1.y + z2.y }, Am = Math.hypot(zs.x, zs.y), Ph = Math.atan2(zs.y, zs.x) * R2D;
+    const X = t => 40 + t / 62.8 * 390, Y = v => 125 - v * 6.2, tsec = st.t / 1000;
+    const f = (A, p) => t => A * Math.cos(w * t / 1000 + p * D2R);
+    let s = `<line class="axis" x1="40" y1="125" x2="430" y2="125"/><line class="axis" x1="40" y1="10" x2="40" y2="240"/>`;
+    for (const v of [-15, -10, -5, 5, 10, 15]) s += `<line class="grid" x1="40" y1="${Y(v)}" x2="430" y2="${Y(v)}"/><text class="tick" x="34" y="${Y(v) + 4}" text-anchor="end">${String(v).replace('-', '−')}</text>`;
+    const curve = (g, col, cls = '') => { const p = []; for (let n = 0; n <= 200; n++) { const t = 62.8 * n / 200; p.push([X(t), Y(g(t))]); } return `<path class="vcurve ${cls}" style="stroke:${col}" d="${pathOf(p)}"/>`; };
+    s += curve(f(st.A1, st.p1), 'var(--s1)') + curve(f(st.A2, st.p2), 'var(--s2)') + curve(f(Am, Ph), 'var(--s4)', 'thick');
+    const v1 = f(st.A1, st.p1)(st.t), v2 = f(st.A2, st.p2)(st.t);
+    s += `<line class="cursor" x1="${X(st.t)}" y1="10" x2="${X(st.t)}" y2="240"/>`;
+    for (const [v, c] of [[v1, 'var(--s1)'], [v2, 'var(--s2)'], [v1 + v2, 'var(--s4)']]) s += `<circle cx="${X(st.t)}" cy="${Y(v)}" r="5" style="fill:${c}"/>`;
+    s += `<text class="tick" x="428" y="140" text-anchor="end">t (ms)</text><text class="alab" x="46" y="18">v (V)</text>
+      <text class="lg" x="300" y="22" style="fill:var(--s1)">— v₁</text><text class="lg" x="345" y="22" style="fill:var(--s2)">— v₂</text><text class="lg" x="390" y="22" style="fill:var(--s4)">— v₁ + v₂</text>`;
+    host.querySelector('.g').innerHTML = s;
+    // phasor diagram, tip to tail
+    const c = 125, k = 125 / 16, PX = x => c + x * k, PY = y => c - y * k;
+    let p = `<line class="axis" x1="5" y1="${c}" x2="245" y2="${c}"/><line class="axis" x1="${c}" y1="5" x2="${c}" y2="245"/><text class="alab" x="240" y="${c - 6}" text-anchor="end">Re</text><text class="alab" x="${c + 5}" y="15">Im</text>`;
+    p += arrowLine(PX(0), PY(0), PX(z1.x), PY(z1.y), 'var(--s1)', 3) + arrowLine(PX(z1.x), PY(z1.y), PX(zs.x), PY(zs.y), 'var(--s2)', 3) + arrowLine(PX(0), PY(0), PX(zs.x), PY(zs.y), 'var(--s4)', 4);
+    p += `<text class="plab" x="${PX(z1.x / 2) - 6}" y="${PY(z1.y / 2) - 6}" text-anchor="end" style="fill:var(--s1)">V₁</text><text class="plab" x="${PX(z1.x + z2.x / 2) + 6}" y="${PY(z1.y + z2.y / 2)}" style="fill:var(--s2)">V₂</text><text class="plab" x="${PX(zs.x) + 6}" y="${PY(zs.y) + 16}" style="fill:var(--s4)">V</text>`;
+    host.querySelector('.p').innerHTML = p;
+    host.querySelector('.readout').innerHTML = `<span>at t = ${st.t.toFixed(1)} ms: <i>v</i>₁ = ${f1(v1)} V, <i>v</i>₂ = ${f1(v2)} V, <i>v</i>₁ + <i>v</i>₂ = <b>${f1(v1 + v2)} V</b></span><span>phasor sum: ${Vp} = ${f1(Am)}∠${fa(Ph)}° V</span>`;
+    host.querySelector('.insight').innerHTML = Math.abs(st.A1 + st.A2 - Am) < 0.05 ? 'The two waves are in phase, so here the amplitudes <b>do</b> simply add.' :
+      `The peak of the total is <b>${f1(Am)} V</b>, not ${st.A1 + st.A2} V. On the right, the sum is found by placing the arrows tip to tail — that is phasor addition.`;
+  }
+};
+
+// ---------------------------------------------------------------- complex plane: drag a point
+VIZ.plane = host => {
+  host.innerHTML = `<div class="vgrid"><svg class="vsvg plane" viewBox="0 0 300 300" role="img" aria-label="complex plane: drag the point to see rectangular and polar forms"><g class="g"></g><rect class="hitall" x="0" y="0" width="300" height="300"/></svg>
+  <div class="vside"><div class="readout big col"></div><div class="insight"></div><p class="muted">Drag (or tap) anywhere on the grid. The point snaps to whole numbers.</p></div></div>`;
+  const st = { x: 3, y: 4 }, svg = host.querySelector('svg'), c = 150, k = 13, X = x => c + x * k, Y = y => c - y * k;
+  function draw() {
+    let s = '';
+    for (let g = -10; g <= 10; g++) if (g) s += `<line class="grid${g % 5 ? '' : ' g5'}" x1="${X(g)}" y1="${Y(-10.5)}" x2="${X(g)}" y2="${Y(10.5)}"/><line class="grid${g % 5 ? '' : ' g5'}" x1="${X(-10.5)}" y1="${Y(g)}" x2="${X(10.5)}" y2="${Y(g)}"/>`;
+    s += `<line class="axis" x1="${X(-11)}" y1="${c}" x2="${X(11)}" y2="${c}"/><line class="axis" x1="${c}" y1="${Y(11)}" x2="${c}" y2="${Y(-11)}"/>
+      <text class="alab" x="${X(11)}" y="${c - 5}" text-anchor="end">Re</text><text class="alab" x="${c + 5}" y="${Y(10.6)}">Im</text>
+      <text class="tick" x="${X(5)}" y="${c + 14}" text-anchor="middle">5</text><text class="tick" x="${c - 5}" y="${Y(5) + 4}" text-anchor="end">${J.replace(/<[^>]+>/g, '')}5</text>`;
+    const r = Math.hypot(st.x, st.y), a = Math.atan2(st.y, st.x) * R2D;
+    s += `<line class="dash" x1="${X(st.x)}" y1="${Y(st.y)}" x2="${X(st.x)}" y2="${c}" style="stroke:var(--s1)"/><line class="dash" x1="${X(st.x)}" y1="${Y(st.y)}" x2="${c}" y2="${Y(st.y)}" style="stroke:var(--s3)"/>`;
+    if (r > 0.1) {
+      const ar = 26, big = Math.abs(a) > 180 ? 1 : 0, sw = a >= 0 ? 0 : 1;
+      s += `<path d="M${c + ar} ${c} A${ar} ${ar} 0 ${big} ${sw} ${c + ar * Math.cos(a * D2R)} ${c - ar * Math.sin(a * D2R)}" style="fill:none;stroke:var(--s4);stroke-width:2"/>`;
+      s += arrowLine(c, c, X(st.x), Y(st.y), 'var(--s4)', 3.5);
+    }
+    s += `<circle class="drag" cx="${X(st.x)}" cy="${Y(st.y)}" r="8"/>`;
+    svg.querySelector('.g').innerHTML = s;
+    const calc = st.x === 0 ? null : Math.atan(st.y / st.x) * R2D;
+    const q = st.x > 0 ? 'right half: calculator angle is correct.' : st.x < 0 && st.y >= 0 ? `upper left: calculator says ${fa(calc)}°, so <b>add 180°</b> → ${fa(a)}°.` : st.x < 0 ? `lower left: calculator says ${fa(calc)}°, so <b>subtract 180°</b> → ${fa(a)}°.` : 'on the imaginary axis: angle is ±90° (tan⁻¹ of y/0 is undefined).';
+    host.querySelector('.readout').innerHTML = `<span>rectangular: <b>${st.x} ${st.y < 0 ? '−' : '+'} ${J}${Math.abs(st.y)}</b></span><span>polar: <b>${f1(r)}∠${fa(a)}°</b></span><span class="muted">r = √(${st.x}² + ${st.y}²) = ${f1(r)}</span>`;
+    host.querySelector('.insight').innerHTML = r < 0.1 ? 'At the origin the angle is undefined.' : `Quadrant check — ${q}`;
+  }
+  let drag = false;
+  const move = e => {
+    const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+    st.x = Math.max(-10, Math.min(10, Math.round((p.x - c) / k))); st.y = Math.max(-10, Math.min(10, Math.round((c - p.y) / k))); draw();
+  };
+  const hit = host.querySelector('.hitall');
+  hit.addEventListener('pointerdown', e => { drag = true; hit.setPointerCapture(e.pointerId); move(e); });
+  hit.addEventListener('pointermove', e => { if (drag) move(e); });
+  hit.addEventListener('pointerup', () => { drag = false; });
+  draw();
+};
+
+// ---------------------------------------------------------------- R, L, C: voltage and current waves
+VIZ.rlc = host => {
+  host.innerHTML = `<div class="modes">${['R', 'L', 'C'].map((m, j) => `<button data-m="${m}" class="${j ? '' : 'on'}">${{ R: 'Resistor 5 Ω', L: 'Inductor 50 mH', C: 'Capacitor 2 mF' }[m]}</button>`).join('')}</div>
+  <div class="vgrid"><svg class="vsvg" viewBox="0 0 440 230" role="img" aria-label="voltage and current waves of the chosen element"><g class="g"></g></svg>
+  <svg class="vsvg pdv" viewBox="0 0 230 230" role="img" aria-label="rotating phasors of voltage and current"><g class="p"></g></svg></div>
+  <div class="vrow">${slider('w', 'ω', 20, 200, 10, 100, 'rad/s')}</div><div class="readout"></div><div class="insight"></div>`;
+  const st = { m: 'R', ph: 0, w: 100 };
+  wireSliders(host, st, () => draw());
+  for (const b of host.querySelectorAll('.modes button')) b.onclick = () => { host.querySelectorAll('.modes button').forEach(x => x.classList.toggle('on', x === b)); st.m = b.dataset.m; draw(); };
+  function zOf() { return st.m === 'R' ? { r: 5, x: 0 } : st.m === 'L' ? { r: 0, x: st.w * 0.05 } : { r: 0, x: -1 / (st.w * 0.002) }; }
+  function draw() {
+    const z = zOf(), Zm = Math.hypot(z.r, z.x), Za = Math.atan2(z.x, z.r) * R2D, Vm = 10, Im = Vm / Zm, ia = -Za;
+    const X = u => 40 + u / 540 * 390, Yv = v => 115 - v * 9, Yi = i => 115 - i * 9 * 10 / Math.max(Im, 1e-9) * Math.min(1, Im / 10) * 0.9;
+    let s = `<line class="axis" x1="40" y1="115" x2="430" y2="115"/><line class="axis" x1="40" y1="12" x2="40" y2="218"/>`;
+    for (const u of [90, 180, 270, 360, 450, 540]) s += `<line class="grid" x1="${X(u)}" y1="12" x2="${X(u)}" y2="218"/><text class="tick" x="${X(u)}" y="228" text-anchor="middle">${u}°</text>`;
+    const pv = [], pi = []; for (let n = 0; n <= 180; n++) { const u = 540 * n / 180; pv.push([X(u), Yv(Vm * Math.cos(u * D2R))]); pi.push([X(u), 115 - 90 * Math.cos((u + ia) * D2R) * Math.min(1, Im / 6 + 0.25)]); }
+    s += `<path class="vcurve thick" style="stroke:var(--vc)" d="${pathOf(pv)}"/><path class="vcurve thick" style="stroke:var(--ic)" d="${pathOf(pi)}"/>`;
+    // mark the first peaks
+    const pkI = ((-ia % 360) + 360) % 360;
+    s += `<line class="cursor" style="stroke:var(--vc)" x1="${X(360)}" y1="12" x2="${X(360)}" y2="218"/><line class="cursor" style="stroke:var(--ic)" x1="${X(pkI + (pkI < 180 ? 360 : 0))}" y1="12" x2="${X(pkI + (pkI < 180 ? 360 : 0))}" y2="218"/>`;
+    s += `<text class="lg" x="300" y="24" style="fill:var(--vc)">— v</text><text class="lg" x="340" y="24" style="fill:var(--ic)">— i</text>`;
+    host.querySelector('.g').innerHTML = s;
+    st.Za = Za; st.Im = Im;
+    const lead = st.m === 'R' ? 'in phase: both peak at the same moment' : st.m === 'L' ? 'the current <b>lags</b> the voltage by 90° (its peak comes a quarter-cycle later)' : 'the current <b>leads</b> the voltage by 90° (its peak comes a quarter-cycle earlier)';
+    host.querySelector('.readout').innerHTML = `<span>${Zp} = ${st.m === 'R' ? '5 Ω' : st.m === 'L' ? `${J}ωL = ${J}(${st.w})(0.05) = ${J}${f1(z.x)} Ω` : `1/(${J}ωC) = −${J}/(${st.w} × 0.002) = −${J}${f1(-z.x)} Ω`}</span><span>${Vp} = 10∠0° V, &nbsp;${Ip} = ${Vp}/${Zp} = ${f1(Im)}∠${fa(ia)}° A</span>`;
+    host.querySelector('.insight').innerHTML = `${{ R: 'Resistor', L: 'Inductor', C: 'Capacitor' }[st.m]}: ${lead}.` + (st.m === 'L' ? ' Raise ω: X<sub>L</sub> = ωL grows, so the current gets smaller.' : st.m === 'C' ? ' Raise ω: X<sub>C</sub> = 1/(ωC) shrinks, so the current gets bigger.' : ' A resistor does not care about ω.');
+  }
+  anim(host, dt => {
+    st.ph += dt * 1.2; const c = 115, kv = 9, ki = 90 * Math.min(1, st.Im / 6 + 0.25) / st.Im;
+    const av = st.ph, ai = st.ph - st.Za * D2R;
+    let p = `<line class="axis" x1="5" y1="${c}" x2="225" y2="${c}"/><line class="axis" x1="${c}" y1="5" x2="${c}" y2="225"/><text class="alab" x="222" y="${c - 6}" text-anchor="end">Re</text>`;
+    p += arrowLine(c, c, c + 10 * kv * Math.cos(av), c - 10 * kv * Math.sin(av), 'var(--vc)', 4) + arrowLine(c, c, c + st.Im * ki * 0.9 * Math.cos(ai), c - st.Im * ki * 0.9 * Math.sin(ai), 'var(--ic)', 3);
+    p += `<text class="plab" x="10" y="20" style="fill:var(--vc)">V</text><text class="plab" x="26" y="20" style="fill:var(--ic)">I</text><text class="tick" x="44" y="20">spin together</text>`;
+    host.querySelector('.p').innerHTML = p;
+  });
+  draw();
+};
+
+// ---------------------------------------------------------------- instantaneous and average power
+VIZ.pwr = host => {
+  host.innerHTML = `<div class="modes">${[['R (0°)', 0], ['RL load (36.9°)', 36.87], ['L only (90°)', 90], ['C only (−90°)', -90]].map(([l, v], j) => `<button data-v="${v}" class="${j ? '' : 'on'}">${l}</button>`).join('')}</div>
+  <svg class="vsvg wide" viewBox="0 0 560 262" role="img" aria-label="voltage, current and instantaneous power against time, with the average power line"><g class="g"></g></svg>
+  <div class="vrow">${slider('th', 'Angle θ<sub>v</sub> − θ<sub>i</sub>', -90, 90, 1, 0, '°')}</div><div class="readout"></div><div class="insight"></div>`;
+  const st = {}, inp = host.querySelector('input');
+  wireSliders(host, st, draw);
+  for (const b of host.querySelectorAll('.modes button')) b.onclick = () => { host.querySelectorAll('.modes button').forEach(x => x.classList.toggle('on', x === b)); inp.value = b.dataset.v; inp.oninput(); };
+  function draw() {
+    const Vm = 100, Im = 10, th = st.th * D2R, X = u => 40 + u / 720 * 510, Yp = p => 140 - p * 0.1, Yv = v => 140 - v * 0.9;
+    let s = `<line class="axis" x1="40" y1="140" x2="550" y2="140"/><line class="axis" x1="40" y1="30" x2="40" y2="245"/>`;
+    for (const u of [180, 360, 540, 720]) s += `<line class="grid" x1="${X(u)}" y1="30" x2="${X(u)}" y2="245"/><text class="tick" x="${X(u)}" y="258" text-anchor="middle">${u}°</text>`;
+    const pv = [], pi = [], pp = []; let pos = `M${X(0)} 140`, neg = `M${X(0)} 140`;
+    for (let n = 0; n <= 360; n++) {
+      const u = 720 * n / 360, v = Vm * Math.cos(u * D2R), i = Im * Math.cos(u * D2R - th), p = v * i;
+      pv.push([X(u), Yv(v)]); pi.push([X(u), Yv(i * 5)]); pp.push([X(u), Yp(p)]);
+      pos += ` L${X(u).toFixed(1)} ${Yp(Math.max(p, 0)).toFixed(1)}`; neg += ` L${X(u).toFixed(1)} ${Yp(Math.min(p, 0)).toFixed(1)}`;
+    }
+    const P = 0.5 * Vm * Im * Math.cos(th);
+    s += `<path class="parea pos" d="${pos} L${X(720)} 140 Z"/><path class="parea neg" d="${neg} L${X(720)} 140 Z"/>`;
+    s += `<path class="vcurve" style="stroke:var(--vc)" d="${pathOf(pv)}"/><path class="vcurve" style="stroke:var(--ic)" d="${pathOf(pi)}"/><path class="vcurve thick" style="stroke:var(--pc)" d="${pathOf(pp)}"/>`;
+    s += `<line class="avg" x1="40" y1="${Yp(P)}" x2="550" y2="${Yp(P)}"/><text class="lg" x="546" y="${Yp(P) - 6}" text-anchor="end" style="fill:var(--bad)">average P = ${f1(P)} W</text>`;
+    s += `<text class="lg" x="48" y="16" style="fill:var(--vc)">— v (100 V peak)</text><text class="lg" x="190" y="16" style="fill:var(--ic)">— i (10 A peak, drawn ×5)</text><text class="lg" x="380" y="16" style="fill:var(--pc)">— p = v × i</text>`;
+    host.querySelector('.g').innerHTML = s;
+    host.querySelector('.readout').innerHTML = `<span><i>P</i> = ½<i>V</i><sub>m</sub><i>I</i><sub>m</sub> cos <i>θ</i> = ½ × 100 × 10 × cos(${String(st.th).replace('-', '−')}°) = <b>${f1(P)} W</b></span>`;
+    host.querySelector('.insight').innerHTML = Math.abs(st.th) < 0.5 ? 'In phase (resistor): p(t) is never negative. All energy is used, P = ½V<sub>m</sub>I<sub>m</sub>.'
+      : Math.abs(Math.abs(st.th) - 90) < 0.5 ? 'Pure L or C: the green and red areas are equal. Energy goes in and comes straight back: <b>average power is zero</b>.'
+        : 'Part of each cycle the power is negative: energy is returned to the source. The average is less than ½V<sub>m</sub>I<sub>m</sub>.';
+  }
+};
+
+// ---------------------------------------------------------------- maximum power transfer
+VIZ.mpt = host => {
+  host.innerHTML = `<div class="vgrid"><div>${slider('R', 'Load R<sub>L</sub>', 0.2, 8, 0.1, 4, 'Ω')}${slider('X', 'Load X<sub>L</sub>', -6, 6, 0.1, 0, 'Ω')}
+  <div class="vbtns"><button class="conj primary">Set Z<sub>L</sub> = Z<sub>Th</sub>*</button></div><div class="readout col"></div></div>
+  <div><div class="meter"><div class="fill"></div><span class="mtxt"></span></div><svg class="vsvg" viewBox="0 0 300 170" role="img" aria-label="power against load resistance at the chosen load reactance"><g class="g"></g></svg></div></div><div class="insight"></div>`;
+  const st = {}, Vth = 20 / Math.SQRT2, Rth = 2, Xth = 2, Pmax = Vth * Vth / (8 * Rth);
+  const Pof = (R, X) => 0.5 * Vth * Vth / ((Rth + R) ** 2 + (Xth + X) ** 2) * R;
+  wireSliders(host, st, draw);
+  host.querySelector('.conj').onclick = () => { const [a, b] = host.querySelectorAll('input'); a.value = 2; b.value = -2; a.oninput(); b.oninput(); };
+  function draw() {
+    const P = Pof(st.R, st.X), pct = 100 * P / Pmax;
+    host.querySelector('.fill').style.width = pct.toFixed(1) + '%';
+    host.querySelector('.mtxt').textContent = `P = ${f1(P)} W (${pct.toFixed(0)} % of the maximum)`;
+    host.querySelector('.readout').innerHTML = `<span>${bv('Z', 'L')} = ${st.R.toFixed(1)} ${st.X < 0 ? '−' : '+'} ${J}${Math.abs(st.X).toFixed(1)} Ω</span><span>${bv('Z', 'Th')} + ${bv('Z', 'L')} = ${(2 + st.R).toFixed(1)} ${2 + st.X < 0 ? '−' : '+'} ${J}${Math.abs(2 + st.X).toFixed(1)} Ω</span>`;
+    const X = r => 40 + r / 8 * 250, Y = p => 150 - p / 13 * 135;
+    let s = `<line class="axis" x1="40" y1="150" x2="290" y2="150"/><line class="axis" x1="40" y1="10" x2="40" y2="150"/><text class="tick" x="290" y="165" text-anchor="end">R<tspan dy="3" font-size="70%">L</tspan><tspan dy="-3"> (Ω)</tspan></text><text class="alab" x="46" y="18">P (W)</text>`;
+    for (const r of [2, 4, 6, 8]) s += `<text class="tick" x="${X(r)}" y="164" text-anchor="middle">${r}</text>`;
+    s += `<line class="grid" x1="40" y1="${Y(12.5)}" x2="290" y2="${Y(12.5)}"/><text class="tick" x="286" y="${Y(12.5) - 4}" text-anchor="end">12.5 W</text>`;
+    const pts = []; for (let n = 1; n <= 160; n++) { const r = 8 * n / 160; pts.push([X(r), Y(Pof(r, st.X))]); }
+    s += `<path class="vcurve thick" style="stroke:var(--sc)" d="${pathOf(pts)}"/><circle cx="${X(st.R)}" cy="${Y(P)}" r="6" style="fill:var(--bad)"/>`;
+    host.querySelector('.g').innerHTML = s;
+    host.querySelector('.insight').innerHTML = pct > 99.5 ? '<b>Maximum!</b> The load reactance −j2 cancels the +j2 inside the source, and R<sub>L</sub> = R<sub>Th</sub> = 2 Ω.'
+      : Math.abs(st.X + 2) > 0.15 ? `First cancel the reactance: set X<sub>L</sub> = −2 Ω (a capacitor). Right now the total reactance is ${f1(2 + st.X)} Ω and it is limiting the current.` : 'Reactance cancelled. Now move R<sub>L</sub> to 2 Ω.';
+  }
+};
+
+// ---------------------------------------------------------------- power factor and supply current
+VIZ.pf = host => {
+  host.innerHTML = `<div class="vrow">${slider('pf', 'Power factor', 0.5, 1, 0.01, 0.7)}</div>
+  <div class="vgrid"><div class="bars"></div><svg class="vsvg" viewBox="0 0 300 200" role="img" aria-label="power triangle for the chosen power factor"><g class="g"></g></svg></div><div class="insight"></div>`;
+  const st = {}, P = 4.6;
+  wireSliders(host, st, draw);
+  function draw() {
+    const I = P * 1000 / (230 * st.pf), S = P / st.pf, Q = Math.sqrt(S * S - P * P), loss = 1 / st.pf ** 2;
+    const bar = (lab, v, max, txt, col) => `<div class="pfbar"><span>${lab}</span><div><i style="width:${Math.min(100, 100 * v / max)}%;background:${col}"></i></div><b>${txt}</b></div>`;
+    host.querySelector('.bars').innerHTML = bar('Useful power P', P, 9.2, `${P} kW`, 'var(--pc)') + bar('Apparent power |S|', S, 9.2, `${f1(S)} kVA`, 'var(--sc)') + bar('Supply current', I, 40, `${f1(I)} A`, 'var(--ic)') + bar('Cable loss', loss, 4, `${loss.toFixed(2)}×`, 'var(--bad)')
+      + `<p class="pen ${st.pf < 0.85 ? 'on' : ''}">${st.pf < 0.85 ? `⚠ Below 0.85: a large customer would pay a surcharge (${Math.round((0.85 - st.pf) * 100)} steps of 0.01).` : '✓ At or above 0.85: no surcharge.'}</p>`;
+    const k = 140 / 9.2, x0 = 20, y0 = 180;
+    let s = arrowLine(x0, y0, x0 + P * k, y0, 'var(--pc)', 4) + arrowLine(x0 + P * k, y0, x0 + P * k, y0 - Q * k, 'var(--qc)', 4) + arrowLine(x0, y0, x0 + P * k, y0 - Q * k, 'var(--sc)', 4);
+    s += `<text class="plab" x="${x0 + P * k / 2}" y="${y0 + 16}" text-anchor="middle" style="fill:var(--pc)">P</text><text class="plab" x="${x0 + P * k + 8}" y="${y0 - Q * k / 2}" style="fill:var(--qc)">Q = ${f1(Q)} kVAR</text><text class="plab" x="${x0 + P * k / 2 - 10}" y="${y0 - Q * k / 2 - 8}" text-anchor="end" style="fill:var(--sc)">|S|</text><text class="tick" x="${x0 + 30}" y="${y0 - 6}">θ = ${fa(Math.acos(st.pf) * R2D)}°</text>`;
+    host.querySelector('.g').innerHTML = s;
+    host.querySelector('.insight').innerHTML = `Same 4.6 kW of useful power, but at pf ${st.pf.toFixed(2)} the cables carry ${f1(I)} A instead of 20 A, and the utility loses <b>${loss.toFixed(2)} times</b> as much energy as heat in its cables.`;
+  }
+};
+
+// ---------------------------------------------------------------- power factor correction with a capacitor
+VIZ.pfc = host => {
+  host.innerHTML = `<div class="vrow">${slider('C', 'Parallel capacitor C', 0, 650, 1, 0, 'µF')}<div class="vbtns"><button class="go95 primary">Set C for pf 0.95</button></div></div>
+  <div class="vgrid"><svg class="vsvg" viewBox="0 0 300 260" role="img" aria-label="current phasor diagram: load current, capacitor current and supply current"><g class="a"></g></svg>
+  <svg class="vsvg" viewBox="0 0 300 260" role="img" aria-label="power triangle with the capacitor's reactive power"><g class="b"></g></svg></div><div class="readout"></div><div class="insight"></div>`;
+  const st = {}, P = 10e3, V = 230, w = 2 * Math.PI * 50, Q1 = P * Math.tan(Math.acos(0.75));
+  wireSliders(host, st, draw);
+  host.querySelector('.go95').onclick = () => { const i = host.querySelector('input'); i.value = Math.round(+N.Cuf); i.oninput(); };
+  function draw() {
+    const Qc = w * st.C * 1e-6 * V * V, Q = Q1 - Qc, S = Math.hypot(P, Q), pf = P / S, I = S / V;
+    const ILx = P / V, ILy = -Q1 / V, ICy = Qc / V;
+    // currents (rms phasors), V along +Re
+    const k = 3.1, ox = 30, oy = 70;
+    let a = `<line class="axis" x1="20" y1="${oy}" x2="290" y2="${oy}"/><text class="alab" x="288" y="${oy - 6}" text-anchor="end">Re</text>`;
+    a += arrowLine(ox, oy, ox + 230, oy, 'var(--vc)', 2.5) + `<text class="plab" x="${ox + 232}" y="${oy + 18}" text-anchor="end" style="fill:var(--vc)">V</text>`;
+    a += arrowLine(ox, oy, ox + ILx * k, oy - ILy * k, 'var(--ind)', 3) + `<text class="plab" x="${ox + ILx * k * 0.45 - 6}" y="${oy - ILy * k * 0.45 + 18}" text-anchor="end" style="fill:var(--ind)">I<tspan dy="3" font-size="70%">L</tspan></text>`;
+    if (ICy > 0.2) a += arrowLine(ox + ILx * k, oy - ILy * k, ox + ILx * k, oy - (ILy + ICy) * k, 'var(--cap)', 3) + `<text class="plab" x="${ox + ILx * k + 6}" y="${oy - (ILy + ICy / 2) * k}" style="fill:var(--cap)">I<tspan dy="3" font-size="70%">C</tspan></text>`;
+    a += arrowLine(ox, oy, ox + ILx * k, oy - (ILy + ICy) * k, 'var(--ic)', 4.5) + `<text class="plab" x="${ox + ILx * k * 0.6}" y="${oy - (ILy + ICy) * k * 0.6 - 8}" style="fill:var(--ic)">I (supply)</text>`;
+    host.querySelector('.a').innerHTML = a + `<text class="tick" x="290" y="250" text-anchor="end">currents (rms phasors)</text>`;
+    const kq = 19, bx = 20, by = 230;
+    let b = arrowLine(bx, by, bx + P / 1000 * kq, by, 'var(--pc)', 4) + `<text class="plab" x="${bx + P / 2000 * kq}" y="${by + 18}" text-anchor="middle" style="fill:var(--pc)">P = 10 kW</text>`;
+    b += `<line x1="${bx + P / 1000 * kq}" y1="${by}" x2="${bx + P / 1000 * kq}" y2="${by - Q1 / 1000 * kq}" class="dash" style="stroke:var(--qc)"/><text class="tick" x="${bx + P / 1000 * kq - 6}" y="${by - Q1 / 1000 * kq + 4}" text-anchor="end">Q₁ = ${N.Q1} kVAR</text>`;
+    if (Qc > 50) b += arrowLine(bx + P / 1000 * kq + 10, by - Q1 / 1000 * kq, bx + P / 1000 * kq + 10, by - Q / 1000 * kq, 'var(--cap)', 3) + `<text class="plab" x="${bx + P / 1000 * kq + 16}" y="${by - (Q1 + Q) / 2000 * kq}" style="fill:var(--cap)">Q<tspan dy="3" font-size="70%">C</tspan></text>`;
+    b += arrowLine(bx, by, bx + P / 1000 * kq, by - Q / 1000 * kq, 'var(--sc)', 4) + `<text class="plab" x="${bx + 40}" y="${by - Q / 1000 * kq / 2 - 14}" style="fill:var(--sc)">|S| = ${f1(S / 1000)} kVA</text>`;
+    host.querySelector('.b').innerHTML = b;
+    const lead = Q < -1;
+    host.querySelector('.readout').innerHTML = `<span><i>Q<sub>C</sub></i> = ωCV² = ${f1(Qc / 1000)} kVAR</span><span><i>Q</i> = ${f1(Q / 1000)} kVAR</span><span>pf = <b>${pf.toFixed(3)} ${Math.abs(Q) < 1 ? '(unity)' : lead ? 'leading' : 'lagging'}</b></span><span>supply current = <b>${f1(I)} A</b></span>`;
+    host.querySelector('.insight').innerHTML = st.C === 0 ? `No capacitor: the supply carries ${f1(I)} A at pf 0.75.` : lead ? '<b>Over-corrected!</b> Q is now negative and the power factor is leading. Too much capacitor is as bad as too little.'
+      : pf >= 0.949 ? `pf ≥ 0.95 reached. The motor still gets 10 kW, but the supply current fell from ${N.Iold} A to ${f1(I)} A.` : 'Keep adding capacitance: the vertical (reactive) part of the supply current shrinks; the horizontal (useful) part never changes.';
+  }
+};
+
+'use strict';
+// Page assembly: level tabs, sections of the current level, step-reveal examples, side-by-side comparisons,
+// self-check questions, interactive pictures, contents bar and theme button.
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) { } } };
+
+$('#levels').innerHTML = LEVELS.map(L => `<a href="#${L.id}" class="lvl lv${L.n}" data-l="${L.id}"><span class="lic">${L.icon}</span><span class="ltx"><small>Level ${L.n} · ${L.tag}</small><b>${L.name}</b><em>${L.blurb}</em></span></a>`).join('');
+
+let cur = null;
+function showLevel(id, sec) {
+  const L = LEVELS.find(x => x.id === id) || LEVELS[0];
+  if (cur !== L.id) {
+    cur = L.id;
+    document.body.dataset.level = L.n;
+    $$('#levels .lvl').forEach(a => a.classList.toggle('on', a.dataset.l === L.id));
+    const main = $('main');
+    main.innerHTML = `<div class="lvhead lv${L.n}"><span class="lic">${L.icon}</span><div><small>Level ${L.n} of ${LEVELS.length} · ${L.tag}</small><h2>${L.name}</h2><p>${L.blurb}</p></div></div>`
+      + L.sections.map((s, k) => `<section id="${L.id}-${k + 1}" class="sec s${(k % 5) + 1}"><div class="band"><span class="num">${k + 1}</span><div><small>Level ${L.n} · Part ${k + 1} of ${L.sections.length}</small><h2>${s.title}</h2></div></div><div class="body">${s.html()}</div></section>`).join('')
+      + navFoot(L);
+    $('#toc').innerHTML = L.sections.map((s, k) => `<a href="#${L.id}-${k + 1}" class="chip s${(k % 5) + 1}"><span class="dot">${k + 1}</span><span class="lbl">${s.short}</span></a>`).join('');
+    fill(main); observe(); ticks();
+  }
+  const target = sec ? document.getElementById(sec) : null;
+  if (target) target.scrollIntoView({ behavior: 'instant' }); else scrollTo({ top: $('#levels').offsetTop - 4, behavior: 'instant' });
+}
+function navFoot(L) {
+  const i = LEVELS.indexOf(L), prev = LEVELS[i - 1], next = LEVELS[i + 1];
+  return `<nav class="lvnav">${prev ? `<a class="lvbtn" href="#${prev.id}">← Level ${prev.n}: ${prev.name}</a>` : '<span></span>'}${next ? `<a class="lvbtn next lv${next.n}" href="#${next.id}">Next: Level ${next.n} · ${next.name} →</a>` : '<span class="done">🎉 You have finished all four levels.</span>'}</nav>`;
+}
+
+// ---------------------------------------------------------------- components
+const stepHtml = (s, k) => `<li class="step" hidden><div class="sh"><span class="sn">${k + 1}</span>${s.h}</div><div class="sm">${s.m.map(l => `<div class="mline">${l}</div>`).join('')}</div>${s.fig || ''}${s.why ? `<div class="why">Why: ${s.why}</div>` : ''}${s.tip ? `<div class="tip">${s.tip}</div>` : ''}</li>`;
+function revealer(box, n, onAll) {         // wires .nx .all .rs .cnt inside box for n steps
+  let k = 0;
+  const steps = $$('.step', box), nx = $('.nx', box), rs = $('.rs', box), cnt = $('.cnt', box);
+  const show = m => {
+    k = m; steps.forEach((s, j) => { s.hidden = j >= k; });
+    nx.disabled = k >= n; nx.textContent = k >= n ? 'All steps shown' : `Show step ${k + 1}`;
+    rs.disabled = k === 0; cnt.textContent = `${k} of ${n}`; onAll(k >= n);
+  };
+  nx.onclick = () => { show(k + 1); if (k <= n) steps[k - 1].scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
+  $('.all', box).onclick = () => show(n);
+  rs.onclick = () => show(0);
+  return show;
+}
+const bar = n => `<div class="exbar"><button class="primary nx">Show step 1</button><button class="all">Show all</button><button class="rs" disabled>Start again</button><span class="cnt">0 of ${n}</span></div>`;
+
+function fill(root) {
+  for (const host of $$('[data-ex]', root)) {
+    const ex = EX[host.dataset.ex], n = ex.steps.length;
+    host.className = 'ex';
+    host.innerHTML = `<h4 class="extitle">${ex.title}</h4><div class="exq ${ex.fig && !ex.wide ? '' : 'nofig'}"><div class="qtext"><p>${ex.q}</p><p class="tryfirst">✎ Try it on paper first, then reveal one step at a time.</p></div>${ex.fig || ''}</div>
+    <ol class="steps">${ex.steps.map(stepHtml).join('')}</ol><div class="final" hidden><b>Answer:</b> ${ex.ans}</div>${bar(n)}`;
+    revealer(host, n, all => { $('.final', host).hidden = !all; });
+  }
+  for (const host of $$('[data-vs]', root)) {
+    const v = VS[host.dataset.vs];
+    host.className = 'vs';
+    const col = (side, cls) => `<div class="vcol ${cls}"><h5>${side.name}</h5><ol class="steps">${side.steps.map(stepHtml).join('')}</ol>${bar(side.steps.length)}</div>`;
+    host.innerHTML = `<h4 class="extitle">⚖ ${v.title}</h4><div class="vsq"><p>${v.q}</p>${v.fig ? v.fig() : ''}</div><div class="vcols">${col(v.L, 'left')}${col(v.R, 'right')}</div><div class="same" hidden>✓ ${v.ans}</div>`;
+    const done = [false, false];
+    $$('.vcol', host).forEach((c, j) => revealer(c, j ? v.R.steps.length : v.L.steps.length, all => { done[j] = all; $('.same', host).hidden = !(done[0] && done[1]); }));
+  }
+  for (const host of $$('[data-quiz]', root)) {
+    const qs = QUIZ[host.dataset.quiz];
+    host.className = 'quiz';
+    host.innerHTML = qs.map((q, k) => `<div class="qq"><p><b>Q${k + 1}.</b> ${q.q}</p><div class="opts">${q.o.map((o, j) => `<button data-j="${j}">${'ABCD'[j]}. ${o}</button>`).join('')}</div><div class="fb" hidden></div></div>`).join('') + `<p class="score"></p>`;
+    const got = new Set();
+    $$('.qq', host).forEach((box, k) => {
+      for (const b of $$('.opts button', box)) b.onclick = () => {
+        const ok = +b.dataset.j === qs[k].a, fb = $('.fb', box);
+        b.classList.add(ok ? 'right' : 'wrong'); fb.hidden = false;
+        fb.className = 'fb ' + (ok ? 'ok' : 'no');
+        fb.innerHTML = (ok ? '✓ Correct. ' : '✗ Not quite — try another option. ') + (ok ? qs[k].why : '');
+        if (ok) { got.add(k); $$('.opts button', box).forEach(x => x.disabled = true); }
+        $('.score', host).textContent = got.size ? `${got.size} of ${qs.length} answered correctly` : '';
+      };
+    });
+  }
+  for (const host of $$('[data-viz]', root)) { host.classList.add('viz'); VIZ[host.dataset.viz](host); }
+}
+
+// ---------------------------------------------------------------- contents bar: active section + reading progress
+let obs;
+function observe() {
+  if (obs) obs.disconnect();
+  const chips = $$('#toc .chip');
+  obs = new IntersectionObserver(es => {
+    for (const e of es) if (e.isIntersecting) chips.forEach(c => c.classList.toggle('on', c.getAttribute('href') === '#' + e.target.id));
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  $$('section.sec').forEach(s => obs.observe(s));
+}
+addEventListener('scroll', () => {
+  const h = document.documentElement, f = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight);
+  $('#prog').style.width = (100 * f).toFixed(1) + '%';
+}, { passive: true });
+
+// "before you move on" ticks (kept in this browser only)
+function ticks() {
+  $$('.take input').forEach((b, k) => {
+    const key = `ph-${cur}-${k}`;
+    b.checked = store.get(key) === '1';
+    b.onchange = () => store.set(key, b.checked ? '1' : '0');
+  });
+}
+
+// ---------------------------------------------------------------- routing: #L2 or #L2-3
+function route() {
+  const h = location.hash.slice(1), m = /^(L\d)(?:-\d+)?$/.exec(h);
+  showLevel(m ? m[1] : (store.get('ph-level') || 'L1'), m && h.includes('-') ? h : null);
+  store.set('ph-level', cur);
+}
+addEventListener('hashchange', route);
+// handle level and part links directly too, so they work where the hash cannot change (embedded previews)
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="#L"]'); if (!a) return;
+  const h = a.getAttribute('href').slice(1), m = /^(L\d)(?:-\d+)?$/.exec(h); if (!m) return;
+  e.preventDefault();
+  try { history.pushState(null, '', '#' + h); } catch (err) { }
+  showLevel(m[1], h.includes('-') ? h : null); store.set('ph-level', cur);
+});
+route();
+
+$('#theme').onclick = () => {
+  const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  r.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('theme', r.dataset.theme); } catch (e) { }
+};
+
+</script>
+</body>
+</html>

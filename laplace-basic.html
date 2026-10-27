@@ -1,0 +1,1767 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<script>try{const t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laplace Transform: Basics</title>
+<meta name="description" content="The Laplace transform step by step for one term at a time: signals, the pair table, frequency and time shifts, forward and inverse, with a question bank and a practice generator.">
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--ink:#16242e;--muted:#5b6b76;--line:#d5dbe1;--hl:#ffe08a;--ok:#2e7d32;--bad:#c62828;--note:#eef4fb;--warn:#fff4e5;
+  --k0:#7d8a94;--k1:#d9480f;--k2:#1565c0;--k3:#2b8a3e;--k4:#8d6e00;--kx:#ae3ec9;--sup:#c2255c;--acc:#1f7a8c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12171c;--card:#1b232b;--ink:#e8eef2;--muted:#9fb0bb;--line:#35424d;--hl:#6b5a14;--ok:#7ee787;--bad:#ff7b72;--note:#222e3a;--warn:#3a2f1c;
+  --k0:#8c99a3;--k1:#ff9e5e;--k2:#6cb6ff;--k3:#69db7c;--k4:#e3c04d;--kx:#e599f7;--sup:#f783ac;--acc:#5fd3c0}}
+:root[data-theme="dark"]{--bg:#12171c;--card:#1b232b;--ink:#e8eef2;--muted:#9fb0bb;--line:#35424d;--hl:#6b5a14;--ok:#7ee787;--bad:#ff7b72;--note:#222e3a;--warn:#3a2f1c;
+  --k0:#8c99a3;--k1:#ff9e5e;--k2:#6cb6ff;--k3:#69db7c;--k4:#e3c04d;--kx:#e599f7;--sup:#f783ac;--acc:#5fd3c0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:5}
+h1{font-size:1.25rem;margin:0}
+h1 small{display:block;font-weight:400;color:var(--muted);font-size:.85rem}
+nav.tabs{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;flex-wrap:wrap}
+nav.tabs button{border:0;border-radius:0}
+button{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 14px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button:disabled{opacity:.4;cursor:default}
+button.on,button.primary{background:var(--ink);color:var(--card);border-color:var(--ink)}
+main{max-width:1500px;margin:auto;padding:16px 20px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+h2{font-size:1.2rem;margin:.1em 0 .4em}
+h3{font-size:1.02rem;margin:0 0 .25em}
+p{margin:.45em 0}
+.muted{color:var(--muted);font-size:.92rem}
+.note{background:var(--note);border-radius:9px;padding:9px 13px;margin:.7em 0;font-size:.95rem}
+.warn{background:var(--warn);border-radius:9px;padding:9px 13px;margin:.7em 0;font-size:.95rem}
+.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}
+/* level strip */
+.levels{display:grid;gap:10px;margin-bottom:16px}
+.level{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.level .lname{font-weight:600;min-width:11em}
+.level .lname small{display:block;font-weight:400;color:var(--muted);font-size:.82rem}
+.qbtn{font-size:.92rem;padding:4px 11px}
+/* question layout */
+.qgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:16px;align-items:start}
+@media (max-width:1000px){.qgrid{grid-template-columns:1fr}}
+.sticky{position:sticky;top:76px}
+@media (max-width:1000px){header{position:static}.sticky{top:0;z-index:3}.sticky .card{padding:6px 8px;box-shadow:0 4px 10px rgba(0,0,0,.12)}.sticky .hint{display:none}svg.ckt{max-height:36vh}}
+.qhead{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.chip{display:inline-block;font-size:.78rem;font-weight:600;padding:2px 9px;border-radius:20px;background:var(--note);color:var(--acc);letter-spacing:.02em;text-transform:uppercase}
+.qtext{margin:.6em 0 .8em}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.8em 0}
+ol.steps{list-style:none;padding:0;margin:0;counter-reset:st}
+ol.steps>li{border-left:3px solid var(--line);padding:6px 0 8px 14px;margin:0 0 10px;counter-increment:st}
+ol.steps>li h3::before{content:"Step " counter(st) " · ";color:var(--muted);font-weight:600}
+ol.steps>li.new{border-left-color:var(--acc)}
+.line{margin:.45em 0}
+.how{font-size:.86rem;color:var(--muted)}
+.eq{font-size:1.07rem;padding:3px 10px;border-left:3px solid var(--line);margin-top:2px;font-variant-numeric:tabular-nums;overflow-x:auto}
+.eq:empty{display:none}
+details{margin:.6em 0}summary{cursor:pointer;color:var(--muted)}
+.answer{border:2px solid var(--acc);border-radius:10px;padding:8px 14px;margin:12px 0}
+.try{background:var(--note);border-radius:9px;padding:8px 13px}
+.try label{display:inline-flex;gap:6px;align-items:center;margin:4px 14px 4px 0}
+.try input{width:7.5em;font:inherit;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+/* help modes and one-number-at-a-time checking */
+.modes{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin:.6em 0 .8em}
+.modes button{font-size:.9rem;padding:3px 12px}
+ol.steps>li.pend{border-left-style:dashed;border-left-color:var(--acc)}
+ol.steps>li.pend h3::after{content:" · your turn";color:var(--acc);font-size:.85rem}
+ol.steps>li.pend .eq,ol.steps>li.pend .note,ol.steps>li.pend details{display:none}
+ol.steps.own>li.pend>:not(h3){display:none}
+ol.steps>li.won h3::after{content:" ✓";color:var(--ok)}
+ol.steps>li.helped h3::after{content:" · with help";color:var(--muted);font-weight:400;font-size:.85rem}
+.stage{background:var(--note);border:2px solid var(--acc);border-radius:10px;padding:10px 14px;margin:12px 0}
+.stage .sq{font-weight:600;margin-bottom:6px}
+.srow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.srow label{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
+.srow input{width:8em;font:inherit;padding:4px 8px;border:2px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+.stage .warn{margin:.6em 0 .3em}
+.stage ul{margin:.4em 0;padding-left:1.3em}
+/* terms and variables */
+.term{border-radius:4px;padding:0 2px;transition:background .12s;cursor:default}
+.term.hl{background:var(--hl);box-shadow:0 0 0 2px var(--hl)}
+.var{font-weight:600;font-style:italic;border-radius:4px}
+.var.hl{background:var(--hl)}
+.k0{color:var(--k0)}.k1{color:var(--k1)}.k2{color:var(--k2)}.k3{color:var(--k3)}.k4{color:var(--k4)}.kx{color:var(--kx)}
+/* circuit */
+svg.ckt{display:block;width:100%;height:auto;max-height:70vh;touch-action:manipulation}
+svg.ckt text{font-family:"Segoe UI",system-ui,Arial,sans-serif;fill:var(--ink)}
+.wire{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.src{fill:var(--card)}
+.arrowhead{fill:var(--ink)}
+.sign{stroke:var(--ink);stroke-width:2.5;fill:none}
+.dot{fill:var(--ink)}
+.ul{stroke-width:14;stroke-linecap:round;opacity:0;transition:opacity .15s}
+svg.colour .ul{opacity:.35}
+svg.colour .ul.hl{opacity:.8}
+.ul.k0{stroke:var(--k0)}.ul.k1{stroke:var(--k1)}.ul.k2{stroke:var(--k2)}.ul.k3{stroke:var(--k3)}.ul.k4{stroke:var(--k4)}
+.lab{font-size:23px}
+.lab.nm{font-weight:600}
+.lab.val{fill:var(--muted)}
+svg.ckt text.lab.dep{fill:var(--kx);font-weight:600}
+svg.ckt text.lab.muted{fill:var(--muted);font-size:19px}
+svg.ckt text.lab.nl{font-weight:700;font-size:25px}
+svg.ckt text.k1{fill:var(--k1)}svg.ckt text.k2{fill:var(--k2)}svg.ckt text.k3{fill:var(--k3)}svg.ckt text.k4{fill:var(--k4)}
+.ndot.k1{fill:var(--k1)}.ndot.k2{fill:var(--k2)}.ndot.k3{fill:var(--k3)}.ndot.k4{fill:var(--k4)}
+.nlab.hl .ndot{r:11}
+.halo{fill:var(--hl);opacity:0;transition:opacity .12s}
+g.el{cursor:pointer}
+g.el.hl .halo{opacity:1}
+.ctrl .cline{stroke:var(--kx);stroke-width:2.5}
+.ctrl .chead{fill:var(--kx)}
+.ctrl .csign{stroke:var(--kx);stroke-width:2.5;fill:none}
+svg.ckt text.lab.cx{fill:var(--kx);font-weight:700}
+.ctrl.hl .cline,.ctrl.hl .csign{stroke-width:5}
+.loop .lp{fill:none;stroke-width:2.5;stroke-dasharray:3 6;stroke-linecap:round}
+.loop.k1 .lp{stroke:var(--k1)}.loop.k2 .lp{stroke:var(--k2)}.loop.k3 .lp{stroke:var(--k3)}
+.loop.k1 .lph{fill:var(--k1)}.loop.k2 .lph{fill:var(--k2)}.loop.k3 .lph{fill:var(--k3)}
+svg.ckt .loop.k1 text{fill:var(--k1)}svg.ckt .loop.k2 text{fill:var(--k2)}svg.ckt .loop.k3 text{fill:var(--k3)}
+.lab.ml{font-size:30px;font-weight:700;font-style:italic}
+.loop.hl .lp{stroke-width:5;stroke-dasharray:none}
+.loop{cursor:pointer}
+.bubble{fill:var(--sup);fill-opacity:.06;stroke:var(--sup);stroke-width:2.5;stroke-dasharray:8 6;display:none}
+svg.ckt text.lab.sup{fill:var(--sup);font-weight:600;display:none}
+svg.over .bubble,svg.over text.lab.sup{display:inline}
+/* method page */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,430px),1fr));gap:16px}
+.mgrid .card ol,.mgrid .card ul{padding-left:1.3em;margin:.4em 0}
+.recipe{counter-reset:r}
+table{border-collapse:collapse;width:100%;font-size:.95rem;margin:.6em 0}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+th{background:var(--note)}
+.gen{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.gen .code{font-family:Consolas,monospace;font-size:.9rem;color:var(--muted)}
+.gen input{width:9em;font:inherit;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+.hint{font-size:.88rem;color:var(--muted);margin:.4em 0 0}
+@media (max-width:600px){body{font-size:16px}main{padding:12px 12px 50px}header{padding:10px 12px}.card{padding:12px}.level .lname{min-width:100%}}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:18px 16px 28px;border-top:1px solid var(--line)}
+
+
+/* ---------------------------------------------------------------- colour theme */
+:root{--on-acc:#fff;--hdr1:#1f7a8c;--hdr2:#5b3cc4;--warnline:#f08c00;
+  --lv0:#2f9e44;--lv1:#0c8599;--lv2:#1971c2;--lv3:#7048e8;--lv4:#e03131;
+  --t-setup:#1971c2;--t-equation:#e8590c;--t-algebra:#7048e8;--t-answer:#2f9e44;--t-check:#0c8599}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--on-acc:#10202a;--hdr1:#145866;--hdr2:#3d2a8a;--warnline:#ffa94d;
+  --lv0:#69db7c;--lv1:#3bc9db;--lv2:#74c0fc;--lv3:#b197fc;--lv4:#ff8787;
+  --t-setup:#74c0fc;--t-equation:#ffa94d;--t-algebra:#b197fc;--t-answer:#69db7c;--t-check:#3bc9db}}
+:root[data-theme="dark"]{--on-acc:#10202a;--hdr1:#145866;--hdr2:#3d2a8a;--warnline:#ffa94d;
+  --lv0:#69db7c;--lv1:#3bc9db;--lv2:#74c0fc;--lv3:#b197fc;--lv4:#ff8787;
+  --t-setup:#74c0fc;--t-equation:#ffa94d;--t-algebra:#b197fc;--t-answer:#69db7c;--t-check:#3bc9db}
+/* header band with the page icon; tabs as pills */
+header{background:linear-gradient(100deg,var(--hdr1),var(--hdr2));border-bottom:0;color:#fff}
+header h1{display:flex;align-items:center;gap:12px}
+header h1 small{color:rgba(255,255,255,.82)}
+.picon{flex:none;width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,.16);display:grid;place-items:center}
+.picon svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs{border:0;gap:6px;background:rgba(255,255,255,.14);padding:4px;border-radius:24px}
+nav.tabs button{background:transparent;color:#fff;border-radius:20px;border:0}
+nav.tabs button:hover{background:rgba(255,255,255,.18)}
+nav.tabs button.on{background:#fff;color:var(--hdr1)}
+button.on,button.primary{background:var(--acc);color:var(--on-acc);border-color:var(--acc)}
+/* difficulty levels: one colour each (data-lv = 0 … 4) */
+[data-lv="0"]{--lv:var(--lv0)}[data-lv="1"]{--lv:var(--lv1)}[data-lv="2"]{--lv:var(--lv2)}[data-lv="3"]{--lv:var(--lv3)}[data-lv="4"]{--lv:var(--lv4)}
+.level .lname{color:var(--lv);padding-left:10px;border-left:4px solid var(--lv)}
+.qbtn,.lvb{border-left:4px solid var(--lv,var(--line))}
+.qbtn:hover,.lvb:hover{background:color-mix(in srgb,var(--lv,var(--acc)) 10%,var(--card))}
+.qbtn.on,.lvb.on{background:var(--lv);border-color:var(--lv);color:var(--on-acc)}
+.chip{background:color-mix(in srgb,var(--lv,var(--acc)) 15%,var(--card));color:var(--lv,var(--acc))}
+/* steps: a numbered badge and an icon coloured by the kind of step */
+ol.steps>li.t-setup{--tc:var(--t-setup)}ol.steps>li.t-equation{--tc:var(--t-equation)}ol.steps>li.t-algebra{--tc:var(--t-algebra)}
+ol.steps>li.t-answer{--tc:var(--t-answer)}ol.steps>li.t-check{--tc:var(--t-check)}
+ol.steps>li{border-left:4px solid color-mix(in srgb,var(--tc,var(--line)) 40%,transparent);background:linear-gradient(90deg,color-mix(in srgb,var(--tc,var(--line)) 7%,transparent),transparent 60%);border-radius:0 8px 8px 0;padding-right:8px}
+ol.steps>li.new{border-left-color:var(--tc,var(--acc))}
+ol.steps>li h3{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+ol.steps>li h3::before{content:counter(st);display:inline-grid;place-items:center;min-width:1.65em;height:1.65em;border-radius:50%;background:var(--tc,var(--muted));color:var(--on-acc);font-size:.85rem;font-weight:700}
+.sico{width:17px;height:17px;fill:none;stroke:var(--tc,var(--muted));stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sty{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--tc,var(--muted))}
+ol.steps>li.pend{border-left-style:dashed;border-left-color:var(--tc,var(--acc))}
+/* other surfaces */
+.answer{background:color-mix(in srgb,var(--acc) 10%,var(--card));font-size:1.05rem}
+.warn{border-left:4px solid var(--warnline)}
+.note{border-left:4px solid color-mix(in srgb,var(--acc) 55%,transparent)}
+.try,.stage{background:color-mix(in srgb,var(--acc) 8%,var(--card))}
+.modes button.on{background:var(--acc);border-color:var(--acc)}
+.mgrid>.card{border-top:5px solid var(--mc,var(--acc))}
+.mgrid>.card:nth-child(5n+1){--mc:var(--lv2)}.mgrid>.card:nth-child(5n+2){--mc:var(--lv1)}.mgrid>.card:nth-child(5n+3){--mc:var(--lv3)}
+.mgrid>.card:nth-child(5n+4){--mc:var(--t-equation)}.mgrid>.card:nth-child(5n+5){--mc:var(--lv0)}
+.mgrid>.card>h2{color:var(--mc,var(--ink))}
+.card.levels{border-top:5px solid var(--acc)}
+
+/* ================================================================ course colour layer on top of the handover theme */
+:root{--shadow:0 1px 2px rgba(22,36,46,.06),0 6px 18px rgba(22,36,46,.07);--src-v:#ffe3e3;--src-i:#d0ebff;--src-d:#f3d9fa;--grid:rgba(91,107,118,.16);--glow1:rgba(31,122,140,.10);--glow2:rgba(91,60,196,.08)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.28);--src-v:#4a2328;--src-i:#1d3550;--src-d:#3d2347;--grid:rgba(159,176,187,.12);--glow1:rgba(95,211,192,.08);--glow2:rgba(151,117,250,.08)}}
+:root[data-theme="dark"]{--shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.28);--src-v:#4a2328;--src-i:#1d3550;--src-d:#3d2347;--grid:rgba(159,176,187,.12);--glow1:rgba(95,211,192,.08);--glow2:rgba(151,117,250,.08)}
+body{background:radial-gradient(900px 420px at 0 0,var(--glow1),transparent 70%),radial-gradient(900px 420px at 100% 0,var(--glow2),transparent 70%),var(--bg);background-attachment:fixed}
+.card{box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--line) 70%,transparent)}
+header{box-shadow:0 4px 14px rgba(0,0,0,.14)}
+header h1{font-size:1.3rem}
+/* levels: a tinted row per level with a numbered badge */
+.level{background:color-mix(in srgb,var(--lv,var(--acc)) 7%,var(--card));border-left:5px solid var(--lv,var(--acc));border-radius:10px;padding:8px 12px}
+.level .lname{display:flex;align-items:center;gap:10px;border-left:0;padding-left:0}
+.lnum{flex:none;display:inline-grid;place-items:center;width:1.9em;height:1.9em;border-radius:50%;background:var(--lv,var(--acc));color:var(--on-acc);font-weight:700;font-size:.9rem}
+.level .lname small{color:var(--muted)}
+.qbtn,.lvb{border:1.5px solid color-mix(in srgb,var(--lv,var(--acc)) 45%,var(--line));border-radius:20px;background:var(--card)}
+.qbtn.on,.lvb.on{background:var(--lv,var(--acc));border-color:var(--lv,var(--acc));color:var(--on-acc);box-shadow:0 2px 8px color-mix(in srgb,var(--lv,var(--acc)) 35%,transparent)}
+.grp h2{color:var(--hdr2)}
+.card.levels,.card.gen{border-top:0;padding-top:19px;background:linear-gradient(90deg,var(--hdr1),var(--hdr2)) top/100% 5px no-repeat,var(--card)}
+/* the question: a level-coloured top edge; the circuit on faint graph paper */
+.qcard{border-top:5px solid var(--lv,var(--acc))}
+.qhead h2{margin:0}
+.sticky>.card{border-top:5px solid color-mix(in srgb,var(--lv,var(--acc)) 55%,transparent);background-color:var(--card);background-image:radial-gradient(var(--grid) 1.1px,transparent 1.3px);background-size:20px 20px}
+.src.sv{fill:var(--src-v)}.src.si{fill:var(--src-i)}.src.sd{fill:var(--src-d)}
+.modes{background:color-mix(in srgb,var(--hdr2) 6%,var(--card));border-radius:24px;padding:5px 8px 5px 14px;width:fit-content;max-width:100%}
+.modes button{border-radius:20px}
+.modes button.on{background:linear-gradient(100deg,var(--hdr1),var(--hdr2));border-color:transparent;color:#fff}
+.stage{border-width:2px;border-color:var(--hdr2);box-shadow:var(--shadow)}
+.stage .sq b{color:var(--hdr2)}
+.srow input{font-size:1.05rem}
+.srow input:focus,.try input:focus,.gen input:focus{outline:3px solid color-mix(in srgb,var(--acc) 35%,transparent);border-color:var(--acc)}
+.ctl button.primary,#go{background:linear-gradient(100deg,var(--hdr1),var(--hdr2));border-color:transparent;color:#fff}
+.answer{border-color:var(--t-answer);background:color-mix(in srgb,var(--t-answer) 10%,var(--card))}
+.answer b:first-child{color:var(--t-answer)}
+.more{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.more button{border-color:var(--acc);color:var(--acc);border-radius:20px;font-weight:600}
+.mgrid>.card>h2{display:flex;align-items:center;gap:8px}
+.mgrid>.card>h2::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;background:var(--mc,var(--acc))}
+.mgrid>.card{background:linear-gradient(180deg,color-mix(in srgb,var(--mc,var(--acc)) 6%,var(--card)),var(--card) 140px)}
+th{background:color-mix(in srgb,var(--acc) 12%,var(--card))}
+.gbar .gb.on,.gbar .gpb.on{background:var(--hdr2);border-color:var(--hdr2);color:#fff}
+footer{border-top:0;position:relative}
+footer::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--hdr1),var(--hdr2))}
+@media (max-width:600px){.level{padding:8px}.modes{border-radius:12px}}
+
+/* Laplace pages: stacked fractions, the t <-> s pair card, the s-plane, graphs and the method widgets */
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .12em;line-height:1.2}
+.fr>span:first-child{border-bottom:1.6px solid currentColor;padding:0 .25em .08em}
+.fr>span:last-child{padding:.08em .25em 0}
+.fr.sm{font-size:.82em}
+.fr .fr{font-size:.9em}
+.eq{line-height:2.1}
+.eq.big{font-size:1.15rem;margin:.5em 0;border-left-color:var(--acc)}
+.form{margin:.7em 0 .2em;padding:8px 12px;border:1.5px dashed color-mix(in srgb,var(--acc) 55%,var(--line));border-radius:9px;line-height:2.3;background:color-mix(in srgb,var(--acc) 5%,var(--card))}
+b.box{display:inline-block;min-width:1.5em;padding:0 .3em;border:1.5px solid currentColor;border-radius:5px;text-align:center;font-style:italic;line-height:1.35}
+/* the pair card */
+.pair{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:6px}
+.pair .side{border-radius:10px;padding:8px 10px;min-height:4.2em;line-height:2;font-size:1.05rem}
+.pair .side small{display:block;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;line-height:1.2;margin-bottom:2px}
+.pair .tside{background:color-mix(in srgb,var(--k1) 9%,var(--card));border:1.5px solid color-mix(in srgb,var(--k1) 40%,transparent)}
+.pair .tside small{color:var(--k1)}
+.pair .sside{background:color-mix(in srgb,var(--k2) 9%,var(--card));border:1.5px solid color-mix(in srgb,var(--k2) 40%,transparent)}
+.pair .sside small{color:var(--k2)}
+.pair .arrow{font-weight:700;color:var(--acc);white-space:nowrap}
+.qmark{display:inline-grid;place-items:center;width:1.7em;height:1.7em;border-radius:50%;background:var(--acc);color:var(--on-acc);font-weight:700}
+@media (max-width:600px){.pair{grid-template-columns:1fr}.pair .arrow{text-align:center}}
+h3.ptitle{font-size:.9rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:.8em 0 .1em}
+/* graphs */
+svg.plot{display:block;width:100%;height:auto;margin-top:6px;touch-action:none;user-select:none}
+svg.plot text,svg.pz text,svg.sqpic text{font-family:"Segoe UI",system-ui,Arial,sans-serif}
+.plot .grid{stroke:var(--line);stroke-width:1}
+.plot .axis,.pz .axis{stroke:var(--ink);stroke-width:1.5}
+.plot .tick,.pz .tick{fill:var(--muted);font-size:14px}
+.plot .curve{fill:none;stroke:var(--acc);stroke-width:3.5;stroke-linejoin:round}
+.plot .ghost{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:5 5;opacity:.6}
+.plot .imp{stroke:var(--kx);stroke-width:3.5}.plot .imph{fill:var(--kx)}.plot .impt{fill:var(--kx);font-size:14px;font-weight:600}
+.plot .final{stroke:var(--k2);stroke-width:2;stroke-dasharray:8 5}
+.plot .finalt{fill:var(--k2);font-size:14px;font-weight:600;paint-order:stroke;stroke:var(--card);stroke-width:4px}
+.plot .p0{fill:var(--k1)}.plot .p0t{fill:var(--k1);font-size:14px;font-weight:600;paint-order:stroke;stroke:var(--card);stroke-width:4px}
+.plot .cur{stroke:var(--ink);stroke-width:1.2;stroke-dasharray:3 3}.plot .curd{fill:var(--ink)}
+.plot .curt{fill:var(--ink);font-size:15px;font-weight:600;paint-order:stroke;stroke:var(--card);stroke-width:5px}
+/* the s-plane */
+svg.pz{display:block;width:100%;max-width:420px;height:auto;margin:6px auto 0}
+.pz .lhp{fill:color-mix(in srgb,var(--k3) 10%,transparent)}.pz .rhp{fill:color-mix(in srgb,var(--bad) 8%,transparent)}
+.pz .zone{fill:var(--k3);font-size:12px;font-weight:600}.pz .zone.r{fill:var(--bad)}
+.pz .tk{stroke:var(--ink);stroke-width:1.2}
+.pz .axl{fill:var(--ink);font-size:16px;font-style:italic;font-weight:600}
+.pz .pole path{stroke:var(--k1);stroke-width:3.5;stroke-linecap:round;fill:none}
+.pz .pole.cx path{stroke:var(--kx)}
+.pz .pole.k1 path{stroke:var(--k1)}.pz .pole.k2 path{stroke:var(--k2)}.pz .pole.k3 path{stroke:var(--k3)}
+.pz .mult{fill:var(--k1);font-size:13px;font-weight:700}
+.pz .plab{fill:var(--ink);font-size:13px;font-weight:600;paint-order:stroke;stroke:var(--card);stroke-width:4px}
+.plotph{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:1px dashed var(--line);border-radius:9px;padding:10px 12px;margin-top:6px}
+.de{font-size:.95rem;padding:6px 10px;border-left:3px solid var(--k3);line-height:1.9}
+p.how{font-size:.86rem;color:var(--muted);margin:.5em 0 .1em}
+/* method widgets */
+.wg{margin:.2em 0 .7em}
+.wbar{display:flex;flex-wrap:wrap;gap:6px;margin:.3em 0 .5em}
+.wbar button{font-size:.88rem;padding:3px 11px;border-radius:20px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px;align-items:center}
+.sliders{display:grid;gap:4px;margin:.3em 0}
+.sliders label{display:grid;grid-template-columns:8.5em 1fr 3.2em;align-items:center;gap:8px;font-size:.92rem}
+.sliders input{min-width:0;width:100%}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:.4em 0 .8em}
+.fbox{border:2px solid var(--acc);border-radius:9px;padding:4px 9px;font-size:.9rem;font-weight:600;background:var(--card)}
+.fbox.on{background:var(--acc);color:var(--on-acc)}
+.fbox.f0{border-color:var(--lv0)}.fbox.f1{border-color:var(--lv1)}.fbox.f2{border-color:var(--lv2)}.fbox.f3{border-color:var(--lv3)}.fbox.f4{border-color:var(--lv4)}.fbox.f5{border-color:var(--t-equation)}
+.farr{color:var(--muted)}
+.machine{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}
+.mbox{border-radius:10px;padding:8px;line-height:2}
+.mbox small{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;line-height:1.2}
+.mbox.t{background:color-mix(in srgb,var(--k1) 9%,var(--card))}.mbox.t small{color:var(--k1)}
+.mbox.s{background:color-mix(in srgb,var(--k2) 9%,var(--card))}.mbox.s small{color:var(--k2)}
+.mgear{display:grid;gap:4px;justify-items:center;padding:8px 10px;border:2px dashed var(--acc);border-radius:50%;aspect-ratio:1;align-content:center;font-size:.85rem}
+.mgear b{font-size:1.6rem;color:var(--acc)}
+@media (max-width:600px){.machine{grid-template-columns:1fr}.mgear{aspect-ratio:auto;border-radius:12px}}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.tile{min-height:4.4em;border-radius:10px;border:1.5px solid color-mix(in srgb,var(--k1) 40%,var(--line));background:color-mix(in srgb,var(--k1) 6%,var(--card));line-height:1.9;font-size:1rem}
+.tile .back{display:none}.tile.flip{border-color:color-mix(in srgb,var(--k2) 50%,var(--line));background:color-mix(in srgb,var(--k2) 9%,var(--card))}
+.tile.flip .front{display:none}.tile.flip .back{display:inline}
+.splitrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:1.08rem;line-height:2.2;margin:.3em 0}
+.stile{border-radius:10px;border:2px solid currentColor;background:var(--card);font-size:1.05rem;padding:2px 8px}
+.stile.on{background:color-mix(in srgb,currentColor 14%,var(--card))}
+.covbox{font-size:1.15rem;line-height:2.4;margin:.4em 0}
+.cfac{font:inherit;padding:0 4px;margin:0 1px;border-radius:6px;border:1.5px dashed var(--acc);background:transparent}
+.cfac.cov{background:var(--ink);color:var(--ink);border-style:solid}
+svg.sqpic{display:block;width:100%;height:auto}
+.sqpic .sq0{fill:color-mix(in srgb,var(--k2) 22%,var(--card));stroke:var(--ink);stroke-width:1.5}
+.sqpic .sq1{fill:color-mix(in srgb,var(--k3) 25%,var(--card));stroke:var(--ink);stroke-width:1.5}
+.sqpic .sq2{fill:color-mix(in srgb,var(--k1) 35%,var(--card));stroke:var(--ink);stroke-width:1.5}
+.sqpic text{fill:var(--ink);font-size:15px}.sqpic text.sm{font-size:12px}
+[hidden]{display:none !important}
+@media (max-width:1000px){.sticky{position:static}}
+
+a.home{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;font-weight:600;font-size:.9rem;text-decoration:none;white-space:nowrap;transition:background .15s}
+a.home:hover{background:rgba(255,255,255,.26)}
+a.home:focus-visible{outline:2px solid #fff;outline-offset:2px}
+a.home svg{width:16px;height:16px}
+header h1{margin-right:auto}
+#theme{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:20px;padding:5px 11px;font-weight:600;font-size:1.05rem;line-height:1.2;white-space:nowrap;transition:background .15s}
+#theme:hover{background:rgba(255,255,255,.26);border-color:rgba(255,255,255,.3)}
+#theme:focus-visible{outline:2px solid #fff;outline-offset:2px}
+</style>
+</head>
+<body>
+<header>
+  <a class="home" href="index.html" aria-label="Back to all topics"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 10H3M9 4l-6 6 6 6"/></svg>All topics</a>
+  <h1><span class="picon"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 16h26M16 3v26"/><path d="M6.5 9.5l5 5M11.5 9.5l-5 5" stroke-width="2.8"/></svg></span><span>Laplace Transform: Basics<small>One table entry at a time: signals, pairs, shifts, there and back</small></span></h1>
+  <nav class="tabs" aria-label="Sections"><button data-v="method">How it works</button><button data-v="questions">Questions</button><button data-v="practice">Practice generator</button></nav>
+  <button id="theme" title="Switch between light and dark" aria-label="Switch between light and dark">◐</button>
+</header>
+<main></main>
+<footer>Developed by Muhammad 'Aasim Asyafi'ie bin Ahmad, 2026</footer>
+<script>
+'use strict';
+// Laplace transform pages. Basic: one table entry at a time (forward and inverse, shifts). Advanced: partial
+// fractions (simple, repeated and complex poles, improper fractions), the initial- and final-value theorems and
+// differential equations. Every number in the working is computed here from the question's data (A&S Ch 15
+// methods: residue / cover-up, equating coefficients, completing the square); check.py recomputes them with sympy.
+
+const SLIP_TEXT = { pow10: false, sign: 'Right size, wrong sign. Check the sign rule: (s + a) goes with e<sup>−at</sup>, a pole at s = −a, and the sign in front of each term.' };
+
+// ---------------------------------------------------------------- numbers
+const MI = '−';
+const fact = n => (n <= 1 ? 1 : n * fact(n - 1));
+function ratio(x, maxD = 12) { for (let d = 1; d <= maxD; d++) { const n = Math.round(x * d); if (Math.abs(n / d - x) < 1e-9) return [n, d]; } return null; }
+function sf(x, n = 4) { if (Math.abs(x) < 1e-12) return '0'; let s = String(+x.toPrecision(n)); if (/e/.test(s)) s = x.toFixed(6); return s.replace('-', MI); }
+const FR = (a, b, c = '') => `<span class="fr${c ? ' ' + c : ''}"><span>${a}</span><span>${b}</span></span>`;
+// a number as HTML: an integer, a simple fraction (stacked) or 4 significant figures
+function N(x) { const r = ratio(x); if (r && r[1] === 1) return String(r[0]).replace('-', MI); if (r) return (r[0] < 0 ? MI : '') + FR(Math.abs(r[0]), r[1], 'sm'); return sf(x); }
+// the same as plain text (for summaries and hints): 2/3, −1.5
+function Nt(x) { const r = ratio(x); if (r && r[1] === 1) return String(r[0]).replace('-', MI); if (r) return `${r[0] < 0 ? MI : ''}${Math.abs(r[0])}/${r[1]}`; return sf(x); }
+const P = x => (x < 0 ? `(${N(x)})` : N(x));        // a number in brackets when negative
+const nice = x => { const r = ratio(x, 6); return r && Math.abs(x) <= 200; };
+
+// ---------------------------------------------------------------- polynomials in s (ascending coefficients)
+const ptrim = p => { p = p.slice(); while (p.length > 1 && Math.abs(p[p.length - 1]) < 1e-12) p.pop(); return p; };
+const pdeg = p => ptrim(p).length - 1;
+const padd = (a, b) => { const r = []; for (let i = 0; i < Math.max(a.length, b.length); i++) r.push((a[i] || 0) + (b[i] || 0)); return ptrim(r); };
+const pscale = (a, k) => ptrim(a.map(x => x * k));
+const pmul = (a, b) => { const r = Array(a.length + b.length - 1).fill(0); a.forEach((x, i) => b.forEach((y, j) => { r[i + j] += x * y; })); return ptrim(r); };
+const pev = (p, s) => p.reduce((acc, c, i) => acc + c * s ** i, 0);
+const peq = (a, b) => { a = ptrim(a); b = ptrim(b); const n = Math.max(a.length, b.length); for (let i = 0; i < n; i++) if (Math.abs((a[i] || 0) - (b[i] || 0)) > 1e-7 * Math.max(1, Math.abs(a[i] || 0))) return false; return true; };
+// a signed term: "+ 3s²", "− s", first term without the plus
+function coefH(c, body, first) {
+  const sg = c < 0 ? (first ? MI : ` ${MI} `) : (first ? '' : ' + ');
+  const a = Math.abs(c);
+  return sg + (body && Math.abs(a - 1) < 1e-12 ? '' : N(a)) + body;
+}
+function polyH(p, v = 's') {
+  p = ptrim(p); let out = '';
+  for (let i = p.length - 1; i >= 0; i--) {
+    if (Math.abs(p[i]) < 1e-12) continue;
+    out += coefH(p[i], i === 0 ? '' : i === 1 ? v : `${v}<sup>${i}</sup>`, out === '');
+  }
+  return out || '0';
+}
+// the polynomial with s replaced by a number, term by term: 10(−2)² + 4
+function subH(p, v) {
+  p = ptrim(p); let out = '';
+  for (let i = p.length - 1; i >= 0; i--) {
+    const c = p[i]; if (Math.abs(c) < 1e-12) continue;
+    const sv = i === 0 ? '' : `(${N(v)})${i > 1 ? `<sup>${i}</sup>` : ''}`;
+    const sg = c < 0 ? (out ? ` ${MI} ` : MI) : (out ? ' + ' : '');
+    out += sg + (i && Math.abs(Math.abs(c) - 1) < 1e-12 ? '' : N(Math.abs(c))) + sv;
+  }
+  return out || '0';
+}
+const linH = p => (Math.abs(p) < 1e-12 ? 's' : `s ${p > 0 ? '+' : MI} ${N(Math.abs(p))}`);
+const linP = (p, m = 1) => (Math.abs(p) < 1e-12 ? `s${m > 1 ? `<sup>${m}</sup>` : ''}` : `(${linH(p)})${m > 1 ? `<sup>${m}</sup>` : ''}`);
+const quadH = q => polyH([q.c, q.b, 1]);
+
+// ---------------------------------------------------------------- one table entry ("term")
+// { sh: 'imp' | 'pow' | 'sin' | 'cos', c, n (power of t), a (e^-at), w (omega), d (delay) }
+const TM = {
+  imp: (c, d = 0) => ({ sh: 'imp', c, n: 0, a: 0, w: 0, d }),
+  pow: (c, n = 0, a = 0, d = 0) => ({ sh: 'pow', c, n, a, w: 0, d }),
+  sin: (c, w, a = 0, d = 0) => ({ sh: 'sin', c, n: 0, a, w, d }),
+  cos: (c, w, a = 0, d = 0) => ({ sh: 'cos', c, n: 0, a, w, d }),
+};
+const tArg = d => (d ? `(t ${MI} ${N(d)})` : 't');
+function expH(a, d = 0) { if (!a) return ''; const k = Math.abs(a) === 1 ? '' : N(Math.abs(a)); return `e<sup>${a > 0 ? MI : ''}${k}${tArg(d)}</sup>`; }
+const uH = d => (d ? `u(t ${MI} ${N(d)})` : 'u(t)');
+// the time function without its number in front
+function tBody(f) {
+  if (f.sh === 'imp') return `δ${f.d ? `(t ${MI} ${N(f.d)})` : '(t)'}`;
+  if (f.sh === 'pow') {
+    const tp = f.n === 0 ? '' : f.n === 1 ? tArg(f.d) : `${tArg(f.d)}<sup>${f.n}</sup>`, ex = expH(f.a, f.d);
+    if (!tp && !ex) return uH(f.d);
+    return tp + ex + (f.d ? ' ' + uH(f.d) : '');
+  }
+  const w = Math.abs(f.w - 1) < 1e-12 ? '' : N(f.w);
+  return `${expH(f.a, f.d)} ${f.sh} ${w}${tArg(f.d)}${f.d ? ' ' + uH(f.d) : ''}`.trim();
+}
+const tH = (f, first = true) => coefH(f.c, tBody(f), first);
+const tSum = fs => fs.map((f, i) => tH(f, i === 0)).join('') || '0';
+// the s-domain form of one term, optionally colour-coded (top k1, shift k2, power or omega k3, delay kx)
+function sParts(f) {
+  const c = f.c;
+  if (f.sh === 'imp') return { top: c, bot: null };
+  if (f.sh === 'pow') return { top: c * fact(f.n), bot: { lin: f.a, m: f.n + 1 } };
+  if (f.sh === 'sin') return { top: c * f.w, bot: { lin: f.a, w2: f.w * f.w } };
+  return { top: c, cosTop: true, bot: { lin: f.a, w2: f.w * f.w } };
+}
+function sBot(f, col = false) {
+  const k = (cl, h) => (col ? `<span class="${cl}">${h}</span>` : h), sp = sParts(f);
+  const ab = f.a ? `s ${f.a > 0 ? '+' : MI} ${k('k2', N(Math.abs(f.a)))}` : 's';
+  if (!sp.bot) return '1';
+  if (sp.bot.m !== undefined) return f.a ? `(${ab})${sp.bot.m > 1 ? `<sup>${k('k3', sp.bot.m)}</sup>` : ''}` : (sp.bot.m > 1 ? `s<sup>${k('k3', sp.bot.m)}</sup>` : 's');
+  return (f.a ? `(${ab})<sup>2</sup>` : 's<sup>2</sup>') + ' + ' + k('k3', N(sp.bot.w2));
+}
+function sH(f, col = false) {
+  const k = (cl, h) => (col ? `<span class="${cl}">${h}</span>` : h), sp = sParts(f);
+  const dl = f.d ? ` e<sup>${MI}${k('kx', f.d === 1 ? '' : N(f.d))}s</sup>` : '';
+  const neg = sp.top < 0, at = Math.abs(sp.top);
+  const ab = f.a ? `s ${f.a > 0 ? '+' : MI} ${k('k2', N(Math.abs(f.a)))}` : 's';
+  if (!sp.bot) return (neg ? MI : '') + k('k1', N(at)) + dl;
+  const top = sp.cosTop ? (Math.abs(at - 1) < 1e-12 ? '' : k('k1', N(at))) + (f.a ? `(${ab})` : 's') + dl : k('k1', N(at)) + dl;
+  return (neg ? MI : '') + FR(top, sBot(f, col));
+}
+// the matching row of the pair table, in symbols
+function rowH(f) {
+  const ea = f.a ? 'e<sup>−at</sup>' : '', sa = f.a ? '(s + a)' : 's', sa2 = f.a ? '(s + a)<sup>2</sup>' : 's<sup>2</sup>';
+  if (f.sh === 'imp') return 'δ(t) &nbsp;⇔&nbsp; 1';
+  if (f.sh === 'pow') {
+    if (f.n === 0) return f.a ? `e<sup>−at</sup> &nbsp;⇔&nbsp; ${FR(1, 's + a')}` : `u(t) &nbsp;⇔&nbsp; ${FR(1, 's')}`;
+    return `t<sup>n</sup>${ea} &nbsp;⇔&nbsp; ${FR('n!', `${sa}<sup>n+1</sup>`)}`;
+  }
+  if (f.sh === 'sin') return `${ea} sin ωt &nbsp;⇔&nbsp; ${FR('ω', `${sa2} + ω<sup>2</sup>`)}`;
+  return `${ea} cos ωt &nbsp;⇔&nbsp; ${FR(f.a ? 's + a' : 's', `${sa2} + ω<sup>2</sup>`)}`;
+}
+function fval(f, t) {
+  if (t < f.d - 1e-12 || f.sh === 'imp') return 0;
+  const x = t - f.d, e = Math.exp(-f.a * x);
+  if (f.sh === 'pow') return f.c * x ** f.n * e;
+  return f.c * e * (f.sh === 'sin' ? Math.sin(f.w * x) : Math.cos(f.w * x));
+}
+const f0p = f => (f.d > 0 || f.sh === 'imp' || f.sh === 'sin' || (f.sh === 'pow' && f.n > 0) ? 0 : f.c);    // f(0+)
+function polesOf(f) {
+  if (f.sh === 'imp') return [];
+  if (f.sh === 'pow') return [{ re: -f.a, im: 0, m: f.n + 1 }];
+  return [{ re: -f.a, im: f.w, m: 1 }, { re: -f.a, im: -f.w, m: 1 }];
+}
+function plotSpan(terms) {
+  let T = 0;
+  for (const f of terms) {
+    let s = f.a > 0 ? Math.min(5 / f.a + (f.n ? f.n / f.a : 0), 12) : 4;
+    if (f.w) s = Math.max(Math.min(s, 2.5 * 2 * Math.PI / f.w), 1.5 * 2 * Math.PI / f.w);
+    T = Math.max(T, f.d + s, f.d * 1.6);
+  }
+  return +(T || 4).toPrecision(2);
+}
+
+// ---------------------------------------------------------------- pictures: f(t) graph and s-plane
+function niceStep(span) { const raw = span / 5, p = 10 ** Math.floor(Math.log10(raw)), m = raw / p; return (m < 1.5 ? 1 : m < 3 ? 2 : m < 7 ? 5 : 10) * p; }
+const tk = x => sf(+x.toPrecision(6), 3);
+function plotSVG(pl, tCur = null) {
+  const W = 560, H = 270, L = 54, R = 18, Tm = 16, B = 38, T = pl.T, t0 = -0.06 * T, n = 600;
+  const imps = pl.terms.filter(f => f.sh === 'imp'), cont = pl.terms.filter(f => f.sh !== 'imp');
+  const g = t => cont.reduce((a, f) => a + fval(f, t), 0);
+  const pts = []; for (let i = 0; i <= n; i++) { const t = t0 + (T - t0) * i / n; pts.push([t, g(t)]); }
+  let lo = Math.min(0, ...pts.map(p => p[1])), hi = Math.max(0, ...pts.map(p => p[1]));
+  imps.forEach(f => { lo = Math.min(lo, f.c); hi = Math.max(hi, f.c); });
+  if (pl.marks) for (const v of [pl.marks.f0, pl.marks.finf]) if (Number.isFinite(v)) { lo = Math.min(lo, v); hi = Math.max(hi, v); }
+  if (hi - lo < 1e-9) hi = lo + 1;
+  const pad = 0.1 * (hi - lo); lo -= lo < 0 ? pad : 0; hi += pad;
+  const X = t => L + (t - t0) / (T - t0) * (W - L - R), Y = y => Tm + (hi - y) / (hi - lo) * (H - Tm - B);
+  let s = `<svg class="plot" viewBox="0 0 ${W} ${H}" data-w="${W}" data-l="${L}" data-r="${R}" data-span="${T}" data-tmin="${t0}" role="img" aria-label="graph of ${pl.name || 'f'}(t)">`;
+  const xs = niceStep(T), ys = niceStep(hi - lo);
+  for (let x = 0; x <= T + 1e-9; x += xs) s += `<line class="grid" x1="${X(x)}" x2="${X(x)}" y1="${Tm}" y2="${H - B}"/><text class="tick" x="${X(x)}" y="${H - B + 18}" text-anchor="middle">${tk(x)}</text>`;
+  for (let y = Math.ceil(lo / ys) * ys; y <= hi + 1e-9; y += ys) s += `<line class="grid" x1="${L}" x2="${W - R}" y1="${Y(y)}" y2="${Y(y)}"/><text class="tick" x="${L - 6}" y="${Y(y) + 5}" text-anchor="end">${tk(y)}</text>`;
+  s += `<line class="axis" x1="${L}" x2="${W - R}" y1="${Y(0)}" y2="${Y(0)}"/><line class="axis" x1="${X(0)}" x2="${X(0)}" y1="${Tm}" y2="${H - B}"/>`;
+  s += `<text class="tick" x="${W - R}" y="${H - 6}" text-anchor="end">t (s)</text><text class="tick" x="${L + 4}" y="${Tm + 12}">${pl.name || 'f'}(t)</text>`;
+  if (pl.marks && Number.isFinite(pl.marks.finf)) s += `<line class="final" x1="${L}" x2="${W - R}" y1="${Y(pl.marks.finf)}" y2="${Y(pl.marks.finf)}"/><text class="finalt" x="${W - R - 4}" y="${Y(pl.marks.finf) - 6}" text-anchor="end">${pl.name || 'f'}(∞) = ${Nt(pl.marks.finf)}</text>`;
+  const path = arr => arr.map((p, i) => (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ',' + Y(Math.max(lo, Math.min(hi, p[1]))).toFixed(1)).join('');
+  if (pl.ghost) { const gh = t => pl.ghost.reduce((a, f) => a + fval(f, t), 0); s += `<path class="ghost" d="${path(pts.map(p => [p[0], gh(p[0])]))}"/>`; }
+  s += `<path class="curve" d="${path(pts)}"/>`;
+  for (const f of imps) {
+    const x = X(f.d), y1 = Y(0), y2 = Y(f.c), up = f.c > 0 ? 1 : -1;
+    s += `<line class="imp" x1="${x}" x2="${x}" y1="${y1}" y2="${y2 + up * 9}"/><path class="imph" d="M${x - 7},${y2 + up * 12} L${x},${y2} L${x + 7},${y2 + up * 12} z"/><text class="impt" x="${x + 9}" y="${y2 + (up > 0 ? 14 : -4)}">${Nt(f.c)}δ</text>`;
+  }
+  if (pl.marks && Number.isFinite(pl.marks.f0)) s += `<circle class="p0" cx="${X(0)}" cy="${Y(pl.marks.f0)}" r="6"/><text class="p0t" x="${X(0) + 10}" y="${Y(pl.marks.f0) - 8}">${pl.name || 'f'}(0⁺) = ${Nt(pl.marks.f0)}</text>`;
+  if (tCur !== null) {
+    const v = g(tCur), x = X(tCur);
+    s += `<line class="cur" x1="${x}" x2="${x}" y1="${Tm}" y2="${H - B}"/><circle class="curd" cx="${x}" cy="${Y(v)}" r="5"/><text class="curt" x="${Math.min(x + 8, W - 150)}" y="${Tm + 16}">t = ${sf(tCur, 3)} s: ${pl.name || 'f'} = ${sf(v, 3)}</text>`;
+  }
+  return s + '</svg>';
+}
+function pzSVG(pz) {
+  const W = 330, H = 250, poles = pz.poles || [];
+  const ext = Math.max(2, ...poles.map(p => Math.abs(p.re)), ...poles.map(p => Math.abs(p.im)));
+  const st = ext > 12 ? 5 : ext > 6 ? 2 : 1, Rg = Math.ceil(ext * 1.25 / st) * st;
+  const xmin = -Rg, xmax = Math.max(st * 2, Math.ceil((Math.max(0, ...poles.map(p => p.re)) + st) / st) * st), ymax = Rg;
+  const L = 14, R = 14, Tm = 14, B = 26;
+  const X = x => L + (x - xmin) / (xmax - xmin) * (W - L - R), Y = y => Tm + (ymax - y) / (2 * ymax) * (H - Tm - B);
+  let s = `<svg class="pz" viewBox="0 0 ${W} ${H}" role="img" aria-label="pole map on the s-plane">`;
+  s += `<rect class="lhp" x="${X(xmin)}" y="${Tm}" width="${X(0) - X(xmin)}" height="${H - Tm - B}"/><rect class="rhp" x="${X(0)}" y="${Tm}" width="${X(xmax) - X(0)}" height="${H - Tm - B}"/>`;
+  s += `<text class="zone" x="${X(xmin) + 6}" y="${H - B - 8}">left half: dies away</text><text class="zone r" x="${X(xmax) - 6}" y="${H - B - 8}" text-anchor="end">grows</text>`;
+  for (let x = xmin; x <= xmax + 1e-9; x += st) if (Math.abs(x) > 1e-9) s += `<line class="tk" x1="${X(x)}" x2="${X(x)}" y1="${Y(0) - 4}" y2="${Y(0) + 4}"/><text class="tick" x="${X(x)}" y="${Y(0) + 17}" text-anchor="middle">${tk(x)}</text>`;
+  for (let y = -ymax; y <= ymax + 1e-9; y += st) if (Math.abs(y) > 1e-9) s += `<line class="tk" x1="${X(0) - 4}" x2="${X(0) + 4}" y1="${Y(y)}" y2="${Y(y)}"/><text class="tick" x="${X(0) + 7}" y="${Y(y) + 4}">${y > 0 ? 'j' + tk(y) : MI + 'j' + tk(-y)}</text>`;
+  s += `<line class="axis" x1="${L}" x2="${W - R}" y1="${Y(0)}" y2="${Y(0)}"/><line class="axis" x1="${X(0)}" x2="${X(0)}" y1="${Tm}" y2="${H - B}"/>`;
+  s += `<text class="axl" x="${W - R}" y="${Y(0) - 7}" text-anchor="end">σ</text><text class="axl" x="${X(0) - 7}" y="${Tm + 12}" text-anchor="end">jω</text>`;
+  poles.forEach(p => {
+    const x = X(p.re), y = Y(p.im), r = 8;
+    s += `<g class="pole${p.cls ? ' ' + p.cls : ''}"><path d="M${x - r},${y - r} L${x + r},${y + r} M${x - r},${y + r} L${x + r},${y - r}"/>${p.m > 1 ? `<text class="mult" x="${x + 9}" y="${y - 8}">×${p.m}</text>` : ''}${p.lab ? `<text class="plab" x="${x}" y="${y + (p.im < 0 ? 24 : -14)}" text-anchor="middle">${p.lab}</text>` : ''}</g>`;
+  });
+  if (pz.note) s += `<text class="tick" x="${W / 2}" y="${Tm + 14}" text-anchor="middle">${pz.note}</text>`;
+  else if (!poles.length) s += `<text class="tick" x="${W / 2}" y="${Tm + 30}" text-anchor="middle">no poles (F(s) is a constant${pz.delay ? ' × delay' : ''})</text>`;
+  return s + '</svg>';
+}
+
+// ---------------------------------------------------------------- stages and steps
+const stage = (html, val, step, wrong = [], unit = '', o = {}) => ({ html, val, step, wrong, unit, kind: 'real', ...o });
+const W_ = (val, why) => ({ val, why });
+const BOX = (t, cl = 'k1') => `<b class="box ${cl}">${t}</b>`;
+
+// ================================================================ BASIC KINDS
+const KINDS = {};
+function delayStep(f, steps) {
+  steps.push({ type: 'setup', title: 'Put the delay to one side', say: `The signal switches on at t = ${N(f.d)} s, and inside it every t is written as (t ${MI} ${N(f.d)}). That is the time-shift rule:`,
+    lines: [{ how: 'Time shift (delay by d): work out the transform without the delay, then multiply by e<sup>−ds</sup>', eq: `f(t ${MI} d) u(t ${MI} d) &nbsp;⇔&nbsp; e<sup>−ds</sup> F(s), &nbsp; here d = ${N(f.d)}` }],
+    note: 'Do not mix it up with the frequency shift: e<sup>−at</sup> × f(t) changes s into s + a. A delay changes nothing inside F(s); it only adds the factor e<sup>−ds</sup>.' });
+}
+
+// value of a signal at given times (warm-up)
+KINDS.val = q => {
+  const f = q.f, steps = [], answers = [];
+  const text = `A signal is f(t) = ${tH(f)}${f.d ? '' : ' (for t ≥ 0)'}. Find its value at ${q.ts.map(t => `t = ${sf(t)} s`).join(' and at ')}.`;
+  const bits = [];
+  if (f.d) bits.push(`u(t ${MI} ${N(f.d)}) is a switch: 0 before t = ${N(f.d)} s and 1 after it. Inside the signal, use the time since it switched on, t ${MI} ${N(f.d)}.`);
+  if (f.a) bits.push(`The factor e<sup>${MI}${f.a === 1 ? '' : N(f.a)}t</sup> starts at 1 and dies away: the bigger a, the faster.`);
+  if (f.sh === 'sin' || f.sh === 'cos') bits.push(`In ${f.sh} ωt the angle ωt is in <b>radians</b>: set the calculator to RAD.`);
+  if (f.sh === 'pow' && f.n) bits.push(`t<sup>${f.n > 1 ? f.n : ''}</sup> grows with time${f.a ? ', while the exponential pulls it back down' : ''}.`);
+  if (!bits.length) bits.push('A step: it jumps to its height at t = 0 and stays there.');
+  steps.push({ type: 'setup', title: 'Read the signal piece by piece', say: bits.join(' '), lines: [{ how: 'The signal', eq: `f(t) = ${tH(f)}` }], plot: true });
+  const g = (t, o = {}) => {        // the value with optional mistakes
+    const x = o.noDelay ? t : t - f.d;
+    if (!o.noDelay && t < f.d - 1e-12) return 0;
+    const e = Math.exp((o.plusExp ? 1 : -1) * f.a * x), c = o.noC ? 1 : f.c;
+    if (f.sh === 'pow') return c * x ** f.n * e;
+    const ang = o.deg ? f.w * x * Math.PI / 180 : f.w * x;
+    return c * e * (f.sh === 'sin' ? Math.sin(ang) : Math.cos(ang));
+  };
+  q.ts.forEach(t => {
+    const v = g(t), lines = [];
+    if (f.d && t < f.d - 1e-12) lines.push({ how: `t = ${N(t)} is before the switch-on time ${N(f.d)} s`, eq: `u(${sf(t)} ${MI} ${N(f.d)}) = u(${sf(t - f.d)}) = 0, &nbsp; so f(${sf(t)}) = 0` });
+    else {
+      const x = t - f.d, parts = [];
+      if (f.d) lines.push({ how: 'Time since the switch-on', eq: `t ${MI} ${N(f.d)} = ${sf(t)} ${MI} ${N(f.d)} = ${sf(x)} s` });
+      if (f.sh === 'pow' && f.n) parts.push([`${sf(x)}${f.n > 1 ? `<sup>${f.n}</sup>` : ''}`, x ** f.n]);
+      if (f.a) parts.push([`e<sup>${MI}${N(f.a)} × ${sf(x)}</sup>`, Math.exp(-f.a * x)]);
+      if (f.sh === 'sin' || f.sh === 'cos') parts.push([`${f.sh}(${N(f.w)} × ${sf(x)})`, f.sh === 'sin' ? Math.sin(f.w * x) : Math.cos(f.w * x)]);
+      const cs = Math.abs(f.c - 1) < 1e-12 ? [] : [N(f.c)];
+      lines.push({ how: 'Put the time into each piece', eq: `f(${sf(t)}) = ${cs.concat(parts.map(p => p[0])).join(' × ') || '1'}` });
+      if (parts.length) lines.push({ how: 'Work out each piece on the calculator', eq: `= ${cs.concat(parts.map(p => sf(p[1], 4))).join(' × ')} = ${sf(v, 4)}` });
+    }
+    steps.push({ type: 'answer', title: `Value at t = ${sf(t)} s`, lines });
+    const wr = [];
+    if (f.d) wr.push(W_(g(t, { noDelay: true }), t < f.d ? `u(t ${MI} ${N(f.d)}) is still 0 before t = ${N(f.d)} s: the signal has not switched on yet.` : `Inside a delayed signal use the time since switch-on, t ${MI} ${N(f.d)}, not t itself.`));
+    if (f.a) wr.push(W_(g(t, { plusExp: true }), 'The power of e is negative: e<sup>−at</sup> gets smaller as t grows.'));
+    if (f.w) wr.push(W_(g(t, { deg: true }), 'Your calculator is in degrees. In sin ωt and cos ωt the angle is in radians: switch to RAD.'));
+    if (Math.abs(f.c - 1) > 1e-12) wr.push(W_(g(t, { noC: true }), `Multiply by the number in front, ${N(f.c)}.`));
+    answers.push(stage(`f(${sf(t)})`, v, steps.length - 1, wr));
+  });
+  const terms = [f];
+  return { text, steps, answers, plot: { terms, T: Math.max(plotSpan(terms), ...q.ts.map(t => t * 1.2)), name: 'f' }, plotAt: 0, pair: { t: tH(f), s: sH(f, true), known: 't', at: -1 } };
+};
+
+// forward transform of one table entry
+KINDS.fwd = q => {
+  const f = q.f, sp = sParts(f), steps = [], answers = [];
+  const form = f.sh === 'imp' ? `${BOX('K')}${f.d ? ` e<sup>−${BOX('d', 'kx')}s</sup>` : ''}`
+    : `${FR(f.sh === 'cos' ? `${BOX('K')}(${f.a ? `s + ${BOX('a', 'k2')}` : 's'})` : BOX('K') + (f.d ? ` e<sup>−${BOX('d', 'kx')}s</sup>` : ''),
+      f.sh === 'pow' ? `${f.a ? `(s + ${BOX('a', 'k2')})` : 's'}${f.n ? `<sup>${BOX('m', 'k3')}</sup>` : ''}` : `${f.a ? `(s + ${BOX('a', 'k2')})` : 's'}<sup>2</sup> + ${BOX('b', 'k3')}`)}${f.sh === 'cos' && f.d ? ` × e<sup>−${BOX('d', 'kx')}s</sup>` : ''}`;
+  const text = `Find the Laplace transform F(s) of f(t) = ${tH(f)}${f.d ? '' : ', t ≥ 0'}.<div class="form">Write the answer as &nbsp; F(s) = ${form}</div>`;
+  if (f.d) delayStep(f, steps);
+  // 1. the pattern
+  const lines = [];
+  if (Math.abs(f.c - 1) > 1e-12) lines.push({ how: `Linearity: the number in front (${N(f.c)}) just waits outside and multiplies the answer`, eq: `f(t) = ${N(f.c)} × [${tBody({ ...f, c: 1, d: 0 })}]` });
+  lines.push({ how: 'The matching row of the table', eq: rowH(f) });
+  const vals = [];
+  if (f.sh === 'pow' && f.n) vals.push(`n = ${f.n}`);
+  if (f.a) vals.push(`a = ${N(f.a)}`);
+  if (f.w) vals.push(`ω = ${N(f.w)} rad/s`);
+  if (vals.length) lines.push({ how: 'Read the numbers off the signal', eq: vals.join(', &nbsp; ') });
+  const what = f.sh === 'imp' ? 'an impulse' : f.sh === 'pow' ? (f.n ? (f.a ? 'a power of t times a decaying exponential' : 'a power of t') : (f.a ? 'a decaying exponential' : 'a step')) : `${f.a ? 'a damped ' : 'a '}${f.sh === 'sin' ? 'sine' : 'cosine'}`;
+  steps.push({ type: 'setup', title: 'Spot the pattern in the table', say: `${f.d ? 'Without the delay this is' : 'This is'} ${what}.${f.a ? ` The e<sup>−${f.a === 1 ? '' : N(f.a)}t</sup> is a <b>frequency shift</b>: every s in the plain pair becomes s + ${N(f.a)}.` : ''}`, lines });
+  // 2. the number on top
+  let tl, wr = [];
+  if (f.sh === 'imp') { tl = [{ how: 'δ(t) ⇔ 1, so the number in front is the whole answer', eq: `K = ${N(f.c)}` }]; }
+  else if (f.sh === 'pow') {
+    tl = f.n >= 2 ? [{ how: 'Work out n! (n factorial: multiply down to 1)', eq: `${f.n}! = ${Array.from({ length: f.n }, (_, i) => f.n - i).join(' × ')} = ${fact(f.n)}` }] : f.n === 1 ? [{ how: 'n = 1', eq: '1! = 1' }] : [];
+    tl.push({ how: f.n ? 'Number on top = (number in front) × n!' : 'The table has 1 on top, so the number on top is the number in front', eq: `K = ${f.n ? `${N(f.c)} × ${fact(f.n)} = ` : ''}${N(sp.top)}` });
+    if (f.n >= 2) wr.push(W_(f.c, `You forgot the n! on top: t<sup>${f.n}</sup> ⇔ ${f.n}!/s<sup>${f.n + 1}</sup> = ${fact(f.n)}/s<sup>${f.n + 1}</sup>.`), W_(f.c * f.n, `n! is not n: ${f.n}! = ${Array.from({ length: f.n }, (_, i) => f.n - i).join(' × ')} = ${fact(f.n)}.`), W_(f.c * fact(f.n + 1), `Use n! with n = ${f.n} (the power of t), not (n + 1)!.`));
+    if (f.n >= 1) wr.push(W_(fact(f.n), `Multiply n! by the number in front, ${N(f.c)}.`));
+  } else if (f.sh === 'sin') {
+    tl = [{ how: 'Sine has ω on top: number on top = (number in front) × ω', eq: `K = ${N(f.c)} × ${N(f.w)} = ${N(sp.top)}` }];
+    wr.push(W_(f.c, `Sine has ω on top: sin ωt ⇔ ω/(s² + ω²). Multiply by ω = ${N(f.w)}.`), W_(f.c * f.w * f.w, 'ω goes on top once; ω² belongs on the bottom.'), W_(f.w, `Multiply ω by the number in front, ${N(f.c)}.`));
+  } else {
+    tl = [{ how: `Cosine has ${f.a ? '(s + a)' : 's'} on top, so only the number in front is left over`, eq: `K = ${N(f.c)}` }];
+    wr.push(W_(f.c * f.w, `That is the sine pattern (ω on top). Cosine has ${f.a ? '(s + a)' : 's'} on top, with no ω.`));
+  }
+  steps.push({ type: 'algebra', title: 'Work out the number on top', lines: tl });
+  answers.push(stage(f.sh === 'cos' ? `K (the number in front of ${f.a ? '(s + a)' : 's'} on top)` : 'K (the number on top)', sp.top, steps.length - 1, wr));
+  // 3. the shift
+  if (f.a) {
+    steps.push({ type: 'algebra', title: 'Read the shift a', say: `The factor e<sup>−${f.a === 1 ? '' : N(f.a)}t</sup> means a = ${N(f.a)}: every s in the plain pair turns into (s + ${N(f.a)}).`, lines: [{ how: 'The bracket on the bottom', eq: `(s + ${N(f.a)})` }] });
+    answers.push(stage('a (in s + a)', f.a, steps.length - 1, [W_(-f.a, `e<sup>−${N(f.a)}t</sup> gives (s + ${N(f.a)}) with a plus sign: the minus in the exponent becomes plus in the bracket.`)]));
+  }
+  // 4. the bottom
+  if (f.sh === 'pow' && f.n) {
+    steps.push({ type: 'algebra', title: 'Find the power on the bottom', lines: [{ how: 'The power is one more than the power of t', eq: `m = n + 1 = ${f.n} + 1 = ${f.n + 1}` }] });
+    answers.push(stage('m (the power on the bottom)', f.n + 1, steps.length - 1, [W_(f.n, `The power on the bottom is n + 1, one more than the power of t: t<sup>${f.n}</sup> ⇔ …/s<sup>${f.n + 1}</sup>.`)]));
+  } else if (f.sh === 'sin' || f.sh === 'cos') {
+    steps.push({ type: 'algebra', title: 'Find the number added on the bottom', lines: [{ how: 'The bottom has ω squared', eq: `b = ω<sup>2</sup> = ${N(f.w)}<sup>2</sup> = ${N(f.w * f.w)}` }] });
+    answers.push(stage('b = ω²', f.w * f.w, steps.length - 1, [W_(f.w, `Square ω: the bottom is s² + ω², so b = ${N(f.w)}² = ${N(f.w * f.w)}.`), W_(2 * f.w, `ω² means ω × ω, not 2 × ω.`)]));
+  }
+  if (f.d) {
+    steps.push({ type: 'algebra', title: 'Put the delay back', lines: [{ how: 'Multiply by e<sup>−ds</sup> with the delay d', eq: `e<sup>−${N(f.d)}s</sup>` }] });
+    answers.push(stage('d (in e<sup>−ds</sup>)', f.d, steps.length - 1, [W_(-f.d, `The delay factor is e<sup>−ds</sup> with d = ${N(f.d)} (the switch-on time), a positive number.`)], 's'));
+  }
+  steps.push({ type: 'answer', title: 'Answer', say: 'Colours: <span class="k1">number on top</span>, <span class="k2">shift a</span>, <span class="k3">power or ω²</span>' + (f.d ? ', <span class="kx">delay</span>' : '') + '.', lines: [{ how: 'The Laplace transform', eq: `F(s) = ${sH(f, true)}` }], pz: true });
+  if (f.sh !== 'imp') {
+    const v0 = f0p(f);
+    steps.push({ type: 'check', title: 'Check with the initial value theorem', say: 'f(0<sup>+</sup>) read from the signal must equal the limit of s F(s) as s → ∞ (A&S 15.3).',
+      lines: [{ how: 'From the signal', eq: `f(0<sup>+</sup>) = ${N(v0)}${f.d ? ' (it has not switched on yet)' : ''}` },
+        { how: 'From F(s): multiply by s and let s grow without limit', eq: `lim<sub>s→∞</sub> s F(s) = ${N(v0)} &nbsp;${f.d ? '(e<sup>−ds</sup> → 0)' : sp.cosTop || (f.sh === 'pow' && !f.n) ? '(top and bottom have the same power of s)' : '(the bottom has the higher power of s)'} &nbsp;✓` }] });
+  }
+  return { text, steps, answers, plot: { terms: [f], T: plotSpan([f]), name: 'f' }, plotAt: -1, pz: { poles: polesOf(f), delay: f.d }, pzAt: steps.findIndex(s => s.pz),
+    pair: { t: tH(f), s: sH(f, true), known: 't', at: steps.findIndex(s => s.pz) } };
+};
+
+// inverse transform of one table entry
+KINDS.inv = q => {
+  const f = q.f, sp = sParts(f), steps = [], answers = [];
+  const dbox = f.d ? `(t ${MI} ${BOX('d', 'kx')})` : 't';
+  const form = f.sh === 'imp' ? `${BOX('A')} δ(${f.d ? `t ${MI} ${BOX('d', 'kx')}` : 't'})`
+    : f.sh === 'pow' ? `${BOX('A')} ${(f.n ? `${dbox}<sup>${BOX('n', 'k3')}</sup>` : '') + (f.a ? ` e<sup>−${BOX('a', 'k2')}${dbox}</sup>` : '') || (f.d ? '' : 'u(t)')}${f.d ? ` u(t ${MI} ${BOX('d', 'kx')})` : ''}`
+    : `${BOX('A')}${f.a ? ` e<sup>−${BOX('a', 'k2')}${dbox}</sup>` : ''} ${f.sh} ${BOX('ω', 'k3')}${dbox}${f.d ? ` u(t ${MI} ${BOX('d', 'kx')})` : ''}`;
+  const text = `Find f(t) when F(s) = ${sH(f)}.<div class="form">Write the answer as &nbsp; f(t) = ${form}</div>`;
+  if (f.d) {
+    steps.push({ type: 'setup', title: 'Take out the delay factor', say: `The factor e<sup>−${f.d === 1 ? '' : N(f.d)}s</sup> is a delay of ${N(f.d)} s (time shift). Find the inverse of the rest, then replace every t by (t ${MI} ${N(f.d)}) and switch it on with u(t ${MI} ${N(f.d)}).`,
+      lines: [{ how: 'Time shift', eq: `e<sup>−ds</sup> F(s) &nbsp;⇔&nbsp; f(t ${MI} d) u(t ${MI} d), &nbsp; d = ${N(f.d)} s` }] });
+    answers.push(stage('d (the delay)', f.d, 0, [W_(-f.d, 'e<sup>−ds</sup> is a delay by d, a positive time.')], 's'));
+  }
+  const rest = { ...f, d: 0 }, lines = [{ how: 'The matching row of the table', eq: rowH(f) }];
+  let say;
+  if (f.sh === 'imp') say = 'A number on its own (no s) is an impulse: δ(t) ⇔ 1.';
+  else if (f.sh === 'pow') say = f.a ? `The bottom is a bracket (s + ${N(f.a)})${f.n ? ` to the power ${f.n + 1}` : ''}: that is the ${f.n ? 't<sup>n</sup>e<sup>−at</sup>' : 'e<sup>−at</sup>'} row, with a = ${N(f.a)}${f.n ? ` and n + 1 = ${f.n + 1}, so n = ${f.n}` : ''}.`
+    : f.n ? `The bottom is s<sup>${f.n + 1}</sup>: that is the t<sup>n</sup> row with n + 1 = ${f.n + 1}, so n = ${f.n}.` : 'The bottom is just s: that is the step u(t).';
+  else say = `The bottom is ${f.a ? `(s + ${N(f.a)})² + ${N(f.w * f.w)}` : `s² + ${N(f.w * f.w)}`}: ω² = ${N(f.w * f.w)}, so ω = √${N(f.w * f.w)} = ${N(f.w)} rad/s.${f.a ? ` The (s + ${N(f.a)}) means a frequency shift: a = ${N(f.a)}.` : ''} ${f.sh === 'cos' ? `There is ${f.a ? '(s + a)' : 's'} on top: a <b>cosine</b>.` : 'There is no s on top: a <b>sine</b>.'}`;
+  steps.push({ type: 'setup', title: 'Spot the pattern in the table', say, lines });
+  const pi = steps.length - 1;
+  if (f.a) answers.push(stage('a (in e<sup>−at</sup>)', f.a, pi, [W_(-f.a, `(s + ${N(f.a)}) belongs to e<sup>−${N(f.a)}t</sup>: a = +${N(f.a)}, and the minus sign is already in e<sup>−at</sup>.`)]));
+  if (f.sh === 'pow' && f.n) answers.push(stage('n (the power of t)', f.n, pi, [W_(f.n + 1, `n is one less than the power on the bottom: s<sup>${f.n + 1}</sup> or (s + a)<sup>${f.n + 1}</sup> gives t<sup>${f.n}</sup>.`)]));
+  if (f.w) answers.push(stage('ω', f.w, pi, [W_(f.w * f.w, `Take the square root: ω² = ${N(f.w * f.w)}, so ω = ${N(f.w)}.`), W_(f.w * f.w / 2, `Take the square root of ${N(f.w * f.w)}, do not halve it.`)], 'rad/s'));
+  // make the top match
+  let tl, wr = [];
+  if (f.sh === 'imp' || (f.sh === 'pow' && f.n === 0)) { tl = [{ how: 'The table has 1 on top, so A is simply the number on top', eq: `A = ${N(f.c)}` }]; }
+  else if (f.sh === 'pow') {
+    tl = [{ how: `The table needs n! = ${f.n}! = ${fact(f.n)} on top`, eq: `${sH(rest)} = ${N(f.c)} × ${FR(fact(f.n), sBot(rest))}` },
+      { how: 'So A = (number on top) ÷ n!', eq: `A = ${N(sp.top)} ÷ ${fact(f.n)} = ${N(f.c)}` }];
+    wr.push(W_(sp.top, `Divide by n! = ${fact(f.n)}: the table has n! on top, so only what is left over goes in front.`), W_(sp.top / f.n, `Divide by n! (= ${fact(f.n)}), not by n.`), W_(sp.top * fact(f.n), `Divide by n!, do not multiply.`));
+  } else if (f.sh === 'sin') {
+    tl = [{ how: `The sine row needs ω = ${N(f.w)} on top`, eq: `${N(sp.top)} = ${N(f.c)} × ${N(f.w)}` }, { how: 'So A = (number on top) ÷ ω', eq: `A = ${N(sp.top)} ÷ ${N(f.w)} = ${N(f.c)}` }];
+    wr.push(W_(sp.top, `Divide by ω = ${N(f.w)}: sine has ω on top, so only what is left over goes in front.`), W_(sp.top / (f.w * f.w), 'Divide by ω, not by ω².'), W_(sp.top * f.w, 'Divide by ω, do not multiply.'));
+  } else {
+    tl = [{ how: `${f.a ? '(s + a)' : 's'} on top already matches the cosine row: A is the number in front of it`, eq: `A = ${N(f.c)}` }];
+    wr.push(W_(f.c / f.w, `Do not divide by ω for a cosine: ${f.a ? '(s + a)' : 's'} on top already matches the table.`));
+  }
+  steps.push({ type: 'algebra', title: 'Make the top match the table', lines: tl });
+  answers.push(stage('A (the number in front)', f.c, steps.length - 1, wr));
+  steps.push({ type: 'answer', title: 'Answer', say: 'Colours as in the form: <span class="k1">A</span>' + (f.a ? ', <span class="k2">a</span>' : '') + (f.n || f.w ? ', <span class="k3">' + (f.w ? 'ω' : 'n') + '</span>' : '') + (f.d ? ', <span class="kx">delay</span>' : '') + '.',
+    lines: [{ how: f.d ? `The inverse of the rest, with t replaced by (t ${MI} ${N(f.d)}) and switched on at t = ${N(f.d)} s` : 'The inverse transform', eq: `f(t) = ${tH(f)}${f.d ? '' : ', &nbsp; t ≥ 0'}` }], plot: true });
+  steps.push({ type: 'check', title: 'Check: transform it back', lines: [{ how: 'Use the table forwards on the answer', eq: `ℒ{${tH(f)}} = ${sH(f)} &nbsp;✓ (the question)` }] });
+  return { text, steps, answers, plot: { terms: [f], T: plotSpan([f]), name: 'f' }, plotAt: steps.findIndex(s => s.plot), pz: { poles: polesOf(f), delay: f.d }, pzAt: -1,
+    pair: { t: tH(f), s: sH(f, true), known: 's', at: steps.findIndex(s => s.plot) } };
+};
+
+// sinusoid with a phase angle: K sin(ωt + θ) or K cos(ωt + θ)
+KINDS.phase = q => {
+  const { K, w, th, fn } = q, r = th * Math.PI / 180, sn = Math.sin(r), cs = Math.cos(r);
+  const Pc = fn === 'sin' ? K * sn : K * cs, Qc = fn === 'sin' ? K * w * cs : -K * w * sn;
+  const fH = `${N(K)} ${fn}(${w === 1 ? '' : N(w)}t + ${N(th)}°)`;
+  const terms = fn === 'sin' ? [TM.cos(K * sn, w), TM.sin(K * cs, w)] : [TM.cos(K * cs, w), TM.sin(-K * sn, w)];
+  const steps = [], answers = [];
+  const text = `Find the Laplace transform of f(t) = ${fH}, t ≥ 0.<div class="form">Write the answer as &nbsp; F(s) = ${FR(`${BOX('P')}s + ${BOX('Q', 'k2')}`, `s<sup>2</sup> + ${BOX('b', 'k3')}`)}</div>`;
+  const row = fn === 'sin' ? `sin(ωt + θ) &nbsp;⇔&nbsp; ${FR('s sin θ + ω cos θ', 's<sup>2</sup> + ω<sup>2</sup>')}` : `cos(ωt + θ) &nbsp;⇔&nbsp; ${FR('s cos θ − ω sin θ', 's<sup>2</sup> + ω<sup>2</sup>')}`;
+  steps.push({ type: 'setup', title: 'Spot the pattern in the table', say: `A ${fn === 'sin' ? 'sine' : 'cosine'} with a phase angle θ = ${N(th)}°. Table 15.2 has a row for it (it comes from expanding ${fn}(ωt + θ) and using linearity).`,
+    lines: [{ how: 'The table row', eq: row }, { how: 'Read the numbers', eq: `number in front ${N(K)}, &nbsp; ω = ${N(w)} rad/s, &nbsp; θ = ${N(th)}°` }] });
+  steps.push({ type: 'algebra', title: 'Work out sin θ and cos θ', say: 'Here θ is in <b>degrees</b>: set the calculator to DEG for this step.', lines: [{ how: 'Calculator', eq: `sin ${N(th)}° = ${sf(sn, 4)}, &nbsp; cos ${N(th)}° = ${sf(cs, 4)}` }] });
+  steps.push({ type: 'algebra', title: 'The number in front of s on top', lines: [{ how: fn === 'sin' ? 'P = (number in front) × sin θ' : 'P = (number in front) × cos θ', eq: `P = ${N(K)} × ${sf(fn === 'sin' ? sn : cs, 4)} = ${sf(Pc, 4)}` }] });
+  answers.push(stage('P (in front of s)', Pc, 2, [W_(fn === 'sin' ? K * cs : K * sn, `Swapped: for ${fn}(ωt + θ) the s on top goes with ${fn === 'sin' ? 'sin θ' : 'cos θ'}.`), W_(K * (fn === 'sin' ? Math.sin(th) : Math.cos(th)), 'Your calculator is in radians: θ is in degrees here.')]));
+  steps.push({ type: 'algebra', title: 'The constant on top', lines: [{ how: fn === 'sin' ? 'Q = (number in front) × ω × cos θ' : 'Q = −(number in front) × ω × sin θ (note the minus)', eq: `Q = ${fn === 'sin' ? '' : MI}${N(K)} × ${N(w)} × ${sf(fn === 'sin' ? cs : sn, 4)} = ${sf(Qc, 4)}` }] });
+  answers.push(stage('Q (the constant on top)', Qc, 3, [W_(Qc / w, 'Multiply by ω as well.'), W_(fn === 'sin' ? K * w * sn : K * w * cs, `Swapped: the constant goes with ${fn === 'sin' ? 'cos θ' : 'sin θ'}.`), W_(fn === 'cos' ? -Qc : NaN, 'The cosine row has a minus: s cos θ − ω sin θ.')]));
+  steps.push({ type: 'algebra', title: 'The bottom', lines: [{ how: 'b = ω²', eq: `b = ${N(w)}<sup>2</sup> = ${N(w * w)}` }] });
+  answers.push(stage('b = ω²', w * w, 4, [W_(w, 'Square ω.'), W_(2 * w, 'ω² is ω × ω, not 2ω.')]));
+  steps.push({ type: 'answer', title: 'Answer', lines: [{ how: 'The Laplace transform', eq: `F(s) = ${FR(`${sf(Pc, 4)}s ${Qc < 0 ? MI : '+'} ${sf(Math.abs(Qc), 4)}`, `s<sup>2</sup> + ${N(w * w)}`)}` }], pz: true });
+  steps.push({ type: 'check', title: 'Check with the initial value theorem', lines: [{ how: 'From the signal', eq: `f(0) = ${N(K)} ${fn} ${N(th)}° = ${sf(Pc, 4)}` }, { how: 'From F(s): s × F(s) as s → ∞ leaves the number in front of s on top', eq: `lim<sub>s→∞</sub> s F(s) = ${sf(Pc, 4)} &nbsp;✓` }] });
+  return { text, steps, answers, plot: { terms, T: plotSpan(terms), name: 'f' }, plotAt: -1, pz: { poles: polesOf(TM.sin(1, w)) }, pzAt: steps.findIndex(s => s.pz),
+    pair: { t: fH, s: FR(`${sf(Pc, 4)}s ${Qc < 0 ? MI : '+'} ${sf(Math.abs(Qc), 4)}`, `s<sup>2</sup> + ${N(w * w)}`), known: 't', at: steps.findIndex(s => s.pz) } };
+};
+
+// ================================================================ ADVANCED: rational functions
+// R = { facs: [{ p, m }], quad: { b, c } | null, N (ascending), split: { b, c } (a quadratic written unfactored) }
+function denom(facs, quad) { let D = [1]; for (const f of facs) for (let i = 0; i < (f.m || 1); i++) D = pmul(D, [f.p, 1]); if (quad) D = pmul(D, [quad.c, quad.b, 1]); return D; }
+// build the top from chosen coefficients: simple { p, A }, repeated { p, m: 2, C, D }, quad { b, c, B, S }, k0
+function buildN(facs, quad, k0) {
+  let Nn = k0 ? pscale(denom(facs, quad), k0) : [0];
+  facs.forEach((f, i) => {
+    const base = denom(facs.filter((_, j) => j !== i), quad);
+    if ((f.m || 1) === 1) Nn = padd(Nn, pscale(base, f.A));
+    else { Nn = padd(Nn, pscale(base, f.C)); Nn = padd(Nn, pscale(pmul(base, [f.p, 1]), f.D)); }
+  });
+  if (quad) { const al = quad.b / 2, be = Math.sqrt(quad.c - al * al); Nn = padd(Nn, pmul(denom(facs, null), [quad.B * al + quad.S * be, quad.B])); }
+  return Nn;
+}
+// facs flagged sp: true are shown multiplied out as one quadratic, which the student factorises first
+function ratSpec(q) {
+  const facs = (q.facs || []).map(f => ({ p: f.p, m: f.m || 1, fromSplit: !!f.sp })), quad = q.quad ? { b: q.quad.b, c: q.quad.c } : null;
+  const Nn = q.N ? ptrim(q.N) : buildN(q.facs || [], q.quad, q.k0);
+  const sp = facs.filter(f => f.fromSplit), sq = denom(sp, null);
+  if (sp.length && pdeg(sq) !== 2) throw Error('a split must be a quadratic');
+  return { facs, quad, N: Nn, split: sp.length ? { b: sq[1], c: sq[0] } : null };
+}
+// solve the partial fractions the way the steps do (residues, then equating coefficients)
+function pfSolve(R) {
+  const D = denom(R.facs, R.quad), dd = pdeg(D);
+  let Nr = R.N, k0 = 0;
+  if (pdeg(Nr) > dd) throw Error('top too big');
+  if (pdeg(Nr) === dd && Math.abs(Nr[dd]) > 1e-12) { k0 = Nr[dd]; Nr = padd(Nr, pscale(D, -k0)); }
+  const rest = (i, s) => R.facs.reduce((acc, f, j) => (j === i ? acc : acc * (s + f.p) ** f.m), 1) * (R.quad ? pev([R.quad.c, R.quad.b, 1], s) : 1);
+  const simple = [], reps = [];
+  R.facs.forEach((f, i) => {
+    if (f.m === 1) simple.push({ p: f.p, A: pev(Nr, -f.p) / rest(i, -f.p), i });
+    else if (f.m === 2) reps.push({ p: f.p, C: pev(Nr, -f.p) / rest(i, -f.p), i });
+    else throw Error('pole order > 2');
+  });
+  const sumA = simple.reduce((a, x) => a + x.A, 0), top = Nr[dd - 1] || 0;
+  if (reps.length > 1 || (reps.length && R.quad)) throw Error('unsupported denominator');
+  if (reps.length) reps[0].D = top - sumA;
+  let quad = null;
+  if (R.quad) {
+    const { b, c } = R.quad, al = b / 2, be2 = c - al * al;
+    if (be2 <= 0) throw Error('quadratic is not complex');
+    if (simple.length > 1) throw Error('unsupported denominator');
+    let B, C;
+    if (!simple.length) { B = Nr[1] || 0; C = Nr[0] || 0; }
+    else { const A = simple[0].A, q0 = simple[0].p; B = top - A; C = Math.abs(q0) > 1e-12 ? ((Nr[0] || 0) - A * c) / q0 : (Nr[1] || 0) - A * b; }
+    const be = Math.sqrt(be2);
+    quad = { b, c, B, C, al, be, S: (C - B * al) / be };
+  }
+  const terms = [];
+  if (k0) terms.push(TM.imp(k0));
+  simple.forEach(x => terms.push(TM.pow(x.A, 0, x.p)));
+  reps.forEach(x => { terms.push(TM.pow(x.D, 0, x.p)); terms.push(TM.pow(x.C, 1, x.p)); });
+  if (quad) { terms.push(TM.cos(quad.B, quad.be, quad.al)); terms.push(TM.sin(quad.S, quad.be, quad.al)); }
+  // verify: the pieces put back together give the top
+  const chk = buildN(R.facs.map((f, i) => (f.m === 1 ? { p: f.p, A: simple.find(x => x.i === i).A } : { p: f.p, m: 2, C: reps[0].C, D: reps[0].D })), quad ? { b: quad.b, c: quad.c, B: quad.B, S: quad.S } : null, k0);
+  if (!peq(chk, R.N)) throw Error('partial fractions do not add back up');
+  return { D, Nr, k0, simple, rep: reps[0] || null, quad, terms: terms.filter(t => Math.abs(t.c) > 1e-12) };
+}
+// the bottom as HTML: s first, then (s + p) factors in order, the quadratic last; a split quadratic shown unfactored
+function denH(R, factored = false) {
+  const parts = [];
+  const sp = R.split && !factored ? R.split : null;
+  const facs = R.facs.slice().sort((x, y) => x.p - y.p).filter(f => !(sp && f.fromSplit));
+  facs.forEach(f => parts.push(linP(f.p, f.m)));
+  if (sp) parts.push(`(${quadH(sp)})`);
+  if (R.quad) parts.push(`(${quadH(R.quad)})`);
+  if (parts.length === 1) return parts[0].replace(/^\((.*)\)$/, '$1');
+  return parts.join('');
+}
+const ratH = (R, factored) => FR(polyH(R.N), denH(R, factored));
+function ivtVal(Nn, D) { const dn = pdeg(Nn), dd = pdeg(D); if (Math.abs(Nn[dn]) < 1e-12) return 0; if (dn + 1 < dd) return 0; if (dn + 1 === dd) return Nn[dn] / D[dd]; return NaN; }
+const LET = 'ABCDEFGH';
+const termWord = f => (f.sh === 'imp' ? 'a number on its own ⇔ impulse' : f.sh === 'pow' ? (f.n ? (f.a ? '1/(s + a)² ⇔ t e<sup>−at</sup>' : '1/s² ⇔ t') : (f.a ? '1/(s + a) ⇔ e<sup>−at</sup>' : '1/s ⇔ u(t), a step')) : f.sh === 'cos' ? '(s + α)/((s + α)² + β²) ⇔ e<sup>−αt</sup> cos βt' : 'β/((s + α)² + β²) ⇔ e<sup>−αt</sup> sin βt');
+
+// write the partial-fraction steps for F(s) = R; X names the function ({ F: 'Y', f: 'y' })
+function pfWrite(R, X, ctx) {
+  const so = pfSolve(R), S = ctx.steps, A = ctx.answers, Fs = `${X.F}(s)`;
+  const D = so.D, dd = pdeg(D);
+  // 1. improper: divide first
+  if (so.k0) {
+    S.push({ type: 'algebra', title: 'Divide first: the top is not smaller than the bottom', say: `Top and bottom both have s<sup>${dd}</sup>: the fraction is <b>improper</b>. Take the bottom out ${N(so.k0)} whole time${so.k0 === 1 ? '' : 's'} (long division, A&S 15.4); what is left over is proper.`,
+      lines: [{ how: `k<sub>0</sub> = (number in front of s<sup>${dd}</sup> on top) ÷ (number in front of s<sup>${dd}</sup> on the bottom)`, eq: `k<sub>0</sub> = ${N(R.N[dd])} ÷ 1 = ${N(so.k0)}` },
+        { how: 'Remainder = top − k<sub>0</sub> × bottom', eq: `${polyH(R.N)} ${MI} ${N(so.k0)}(${polyH(D)}) = ${polyH(so.Nr)}` },
+        { how: 'So', eq: `${Fs} = ${N(so.k0)} + ${FR(polyH(so.Nr), denH(R))}` }], note: 'A number on its own in F(s) is an impulse: k<sub>0</sub> ⇔ k<sub>0</sub> δ(t).' });
+    A.push(stage('k<sub>0</sub> (the whole number)', so.k0, S.length - 1, [W_(R.N[dd] / (R.N[dd - 1] || NaN), 'k<sub>0</sub> is the ratio of the two highest-power numbers (s<sup>' + dd + '</sup> on top and bottom).')]));
+  }
+  // 2. factorise an unfactored quadratic
+  if (R.split) {
+    const { b, c } = R.split, roots = R.facs.filter(f => f.fromSplit);
+    const rep = roots.length === 1;
+    const prs = rep ? [roots[0].p, roots[0].p] : [roots[0].p, roots[1].p];
+    S.push({ type: 'setup', title: 'Factorise the bottom', say: `Find two numbers that <b>multiply</b> to ${N(c)} and <b>add</b> to ${N(b)}: they are ${N(prs[0])} and ${N(prs[1])}.`,
+      lines: [{ how: 'Check', eq: `${P(prs[0])} × ${P(prs[1])} = ${N(c)}, &nbsp; ${P(prs[0])} + ${P(prs[1])} = ${N(b)}` },
+        { how: 'So', eq: `${quadH(R.split)} = ${rep ? linP(prs[0], 2) : linP(prs[0]) + linP(prs[1])}` },
+        { how: 'The poles are where the bottom is zero', eq: `${denH(R, true)} = 0 &nbsp; at &nbsp; ${[...new Set(R.facs.map(f => -f.p))].sort((x, y) => y - x).map(v => 's = ' + N(v)).join(', ')}` }],
+      details: { title: 'Or use the quadratic formula', html: `s = [−b ± √(b² − 4c)] / 2 = [${MI}${N(b)} ± √(${N(b * b)} ${MI} ${N(4 * c)})] / 2 = [${MI}${N(b)} ± ${N(Math.sqrt(Math.max(0, b * b - 4 * c)))}] / 2${rep ? '' : ` → ${N(-prs[0])} and ${N(-prs[1])}`}` } });
+    const ps = [...new Set(roots.map(f => -f.p))].sort((x, y) => Math.abs(x) - Math.abs(y));
+    ps.forEach((v, i) => A.push(stage(rep ? 'the (double) pole' : i === 0 ? 'the pole nearer zero' : 'the other pole', v, S.length - 1, [W_(-v, `A pole is where the bottom is zero: s + ${N(-v)} = 0 gives s = ${N(v)}.`)])));
+  }
+  // 3. the split
+  let li = 0; const lab = {}, pieces = [];
+  so.simple.forEach(x => { lab['s' + x.i] = LET[li++]; pieces.push(FR(lab['s' + x.i], linH(x.p))); });
+  if (so.rep) { lab.C = LET[li++]; lab.D = LET[li++]; pieces.push(FR(lab.C, linP(so.rep.p, 2)), FR(lab.D, linH(so.rep.p))); }
+  if (so.quad) { lab.B = LET[li++]; lab.Cq = LET[li++]; pieces.push(FR(`${lab.B}s + ${lab.Cq}`, quadH(so.quad))); }
+  const Fr = so.k0 ? FR(polyH(so.Nr), denH(R, true)) : FR(polyH(R.N), denH(R, true));
+  const polesLab = [];
+  // lab: shown while working (letters only); labF: shown once the answer is reached
+  so.simple.forEach(x => polesLab.push({ re: -x.p, im: 0, m: 1, lab: lab['s' + x.i], labF: `${lab['s' + x.i]} = ${Nt(x.A)}` }));
+  if (so.rep) polesLab.push({ re: -so.rep.p, im: 0, m: 2, lab: `${lab.C}, ${lab.D}`, labF: `${lab.C} = ${Nt(so.rep.C)}, ${lab.D} = ${Nt(so.rep.D)}` });
+  if (so.quad) { polesLab.push({ re: -so.quad.al, im: so.quad.be, m: 1, labF: `−${Nt(so.quad.al)} + j${Nt(so.quad.be)}`, cls: 'cx' }, { re: -so.quad.al, im: -so.quad.be, m: 1, cls: 'cx' }); }
+  S.push({ type: 'setup', title: 'Write the split', say: 'One small fraction for each factor of the bottom.' + (so.rep ? ' The repeated factor (s + p)² needs two: one over (s + p)² and one over (s + p).' : '') + (so.quad ? ' The quadratic does not factorise into real brackets (its poles are complex), so it keeps (Bs + C) on top.' : ''),
+    lines: [{ how: 'The unknown numbers are the letters', eq: `${Fr} = ${pieces.join(' + ')}` }], pz: true });
+  // 4. residues of simple poles
+  const Nr = so.Nr;
+  const restH = (i, v) => {
+    const fs = R.facs.map((f, j) => [f, j]).filter(([, j]) => j !== i);
+    const h = fs.map(([f]) => (Math.abs(f.p) < 1e-12 ? `(${N(v)})` : `(${N(v)} ${f.p > 0 ? '+' : MI} ${N(Math.abs(f.p))})`) + (f.m > 1 ? `<sup>${f.m}</sup>` : '')).join('') + (R.quad ? `(${subH([R.quad.c, R.quad.b, 1], v)})` : '');
+    const symb = fs.map(([f]) => linP(f.p, f.m)).join('') + (R.quad ? `(${quadH(R.quad)})` : '');
+    return { h: h || '1', symb: symb || '1', val: fs.reduce((a, [f]) => a * (v + f.p) ** f.m, 1) * (R.quad ? pev([R.quad.c, R.quad.b, 1], v) : 1) };
+  };
+  so.simple.forEach(x => {
+    const v = -x.p, r = restH(x.i, v), L = lab['s' + x.i], top = pev(Nr, v);
+    S.push({ type: 'algebra', title: `Find ${L}: cover up ${linP(x.p)}`, say: `Residue (cover-up) method: hide the factor ${linP(x.p)} on the bottom, then put s = ${N(v)} (the value that makes it zero) into everything that is left.`,
+      lines: [{ how: 'What is left after covering', eq: `${L} = ${FR(polyH(Nr), r.symb)} &nbsp; at s = ${N(v)}` },
+        { how: `Put s = ${N(v)} into the top and into each bracket`, eq: `${L} = ${FR(subH(Nr, v), r.h)} = ${FR(N(top), N(r.val))} = ${N(x.A)}` }] });
+    const rp = restH(x.i, -v);
+    A.push(stage(L, x.A, S.length - 1, [W_(pev(Nr, -v) / rp.val, `Put in s = ${N(v)} (where ${linH(x.p)} = 0), not s = ${N(-v)}.`), W_(top, `Divide by what is left on the bottom (${N(r.val)}), not just the top.`), W_(r.val ? top * r.val : NaN, 'The top goes on top: divide by the bottom’s value, do not multiply.')]));
+  });
+  // 5. repeated pole
+  if (so.rep) {
+    const x = so.rep, v = -x.p, i = R.facs.findIndex(f => f.m === 2), r = restH(i, v), top = pev(Nr, v);
+    S.push({ type: 'algebra', title: `Find ${lab.C}: cover up the whole ${linP(x.p, 2)}`, say: `Cover the whole squared bracket and put s = ${N(v)} into what is left. This gives the number over ${linP(x.p, 2)} only.`,
+      lines: [{ how: 'What is left after covering', eq: `${lab.C} = ${FR(polyH(Nr), r.symb)} &nbsp; at s = ${N(v)}` }, { how: `Put s = ${N(v)}`, eq: `${lab.C} = ${FR(subH(Nr, v), r.h)} = ${FR(N(top), N(r.val))} = ${N(x.C)}` }] });
+    A.push(stage(lab.C, x.C, S.length - 1, [W_(pev(Nr, -v) / restH(i, -v).val, `Put in s = ${N(v)}, not ${N(-v)}.`), W_(top, `Divide by what is left on the bottom (${N(r.val)}).`)]));
+    const others = so.simple.map(y => lab['s' + y.i]);
+    S.push({ type: 'algebra', title: `Find ${lab.D}: compare the s<sup>${dd - 1}</sup> numbers`, say: `Cover-up cannot reach ${lab.D}. Multiply both sides by the whole bottom: then the highest power on the right, s<sup>${dd - 1}</sup>, comes only from the fractions with a single bracket (${others.concat(lab.D).join(', ')}), each giving its own letter.`,
+      lines: [{ how: `Number in front of s<sup>${dd - 1}</sup>: left side = right side`, eq: `${N(Nr[dd - 1] || 0)} = ${others.concat(lab.D).join(' + ')}` },
+        { how: 'Put in the letters you already know', eq: `${lab.D} = ${N(Nr[dd - 1] || 0)}${so.simple.map(y => ` ${y.A < 0 ? '+' : MI} ${N(Math.abs(y.A))}`).join('')} = ${N(x.D)}` }],
+      note: `If the top has no s<sup>${dd - 1}</sup> term, its number is 0. The textbook alternative is ${lab.D} = d/ds[(s + p)² F(s)] at s = −p (A&S Eq. 15.56).` });
+    A.push(stage(lab.D, x.D, S.length - 1, [W_(Nr[dd - 1] || 0, `Subtract the letters you already know (${others.join(', ')}).`), W_(x.C, `That is ${lab.C}. ${lab.D} sits over the single bracket ${linP(x.p)}.`)]));
+  }
+  // 6. complex pair
+  if (so.quad) {
+    const x = so.quad, Q = { b: x.b, c: x.c };
+    if (so.simple.length) {
+      const y = so.simple[0], La = lab['s' + y.i];
+      S.push({ type: 'algebra', title: `Find ${lab.B}: compare the s<sup>${dd - 1}</sup> numbers`, say: `Multiply both sides by the bottom: ${polyH(Nr)} = ${La}(${quadH(Q)}) + (${lab.B}s + ${lab.Cq})${linP(y.p)}. The s<sup>${dd - 1}</sup> terms come from ${La} × s² and ${lab.B}s × s.`,
+        lines: [{ how: `Number in front of s<sup>${dd - 1}</sup>`, eq: `${N(Nr[dd - 1] || 0)} = ${La} + ${lab.B} &nbsp; → &nbsp; ${lab.B} = ${N(Nr[dd - 1] || 0)} ${y.A < 0 ? '+' : MI} ${N(Math.abs(y.A))} = ${N(x.B)}` }] });
+      A.push(stage(lab.B, x.B, S.length - 1, [W_(Nr[dd - 1] || 0, `Subtract ${La} = ${N(y.A)}.`), W_(-(x.B), 'Check the sign when you move ' + La + ' across.')]));
+      const q0 = y.p, viaConst = Math.abs(q0) > 1e-12;
+      S.push({ type: 'algebra', title: `Find ${lab.Cq}: compare the ${viaConst ? 'constant' : 's'} terms`, say: viaConst ? `The terms with no s: ${La} × ${N(x.c)} on one side, ${lab.Cq} × ${N(q0)} from (${lab.B}s + ${lab.Cq})${linP(q0)}.` : `With s on its own as the other factor, (${lab.B}s + ${lab.Cq})s has no constant term, so compare the s terms: ${La} × ${N(x.b)}s and ${lab.Cq}s.`,
+        lines: viaConst ? [{ how: 'Constant terms: left side = right side', eq: `${N(Nr[0] || 0)} = ${N(x.c)}${La} + ${N(q0)}${lab.Cq} = ${N(x.c)} × ${P(y.A)} + ${N(q0)}${lab.Cq}` }, { how: `Solve for ${lab.Cq}`, eq: `${lab.Cq} = (${N(Nr[0] || 0)} ${MI} ${P(x.c * y.A)}) ÷ ${N(q0)} = ${N(x.C)}` }]
+          : [{ how: 's terms: left side = right side', eq: `${N(Nr[1] || 0)} = ${N(x.b)}${La} + ${lab.Cq} = ${N(x.b)} × ${P(y.A)} + ${lab.Cq}` }, { how: `Solve for ${lab.Cq}`, eq: `${lab.Cq} = ${N(Nr[1] || 0)} ${MI} ${P(x.b * y.A)} = ${N(x.C)}` }] });
+      A.push(stage(lab.Cq, x.C, S.length - 1, [W_(viaConst ? (Nr[0] || 0) / q0 : Nr[1] || 0, `Do not forget the ${La} term: ${La} × ${N(viaConst ? x.c : x.b)} is part of the right side.`)]));
+    } else {
+      S.push({ type: 'setup', title: 'Read B and C from the top', lines: [{ how: 'There is only the quadratic, so the top already is Bs + C', eq: `${lab.B} = ${N(x.B)}, &nbsp; ${lab.Cq} = ${N(x.C)}` }] });
+    }
+    S.push({ type: 'algebra', title: 'Complete the square', say: `Turn ${quadH(Q)} into (s + α)² + β²: α is half the number in front of s, and β² is what is left of the constant.`,
+      lines: [{ how: 'α = half of the s-number', eq: `α = ${N(x.b)} ÷ 2 = ${N(x.al)}` }, { how: 'β² = constant − α²', eq: `β<sup>2</sup> = ${N(x.c)} ${MI} ${P(x.al)}<sup>2</sup> = ${N(x.c)} ${MI} ${N(x.al * x.al)} = ${N(x.be * x.be)}, &nbsp; β = ${N(x.be)}` },
+        { how: 'So', eq: `${quadH(Q)} = ${linP(x.al)}<sup>2</sup> + ${N(x.be)}<sup>2</sup> &nbsp; (poles at s = ${MI}${N(x.al)} ± j${N(x.be)})` }] });
+    const ci = S.length - 1;
+    polesLab.filter(p => p.im).forEach(p => { p.after = ci; });      // the complex pair is drawn once the square is completed
+    A.push(stage('α', x.al, ci, [W_(x.b, 'α is half of the s-number: (s + α)² = s² + 2αs + α².'), W_(-x.al, `(s + α) with α = +${N(x.al)}; the pole is at −α.`)]));
+    A.push(stage('β', x.be, ci, [W_(x.be * x.be, `Take the square root: β² = ${N(x.be * x.be)}, so β = ${N(x.be)}.`), W_(Math.sqrt(x.c), 'Subtract α² first: β² = c − α².')]));
+    S.push({ type: 'algebra', title: 'Split the top into a cosine part and a sine part', say: `Cosine needs (s + α) on top, sine needs β on top. Rewrite ${lab.B}s + ${lab.Cq} = ${lab.B}(s + α) + (${lab.Cq} − ${lab.B}α), then share the left-over number out as a multiple of β.`,
+      lines: [{ how: 'Rewrite the top', eq: `${polyH([x.C, x.B])} = ${N(x.B)}${linP(x.al)} + (${N(x.C)} ${MI} ${P(x.B)} × ${N(x.al)}) = ${N(x.B)}${linP(x.al)} ${x.C - x.B * x.al < 0 ? MI : '+'} ${N(Math.abs(x.C - x.B * x.al))}` },
+        { how: 'Make the left-over number a multiple of β', eq: `sine number = (${N(x.C)} ${MI} ${P(x.B * x.al)}) ÷ β = ${N(x.C - x.B * x.al)} ÷ ${N(x.be)} = ${N(x.S)}` }] });
+    A.push(stage('the sine number (in front of e<sup>−αt</sup> sin βt)', x.S, S.length - 1, [W_(x.C / x.be, `First take ${lab.B}α away: the top is ${lab.B}(s + α) + (${lab.Cq} − ${lab.B}α).`), W_(x.C - x.B * x.al, `Divide by β = ${N(x.be)}: the sine row has β on top.`), W_((x.C + x.B * x.al) / x.be, `It is ${lab.Cq} − ${lab.B}α, a minus.`)]));
+  }
+  // 7. back to t
+  const tl = so.terms.map(f => ({ how: termWord(f), eq: (f.sh === 'cos' ? FR(`${N(f.c)}${linP(f.a)}`, `${linP(f.a)}<sup>2</sup> + ${N(f.w * f.w)}`) : f.sh === 'sin' ? `${N(f.c)} × ${FR(N(f.w), `${linP(f.a)}<sup>2</sup> + ${N(f.w * f.w)}`)}` : f.sh === 'imp' ? N(f.c) : FR(N(f.c), linP(f.a, f.n + 1))) + ` &nbsp;⇔&nbsp; ${tH(f)}` }));
+  tl.push({ how: 'Add them up', eq: `${X.f}(t) = ${tSum(so.terms)}, &nbsp; t ≥ 0` });
+  S.push({ type: 'answer', title: 'Back to the time domain', say: 'Each small fraction is one row of the table.', lines: tl, plot: true });
+  // 8. check
+  const fromT = so.terms.reduce((a, f) => a + f0p(f), 0), lim = ivtVal(Nr, D);
+  if (Number.isFinite(lim) && !ctx.noCheck) S.push({ type: 'check', title: `Check at t = 0<sup>+</sup>`, lines: [{ how: `From the answer (every e<sup>0</sup> = 1, cos 0 = 1, sin 0 = 0, t = 0)`, eq: `${X.f}(0<sup>+</sup>) = ${N(fromT)}` }, { how: 'Initial value theorem on the fraction', eq: `lim<sub>s→∞</sub> s ${so.k0 ? 'F<sub>r</sub>(s)' : Fs} = ${N(lim)} &nbsp;${Math.abs(lim - fromT) < 1e-9 ? '✓' : '✗'}` }] });
+  ctx.rat = { N: R.N, D: denom(R.facs, R.quad) };
+  ctx.pz = { poles: polesLab }; ctx.pzAt = S.findIndex(s => s.pz); ctx.terms = so.terms; ctx.plotAt = S.findIndex(s => s.plot); ctx.so = so;
+  return so;
+}
+const shapeH = (so, X) => {
+  let li = 0; const out = [];
+  if (so.k0) out.push(`${BOX('k<sub>0</sub>')} δ(t)`);
+  so.simple.forEach(x => out.push(`${BOX(LET[li++])}${Math.abs(x.p) < 1e-12 ? '' : ` e<sup>${x.p > 0 ? MI : ''}${Math.abs(x.p) === 1 ? '' : N(Math.abs(x.p))}t</sup>`}`));
+  if (so.rep) { const c = LET[li++], d = LET[li++], e = Math.abs(so.rep.p) < 1e-12 ? '' : ` e<sup>${MI}${so.rep.p === 1 ? '' : N(so.rep.p)}t</sup>`; out.push(`${BOX(c)} t${e}`, `${BOX(d)}${e || ''}`); }
+  if (so.quad) out.push(`e<sup>−${BOX('α', 'k2')}t</sup>(… cos ${BOX('β', 'k3')}t + … sin ${BOX('β', 'k3')}t)`);
+  return `${X.f}(t) = ${out.join(' + ')}`;
+};
+function finish(ctx, text, extra = {}) {
+  return { text, rat: ctx.rat, steps: ctx.steps, answers: ctx.answers, plot: ctx.terms ? { terms: ctx.terms, T: plotSpan(ctx.terms), name: extra.name || 'f', marks: extra.marks } : null, plotAt: ctx.plotAt ?? -1, pz: ctx.pz, pzAt: ctx.pzAt ?? -1, pair: extra.pair };
+}
+
+// partial fractions (and the inverse) of a rational F(s)
+KINDS.pf = q => {
+  const R = ratSpec(q);
+  const ctx = { steps: [], answers: [] }, X = { F: 'F', f: 'f' };
+  const so = pfWrite(R, X, ctx);
+  const text = `Find f(t) when F(s) = ${ratH(R)}.<div class="form">The answer has the shape &nbsp; ${shapeH(so, X)}</div>`;
+  return finish(ctx, text, { pair: { s: ratH(R), t: tSum(so.terms), known: 's', at: ctx.plotAt } });
+};
+// a quadratic s² + bs + c with real roots (from a differential equation): its roots become factors flagged fromSplit
+function markSplit(R, q) {
+  const { b, c } = q.split, disc = b * b - 4 * c, r1 = (b - Math.sqrt(disc)) / 2, r2 = (b + Math.sqrt(disc)) / 2;    // s + r1, s + r2
+  if (disc < -1e-12) throw Error('split quadratic has complex roots');
+  const add = p => { const f = R.facs.find(g => Math.abs(g.p - p) < 1e-9 && g.fromSplit); if (f) f.m++; else R.facs.push({ p, m: 1, fromSplit: true }); };
+  if (Math.abs(disc) < 1e-12) { add(r1); add(r1); } else { add(r1); add(r2); }
+  R.split = { b, c };
+}
+
+// factorise a quadratic with real roots (warm-up)
+KINDS.roots = q => {
+  const { b, c } = q, disc = b * b - 4 * c, p1 = (b - Math.sqrt(disc)) / 2, p2 = (b + Math.sqrt(disc)) / 2;
+  const steps = [], answers = [];
+  const text = `Factorise ${quadH(q)} and give its roots (the values of s that make it zero). These are the <b>poles</b> of any F(s) with this on the bottom.`;
+  if (Math.abs(c) < 1e-12) steps.push({ type: 'setup', title: 'Take out the common s', say: 'There is no constant term, so every term has an s in it.', lines: [{ how: 'Factor s out', eq: `${quadH(q)} = s(${linH(b)})` }] });
+  else steps.push({ type: 'setup', title: 'Find two numbers', say: `Look for two numbers that <b>multiply</b> to ${N(c)} and <b>add</b> to ${N(b)}.`,
+    lines: [{ how: 'Try the factor pairs of ' + N(c), eq: pairsH(c, b) }, { how: 'Check', eq: `${P(p1)} × ${P(p2)} = ${N(c)}, &nbsp; ${P(p1)} + ${P(p2)} = ${N(b)}` }, { how: 'So', eq: `${quadH(q)} = ${linP(p1)}${linP(p2)}` }],
+    details: { title: 'Or use the quadratic formula', html: `s = [−b ± √(b² − 4c)] / 2 = [${MI}${N(b)} ± √(${N(b * b)} ${MI} ${N(4 * c)})] / 2 = [${MI}${N(b)} ± ${N(Math.sqrt(disc))}] / 2` } });
+  steps.push({ type: 'answer', title: 'The roots (poles)', say: 'Each bracket is zero when s is minus its number.', lines: [{ how: 'Set each bracket to zero', eq: `${linH(p1)} = 0 → s = ${N(-p1)}; &nbsp; ${linH(p2)} = 0 → s = ${N(-p2)}` }], pz: true });
+  const near = Math.abs(p1) <= Math.abs(p2) ? -p1 : -p2, far = near === -p1 ? -p2 : -p1;
+  answers.push(stage('the root nearer zero', near, 1, [W_(-near, `The bracket (s + ${N(-near)}) is zero at s = ${N(near)}: change the sign.`), W_(b, 'That is the sum of the roots with the sign changed (b), not a root.')]));
+  answers.push(stage('the other root', far, 1, [W_(-far, `The bracket (s + ${N(-far)}) is zero at s = ${N(far)}: change the sign.`)]));
+  return { text, steps, answers, pz: { poles: [{ re: -p1, im: 0, m: 1 }, { re: -p2, im: 0, m: 1 }] }, pzAt: 1, plot: null, plotAt: -1 };
+};
+function pairsH(c, b) {
+  const out = [];
+  for (let i = 1; i * i <= Math.abs(c); i++) if (isIntv(c / i)) { const j = c / i; out.push(`${i} × ${N(j)} (sum ${N(i + j)})`); if (c > 0) out.push(`${MI}${i} × ${MI}${N(j)} (sum ${N(-i - j)})`); else out.push(`${MI}${i} × ${N(-j)} (sum ${N(-i - j)})`); }
+  return out.filter((x, i) => i < 6).join(', &nbsp; ');
+}
+const isIntv = x => Math.abs(x - Math.round(x)) < 1e-9;
+
+// complete the square (warm-up)
+KINDS.cts = q => {
+  const { b, c } = q, al = b / 2, be2 = c - al * al, be = Math.sqrt(be2);
+  const steps = [], answers = [];
+  const text = `Complete the square: write ${quadH(q)} as (s + ${BOX('α', 'k2')})² + ${BOX('β', 'k3')}², and give the pole with the positive j part.`;
+  steps.push({ type: 'setup', title: 'Why it will not factorise', say: `b² − 4c = ${N(b * b)} ${MI} ${N(4 * c)} = ${N(b * b - 4 * c)} is negative, so there are no real roots: the poles are a complex pair.`, lines: [] });
+  steps.push({ type: 'algebra', title: 'Halve the s-number', lines: [{ how: '(s + α)² = s² + 2αs + α², so 2α must equal the s-number', eq: `α = ${N(b)} ÷ 2 = ${N(al)}` }] });
+  answers.push(stage('α', al, 1, [W_(b, 'Halve it: 2α = ' + N(b) + '.'), W_(-al, `(s + α) has α = +${N(al)} here.`)]));
+  steps.push({ type: 'algebra', title: 'What is left of the constant', lines: [{ how: '(s + α)² already holds α²; the rest is β²', eq: `β<sup>2</sup> = ${N(c)} ${MI} ${P(al)}<sup>2</sup> = ${N(c)} ${MI} ${N(al * al)} = ${N(be2)}` }] });
+  answers.push(stage('β²', be2, 2, [W_(c, `Subtract α² = ${N(al * al)} from the constant.`), W_(c - al, 'Subtract α squared, not α.'), W_(c - b * b, 'Subtract α² = (b/2)², not b².')]));
+  steps.push({ type: 'algebra', title: 'Take the square root', lines: [{ how: 'β is the positive square root', eq: `β = √${N(be2)} = ${N(be)}` }, { how: 'So', eq: `${quadH(q)} = ${linP(al)}<sup>2</sup> + ${N(be)}<sup>2</sup>` }] });
+  answers.push(stage('β', be, 3, [W_(be2, 'Take the square root of β².')]));
+  steps.push({ type: 'answer', title: 'The complex poles', say: '(s + α)² + β² = 0 when s + α = ± jβ.', lines: [{ how: 'Poles', eq: `s = ${MI}α ± jβ = ${MI}${N(al)} ± j${N(be)}` }], pz: true });
+  answers.push(stage('the pole with +j', [-al, be], 4, [W_([-al, -be], 'That is its partner (the conjugate). This box asks for the one with +j.'), W_([al, be], 'The real part is −α: the pole is on the left of the jω axis.')], '', { kind: 'cx' }));
+  steps.push({ type: 'check', title: 'Check by expanding', lines: [{ how: 'Multiply out', eq: `${linP(al)}<sup>2</sup> + ${N(be2)} = s<sup>2</sup> + ${N(2 * al)}s + ${N(al * al)} + ${N(be2)} = ${quadH(q)} &nbsp;✓` }] });
+  return { text, steps, answers, pz: { poles: [{ re: -al, im: be, m: 1, cls: 'cx' }, { re: -al, im: -be, m: 1, cls: 'cx' }] }, pzAt: 4, plot: null, plotAt: -1 };
+};
+
+// one residue by cover-up (warm-up)
+KINDS.res1 = q => {
+  const R = ratSpec(q), so = pfSolve(R), x = so.simple[q.ask || 0], L = 'ABC'[q.ask || 0];
+  const steps = [], answers = [], v = -x.p, others = R.facs.filter((_, j) => j !== x.i);
+  const symb = others.map(f => linP(f.p, f.m)).join('') || '1', valH = others.map(f => (Math.abs(f.p) < 1e-12 ? `(${N(v)})` : `(${N(v)} ${f.p > 0 ? '+' : MI} ${N(Math.abs(f.p))})`)).join('') || '1';
+  const rv = others.reduce((a, f) => a * (v + f.p) ** f.m, 1), top = pev(R.N, v);
+  const text = `${FR(polyH(R.N), denH(R))} = ${so.simple.map((y, k) => FR('ABC'[k], linH(y.p))).join(' + ')}. Find ${L} only.`;
+  steps.push({ type: 'setup', title: `Cover up ${linP(x.p)}`, say: `Put your finger over ${linP(x.p)} on the bottom. It is zero at s = ${N(v)}, so that is the value to use.`, lines: [{ how: 'What is left', eq: `${FR(polyH(R.N), symb)}` }], pz: true });
+  steps.push({ type: 'algebra', title: `Put s = ${N(v)} into what is left`, lines: [{ how: 'Top and every bracket', eq: `${L} = ${FR(subH(R.N, v), valH)} = ${FR(N(top), N(rv))} = ${N(x.A)}` }] });
+  const rp = others.reduce((a, f) => a * (-v + f.p) ** f.m, 1);
+  answers.push(stage(L, x.A, 1, [W_(pev(R.N, -v) / rp, `Put in s = ${N(v)} (the value that makes ${linH(x.p)} zero), not ${N(-v)}.`), W_(top, `Divide by the bottom’s value (${N(rv)}).`)]));
+  steps.push({ type: 'check', title: 'Check with a test value', say: 'Pick a value of s that is not a pole, say s = 1, and compare both sides (A&S 15.4, Example 15.11 uses this idea).',
+    lines: [{ how: 'Left side at s = 1', eq: sf(pev(R.N, 1) / pev(denom(R.facs, null), 1), 4) }, { how: 'Right side at s = 1 with all the letters', eq: `${so.simple.map(y => `${FR(N(y.A), N(1 + y.p))}`).join(' + ')} = ${sf(so.simple.reduce((a, y) => a + y.A / (1 + y.p), 0), 4)} &nbsp;✓` }] });
+  return { text, rat: { N: R.N, D: denom(R.facs, null) }, steps, answers, pz: { poles: so.simple.map((y, k) => ({ re: -y.p, im: 0, m: 1, lab: 'ABC'[k] })) }, pzAt: 0, plot: null, plotAt: -1 };
+};
+
+// initial and final value theorems
+KINDS.ivfv = q => {
+  const R = ratSpec(q), D = denom(R.facs, R.quad), Nn = R.N, dn = pdeg(Nn), dd = pdeg(D);
+  const steps = [], answers = [];
+  const poles = []; R.facs.forEach(f => poles.push({ re: -f.p, im: 0, m: f.m })); if (R.quad) { const al = R.quad.b / 2, be2 = R.quad.c - al * al; if (be2 > 0) poles.push({ re: -al, im: Math.sqrt(be2), m: 1, cls: 'cx' }, { re: -al, im: -Math.sqrt(be2), m: 1, cls: 'cx' }); else { const r = Math.sqrt(-be2); poles.push({ re: -al + r, im: 0, m: 1 }, { re: -al - r, im: 0, m: 1 }); } }
+  const zero = R.facs.find(f => Math.abs(f.p) < 1e-12), bad = poles.filter(p => !(p.re < -1e-12 || (Math.abs(p.re) < 1e-12 && Math.abs(p.im) < 1e-12 && zero && zero.m === 1)));
+  const fvOK = !bad.length;
+  const text = `F(s) = ${FR(polyH(Nn), denH(R))}. Without finding f(t), use the initial value theorem${fvOK ? ' and the final value theorem' : ''} to find f(0<sup>+</sup>)${fvOK ? ' and f(∞)' : ', and decide whether the final value theorem can be used'}.`;
+  const v0 = ivtVal(Nn, D);
+  const sN = pmul(Nn, [0, 1]);
+  steps.push({ type: 'algebra', title: 'Initial value: multiply by s, let s → ∞', say: `f(0<sup>+</sup>) = lim<sub>s→∞</sub> s F(s). Only the highest powers matter when s is huge: divide top and bottom by s<sup>${dd}</sup>; every term with 1/s left over dies.`,
+    lines: [{ how: 's × F(s)', eq: `s F(s) = ${FR(polyH(sN), polyH(D))}` },
+      { how: dn + 1 < dd ? `The top's highest power (s<sup>${dn + 1}</sup>) is below the bottom's (s<sup>${dd}</sup>)` : `Top and bottom both have s<sup>${dd}</sup>: keep only those two numbers`, eq: `f(0<sup>+</sup>) = ${dn + 1 < dd ? '0' : `${N(Nn[dn])} ÷ ${N(D[dd])} = ${N(v0)}`}` }] });
+  answers.push(stage('f(0<sup>+</sup>)', v0, 0, [W_(dn + 1 < dd ? Nn[dn] : NaN, `The top's highest power (s<sup>${dn + 1}</sup>) is lower than the bottom's (s<sup>${dd}</sup>), so the limit is 0.`), W_(Number.isFinite(pev(Nn, 0) / pev(D, 0)) ? pev(Nn, 0) / pev(D, 0) : NaN, 'That is F(0). The initial value needs s → ∞, after multiplying by s.')]));
+  steps.push({ type: 'setup', title: 'Where are the poles?', say: fvOK ? 'The final value theorem only works if every pole is in the left half of the s-plane (a single pole at s = 0 is allowed): then f(t) settles.' : 'The final value theorem only works if every pole is in the left half of the s-plane (a single pole at s = 0 is allowed).',
+    lines: [{ how: 'Poles (bottom = 0)', eq: poles.filter(p => p.im >= 0).map(p => `s = ${p.im ? `${N(p.re)} ± j${N(p.im)}` : N(p.re)}${p.m > 1 ? ' (double)' : ''}`).join(', &nbsp; ') },
+      { how: fvOK ? 'All in the left half (or a single one at 0)' : 'Not all in the left half', eq: fvOK ? 'The final value theorem can be used ✓' : `${bad.filter(p => p.im >= 0).map(p => `s = ${p.im ? `${N(p.re)} ± j${N(p.im)}` : N(p.re)}`).join(', ')} ${bad.some(p => Math.abs(p.re) < 1e-12) ? 'sits on the jω axis: f(t) keeps oscillating' : 'is in the right half: f(t) grows without limit'}. <b>No final value</b>; the theorem would give a wrong number.` }], pz: true });
+  let vinf = NaN;
+  if (fvOK) {
+    const Dn = zero ? denom(R.facs.filter(f => f !== zero), R.quad) : D;
+    vinf = zero ? pev(Nn, 0) / pev(Dn, 0) : 0;
+    steps.push({ type: 'algebra', title: 'Final value: multiply by s, let s → 0', say: zero ? 'The s you multiply by cancels the s on the bottom; then put s = 0.' : 'With no pole at s = 0, the s you multiply by makes the whole thing 0 at s = 0.',
+      lines: zero ? [{ how: 'Cancel s', eq: `s F(s) = ${FR(polyH(Nn), polyH(Dn))}` }, { how: 'Put s = 0', eq: `f(∞) = ${FR(N(pev(Nn, 0)), N(pev(Dn, 0)))} = ${N(vinf)}` }]
+        : [{ how: 's × F(s) at s = 0', eq: `f(∞) = ${FR(`0 × (${N(pev(Nn, 0))})`, N(pev(D, 0)))} = 0` }] });
+    answers.push(stage('f(∞)', vinf, steps.length - 1, [W_(zero ? NaN : pev(Nn, 0) / pev(D, 0), 'Multiply by s first: that is F(0), not s F(s) at s = 0.'), W_(v0, 'That is the initial value (s → ∞). The final value needs s → 0.')]));
+  }
+  let terms = null, plotAt = -1;
+  try {
+    const so = pfSolve(R); terms = so.terms;
+    steps.push(fvOK ? { type: 'check', title: 'Compare with f(t)', say: 'Partial fractions (not needed for the theorems) give f(t); its start and end agree.', lines: [{ how: 'f(t)', eq: `f(t) = ${tSum(terms)}` }, { how: 'At t = 0 and as t → ∞', eq: `f(0<sup>+</sup>) = ${N(terms.reduce((a, f) => a + f0p(f), 0))}, &nbsp; f(∞) = ${N(vinf)} &nbsp;✓` }], plot: true }
+      : { type: 'check', title: 'See why: look at f(t)', say: 'Partial fractions give f(t). It starts at the value found above, but it never settles, so there is no f(∞) to find.', lines: [{ how: 'f(t)', eq: `f(t) = ${tSum(terms)}` }, { how: 'At t = 0', eq: `f(0<sup>+</sup>) = ${N(terms.reduce((a, f) => a + f0p(f), 0))} &nbsp;✓` }], plot: true });
+    plotAt = steps.length - 1;
+  } catch (e) { /* shape not covered: no check step */ }
+  return { text, rat: { N: Nn, D }, steps, answers, pz: { poles }, pzAt: steps.findIndex(s => s.pz), plot: terms ? { terms, T: plotSpan(terms), name: 'f', marks: { f0: v0, finf: vinf } } : null, plotAt };
+};
+
+// ---------------------------------------------------------------- differential equations
+const yH = (k, v = 'y') => (k === 2 ? `${v}″(t)` : k === 1 ? `${v}′(t)` : `${v}(t)`);
+const inpH = i => (!i || i.type === 'none' || !i.K ? '0' : i.type === 'step' ? `${N(i.K)}u(t)` : `${N(i.K)}e<sup>${MI}${i.b === 1 ? '' : N(i.b)}t</sup>`);
+const inpS = i => (!i || i.type === 'none' || !i.K ? '0' : i.type === 'step' ? FR(N(i.K), 's') : FR(N(i.K), linH(i.b)));
+const lhs = (cs, v = 'y') => cs.map(([k, c], j) => coefH(c, yH(k, v), j === 0)).join('');
+// y' + a y = input, y(0) = y0
+KINDS.ode1 = q => {
+  const { a, y0 } = q, inp = q.inp || { type: 'none' }, ctx = { steps: [], answers: [], noCheck: true }, S = ctx.steps, A = ctx.answers;
+  const text = `Use the Laplace transform to solve &nbsp; ${lhs([[1, 1], [0, a]])} = ${inpH(inp)}, &nbsp; with y(0) = ${N(y0)}.`;
+  S.push({ type: 'setup', title: 'Transform every term', say: 'Use the derivative rule: the starting value y(0) comes in here, so you never need a separate constant (A&S Eq. 15.23).',
+    lines: [{ how: 'Derivative rule', eq: `y′(t) &nbsp;⇔&nbsp; sY(s) ${MI} y(0) = sY(s) ${MI} ${P(y0)}` }, { how: 'The unknown itself', eq: 'y(t) &nbsp;⇔&nbsp; Y(s)' }, { how: 'The right side (table)', eq: `${inpH(inp)} &nbsp;⇔&nbsp; ${inpS(inp)}` }] });
+  S.push({ type: 'equation', title: 'Write the s-domain equation', lines: [{ how: 'Replace each term', eq: `[sY(s) ${MI} ${P(y0)}] + ${N(a)}Y(s) = ${inpS(inp)}` }] });
+  let R, how;
+  if (inp.type === 'step') { R = { facs: [{ p: 0, m: 1 }, { p: a, m: 1 }], quad: null, N: [inp.K, y0] }; how = `(s + ${N(a)})Y(s) = ${N(y0)} + ${FR(N(inp.K), 's')} = ${FR(polyH([inp.K, y0]), 's')}`; }
+  else if (inp.type === 'exp') { R = { facs: [{ p: a, m: 1 }, { p: inp.b, m: 1 }], quad: null, N: [y0 * inp.b + inp.K, y0] }; how = `(s + ${N(a)})Y(s) = ${N(y0)} + ${FR(N(inp.K), linH(inp.b))} = ${FR(polyH([y0 * inp.b + inp.K, y0]), linH(inp.b))}`; }
+  else { R = { facs: [{ p: a, m: 1 }], quad: null, N: [y0] }; how = `(s + ${N(a)})Y(s) = ${N(y0)}`; }
+  S.push({ type: 'algebra', title: 'Collect the Y(s) terms and divide', say: `Move ${P(y0)} to the right (it changes sign), take Y(s) out as a common factor, then divide by (s + ${N(a)}).`,
+    lines: [{ how: 'Collect', eq: how }, { how: 'Divide', eq: `Y(s) = ${ratH(R)}` }] });
+  const yi = S.length - 1;
+  if (inp.type === 'exp') A.push(stage('the constant on top of Y(s)', y0 * inp.b + inp.K, yi, [W_(-y0 * inp.b + inp.K, 'sY − y(0): when y(0) moves to the right it becomes +y(0).'), W_(inp.K, `y(0) also multiplies (s + ${N(inp.b)}) when you make one fraction.`)]));
+  else A.push(stage(inp.type === 'step' ? 'the number in front of s on top of Y(s)' : 'the number on top of Y(s)', y0, yi, [W_(-y0, 'sY(s) − y(0): moving −y(0) across the = sign makes it +y(0).')]));
+  pfWrite(R, { F: 'Y', f: 'y' }, ctx);
+  const yinf = inp.type === 'step' ? inp.K / a : 0;
+  ctx.steps.push({ type: 'check', title: 'Check the start and the end', lines: [{ how: 'At t = 0 the answer must give the given y(0)', eq: `y(0) = ${N(ctx.terms.reduce((s, f) => s + f0p(f), 0))} &nbsp;✓` }, { how: 'Long after, all the exponentials have died', eq: `y(∞) = ${N(yinf)}${inp.type === 'step' ? ` (= ${N(inp.K)} ÷ ${N(a)}: put y′ = 0 in the equation)` : ''} &nbsp;✓` }] });
+  return finish(ctx, text, { name: 'y', marks: { f0: y0, finf: yinf } });
+};
+// y'' + b y' + c y = input, y(0) = y0, y'(0) = y1
+KINDS.ode2 = q => {
+  const { b, c, y0, y1 } = q, K = q.K || 0, ctx = { steps: [], answers: [], noCheck: true }, S = ctx.steps, A = ctx.answers, inp = K ? { type: 'step', K } : { type: 'none' };
+  const text = `Use the Laplace transform to solve &nbsp; ${lhs([[2, 1], [1, b], [0, c]])} = ${inpH(inp)}, &nbsp; with y(0) = ${N(y0)} and y′(0) = ${N(y1)}.`;
+  S.push({ type: 'setup', title: 'Transform every term', say: 'Both starting values come in through the derivative rules (A&S Eq. 15.24).',
+    lines: [{ how: 'Second derivative', eq: `y″(t) &nbsp;⇔&nbsp; s<sup>2</sup>Y(s) ${MI} s y(0) ${MI} y′(0) = s<sup>2</sup>Y(s) ${MI} ${N(y0)}s ${MI} ${P(y1)}` },
+      { how: 'First derivative', eq: `y′(t) &nbsp;⇔&nbsp; sY(s) ${MI} y(0) = sY(s) ${MI} ${P(y0)}` }, { how: 'The right side', eq: `${inpH(inp)} &nbsp;⇔&nbsp; ${inpS(inp)}` }] });
+  S.push({ type: 'equation', title: 'Write the s-domain equation', lines: [{ how: 'Replace each term', eq: `[s<sup>2</sup>Y ${MI} ${N(y0)}s ${MI} ${P(y1)}] + ${N(b)}[sY ${MI} ${P(y0)}] + ${N(c)}Y = ${inpS(inp)}` }] });
+  const k1 = y1 + b * y0;
+  S.push({ type: 'algebra', title: 'Collect the Y(s) terms on the left', say: 'Everything with Y(s) stays on the left; the starting-value terms move to the right and change sign.',
+    lines: [{ how: 'Left: Y(s) × (s² + bs + c). Right: the moved terms', eq: `(${quadH({ b, c })})Y(s) = ${polyH([k1, y0])}${K ? ' + ' + FR(N(K), 's') : ''}` },
+      { how: 'The constant on the right', eq: `y′(0) + ${N(b)} y(0) = ${N(y1)} + ${N(b)} × ${P(y0)} = ${N(k1)}` }] });
+  A.push(stage('the constant on the right, y′(0) + b y(0)', k1, 2, [W_(y1 - b * y0, `−${N(b)} × y(0) moves across and becomes +${N(b)}y(0).`), W_(y1, `Do not forget ${N(b)} × y(0), from the b[sY − y(0)] term.`), W_(b * y0, 'Do not forget y′(0).'), W_(-k1, 'The moved terms change sign once: they are positive on the right.')]));
+  const top = K ? [K, k1, y0] : [k1, y0];
+  const disc = b * b - 4 * c;
+  const facs = K ? [{ p: 0, m: 1 }] : [];
+  const R = disc >= -1e-12 ? { facs, quad: null, N: top } : { facs, quad: { b, c }, N: top };
+  if (disc >= -1e-12) markSplit(R, { split: { b, c }, N: top });
+  S.push({ type: 'algebra', title: 'Make Y(s) one fraction', lines: [{ how: K ? 'Multiply the right side by s/s to combine, then divide by the quadratic' : 'Divide by the quadratic', eq: `Y(s) = ${FR(polyH(top), denH(R))}` }] });
+  pfWrite(R, { F: 'Y', f: 'y' }, ctx);
+  const yinf = K ? K / c : 0;
+  ctx.steps.push({ type: 'check', title: 'Check the start and the end', lines: [{ how: 'At t = 0', eq: `y(0) = ${N(ctx.terms.reduce((s, f) => s + f0p(f), 0))} &nbsp;✓ (given ${N(y0)})` }, { how: 'Long after', eq: `y(∞) = ${N(yinf)}${K ? ` (= ${N(K)} ÷ ${N(c)}: put y″ = y′ = 0)` : ''} &nbsp;✓` }] });
+  return finish(ctx, text, { name: 'y', marks: { f0: y0, finf: yinf } });
+};
+// integro-differential: y' + a y + c ∫ y = K u(t), y(0) = y0
+KINDS.ide = q => {
+  const { a, c, y0, K } = q, ctx = { steps: [], answers: [], noCheck: true }, S = ctx.steps, A = ctx.answers;
+  const text = `Use the Laplace transform to solve &nbsp; y′(t) + ${N(a)}y(t) + ${N(c)}∫<sub>0</sub><sup>t</sup> y(τ) dτ = ${N(K)}u(t), &nbsp; with y(0) = ${N(y0)}.`;
+  S.push({ type: 'setup', title: 'Transform every term', say: 'The integral rule divides by s (A&S Eq. 15.28); the derivative rule brings in y(0).',
+    lines: [{ how: 'Derivative', eq: `y′(t) &nbsp;⇔&nbsp; sY(s) ${MI} ${P(y0)}` }, { how: 'Integral', eq: `∫<sub>0</sub><sup>t</sup> y(τ) dτ &nbsp;⇔&nbsp; ${FR('Y(s)', 's')}` }, { how: 'Right side', eq: `${N(K)}u(t) &nbsp;⇔&nbsp; ${FR(N(K), 's')}` }] });
+  S.push({ type: 'equation', title: 'Write the s-domain equation', lines: [{ how: 'Replace each term', eq: `sY ${MI} ${P(y0)} + ${N(a)}Y + ${N(c)}${FR('Y', 's')} = ${FR(N(K), 's')}` }] });
+  S.push({ type: 'algebra', title: 'Multiply every term by s', say: 'This clears the 1/s fractions. Then collect Y(s).', lines: [{ how: '× s', eq: `s<sup>2</sup>Y ${MI} ${N(y0)}s + ${N(a)}sY + ${N(c)}Y = ${N(K)}` }, { how: 'Collect', eq: `(${quadH({ b: a, c })})Y(s) = ${polyH([K, y0])}` }] });
+  A.push(stage('the number in front of s on the right', y0, 2, [W_(-y0, 'The −y(0)s term moves to the right and becomes +y(0)s.')]));
+  const disc = a * a - 4 * c, top = [K, y0];
+  const R = disc >= -1e-12 ? { facs: [], quad: null, N: top } : { facs: [], quad: { b: a, c }, N: top };
+  if (disc >= -1e-12) markSplit(R, { split: { b: a, c }, N: top });
+  S.push({ type: 'algebra', title: 'Divide to get Y(s)', lines: [{ how: 'Y(s) on its own', eq: `Y(s) = ${FR(polyH(top), denH(R))}` }] });
+  pfWrite(R, { F: 'Y', f: 'y' }, ctx);
+  ctx.steps.push({ type: 'check', title: 'Check the start', lines: [{ how: 'At t = 0', eq: `y(0) = ${N(ctx.terms.reduce((s, f) => s + f0p(f), 0))} &nbsp;✓ (given ${N(y0)})` }] });
+  return finish(ctx, text, { name: 'y', marks: { f0: y0, finf: 0 } });
+};
+
+// ---------------------------------------------------------------- solving, mistake filter, generator
+function solveQ(q) {
+  if (q.sol) return q.sol;
+  const s = KINDS[q.kind](q);
+  if (q.text) s.text = q.text;
+  s.answers.forEach(a => {
+    const keep = [];
+    for (const w of a.wrong || []) {
+      if (a.kind === 'cx') {
+        if (!w.val.every(Number.isFinite)) continue;
+        if (Math.hypot(w.val[0] - a.val[0], w.val[1] - a.val[1]) <= Math.max(0.06, 0.03 * Math.hypot(...a.val))) continue;
+        keep.push(w); continue;
+      }
+      if (!Number.isFinite(w.val) || !w.why) continue;
+      const thr = Math.max(Math.abs(a.val) * (a.tol ?? 0.01) * 3, a.val === 0 ? 0.015 : 0, 1e-9);
+      if (Math.abs(w.val - a.val) <= thr) continue;
+      if (keep.some(k => isRight({ ...a, val: k.val }, w.val) || isRight({ ...a, val: w.val }, k.val))) continue;
+      keep.push(w);
+    }
+    a.wrong = keep;
+  });
+  return s;
+}
+function rng(seed) { let x = (seed >>> 0) || 1; return () => { x ^= x << 13; x >>>= 0; x ^= x >>> 17; x ^= x << 5; x >>>= 0; return x / 4294967296; }; }
+function generate(T, level, seed) {
+  const R = rng(seed); for (let i = 0; i < 3; i++) R();
+  const h = { R, pick: l => l[Math.floor(R() * l.length)], int: (a, b) => a + Math.floor(R() * (b - a + 1)) };
+  const tl = T.templates[level];
+  for (let k = 0; k < 300; k++) {
+    const t = h.pick(tl);
+    try {
+      const q = { level, title: 'Practice', generated: true, ...t(h) };
+      const sol = solveQ(q);
+      if (q.ok && !q.ok(sol)) continue;
+      if (sol.answers.some(a => /^[A-H]$/.test(a.html) && Math.abs(a.val) < 1e-9)) continue;     // a zero coefficient: a pole cancels, a poor question
+      if (!sol.answers.every(a => (a.kind === 'cx' ? a.val.every(Number.isFinite) : Number.isFinite(a.val) && Math.abs(a.val) < 1e4))) continue;
+      if (!q.anyNum && !sol.answers.every(a => a.kind === 'cx' || nice(a.val))) continue;
+      q.sol = sol; delete q.ok; return q;
+    } catch (e) { /* try another */ }
+  }
+  throw Error('no question generated');
+}
+
+</script>
+<script>
+'use strict';
+// Laplace transform, basic page: every F(s) is ONE table entry (one s-term), possibly with a delay factor.
+// Content follows A&S Ch 15.2-15.3 (definition, Table 15.2 pairs, linearity, time shift, frequency shift, initial value);
+// all question values are our own.
+(function () {
+  const { imp, pow, sin, cos } = TM;
+  const levels = [
+    { id: 'warm', code: 'W', name: 'Warm-up', blurb: 'read a signal, the first rows of the table' },
+    { id: 'basic', code: 'B', name: 'Basics', blurb: 'one row: tⁿ, e^−at, sin, cos' },
+    { id: 'core', code: 'C', name: 'Core', blurb: 'frequency shift: e^−at times a signal' },
+    { id: 'app', code: 'A', name: 'Applied', blurb: 'time delay, sine with a phase angle' },
+    { id: 'chal', code: 'X', name: 'Challenge', blurb: 'delay and shift together, both ways' },
+  ];
+
+  const method = [
+    { title: 'What the Laplace transform does', widget: 'machine',
+      html: `<p>A differential equation is hard to solve in time t. The Laplace transform <b>translates</b> each signal f(t) into a function F(s) of a new variable s, where calculus turns into ordinary algebra. You solve there, then translate back.</p>
+      <p>It is like logarithms: multiplying big numbers is hard, adding their logs is easy. You never use the hard road; you look things up in a <b>table</b>.</p>
+      <div class="note">This page practises the table, one row at a time. Every F(s) here has a <b>single</b> s-term. Splitting bigger fractions comes on the advanced page.</div>` },
+    { title: 'The definition (where the table comes from)', html: `<div class="eq">F(s) = ℒ{f(t)} = ∫<sub>0</sub><sup>∞</sup> f(t) e<sup>−st</sup> dt</div>
+      <p>Multiply the signal by e<sup>−st</sup> and add it up (integrate) over all time. The answer depends only on s. Two rows worked out once (A&amp;S Example 15.1):</p>
+      <p class="how">The step u(t) = 1 for t &gt; 0. The integral of e<sup>−st</sup> is e<sup>−st</sup> ÷ (−s):</p>
+      <div class="eq">ℒ{u(t)} = ∫<sub>0</sub><sup>∞</sup> e<sup>−st</sup> dt = [${FR('e<sup>−st</sup>', '−s')}]<sub>0</sub><sup>∞</sup> = 0 − ${FR(1, '−s')} = ${FR(1, 's')}</div>
+      <p class="how">The exponential e<sup>−at</sup>: combine the powers, e<sup>−at</sup> e<sup>−st</sup> = e<sup>−(s+a)t</sup>, and integrate the same way:</p>
+      <div class="eq">ℒ{e<sup>−at</sup>} = ∫<sub>0</sub><sup>∞</sup> e<sup>−(s+a)t</sup> dt = ${FR(1, 's + a')}</div>
+      <div class="note"><b>Maths reminder:</b> e<sup>−big</sup> → 0, and e<sup>0</sup> = 1. That is why the top limit gives 0 and the bottom limit gives 1.</div>` },
+    { title: 'The signals', widget: 'gallery', html: `<p>Click a signal to see its graph, its transform and where its poles sit. All of them are switched on at t = 0 (they are 0 before).</p>` },
+    { title: 'The pair table (flash cards)', widget: 'tiles', html: `<p>The rows of A&amp;S Table 15.2 used on this page. Click a card to turn it over; try to say the other side first.</p>` },
+    { title: 'Maths reminder: factorials, powers and roots', html: `<ul>
+      <li><b>n!</b> (n factorial) multiplies down to 1: 3! = 3 × 2 × 1 = 6, &nbsp; 4! = 24. Also 1! = 1 and 0! = 1.</li>
+      <li>t<sup>n</sup> ⇔ n!/s<sup>n+1</sup>: the power on the bottom is <b>one more</b> than the power of t. t² ⇔ 2/s³.</li>
+      <li>ω² means ω × ω: if ω = 4 then ω² = 16. Going back, ω = √16 = 4.</li>
+      <li>(s + 3)² is the bracket times itself. On this page leave it as a bracket: do not multiply it out.</li></ul>` },
+    { title: 'Linearity: the number in front waits outside', html: `<div class="eq">ℒ{K f(t)} = K F(s)</div>
+      <p>Take the number off, look up the rest in the table, put the number back on top. Example: 5 sin 3t → 5 × ${FR(3, 's<sup>2</sup> + 9')} = ${FR(15, 's<sup>2</sup> + 9')}.</p>
+      <p>Going back is the same in reverse: ${FR(15, 's<sup>2</sup> + 9')} = 5 × ${FR(3, 's<sup>2</sup> + 9')} → 5 sin 3t. The table's own number (3 = ω here) must be on top first; whatever is left over goes in front.</p>` },
+    { title: 'Frequency shift and time shift', widget: 'shift', html: `<div class="eq">e<sup>−at</sup> f(t) &nbsp;⇔&nbsp; F(s + a) &nbsp; &nbsp; &nbsp; f(t − d) u(t − d) &nbsp;⇔&nbsp; e<sup>−ds</sup> F(s)</div>
+      <ul><li><span class="k2"><b>Frequency shift</b></span>: multiplying by e<sup>−at</sup> squeezes the signal down over time. In F(s), <b>every s becomes s + a</b>.</li>
+      <li><span class="kx"><b>Time shift</b></span>: delaying the whole signal by d seconds leaves F(s) alone and <b>multiplies it by e<sup>−ds</sup></b>.</li></ul>
+      <p>Move the sliders: the faint curve is the plain signal.</p>` },
+    { title: 'The poles tell you the shape', widget: 'poles', html: `<p>A <b>pole</b> is a value of s that makes the bottom of F(s) zero. Its position on the s-plane predicts the shape of f(t):</p>
+      <ul><li>on the left (σ &lt; 0): dies away; further left, faster;</li><li>at the origin: a step (stays constant);</li><li>a pair ± jω: oscillates at ω rad/s;</li><li>on the right: grows without limit.</li></ul>` },
+    { title: 'Inverse: read the table backwards', widget: 'recipe', html: `<ol>
+      <li><b>Delay?</b> If there is an e<sup>−ds</sup>, put it aside; at the end replace t by (t − d) and multiply by u(t − d).</li>
+      <li><b>Bottom</b> decides the row: s or s<sup>n+1</sup> → power of t; (s + a) → e<sup>−at</sup>; s² + ω² → sine or cosine; (s + a)² + ω² → damped.</li>
+      <li><b>Top</b> decides sine or cosine: no s on top → sine, s (or s + a) on top → cosine.</li>
+      <li><b>Make the top match</b> the table (n! for powers, ω for sine); what is left over is the number in front.</li>
+      <li><b>Check</b> by transforming your answer forwards.</li></ol>` },
+    { title: 'Maths reminder: the calculator', html: `<ul>
+      <li>e<sup>x</sup> is usually <b>SHIFT ln</b>. e<sup>−1</sup> = 0.3679, e<sup>−2</sup> = 0.1353.</li>
+      <li>In sin ωt and cos ωt the angle ωt is in <b>radians</b> (RAD mode). A phase written in degrees, like sin(2t + 30°), is the one place to use DEG for sin 30° and cos 30°.</li>
+      <li>Signs: (s + 3) belongs to e<sup>−3t</sup>; (s − 3) would be e<sup>+3t</sup>, which grows.</li></ul>` },
+    { title: 'A free check: the initial value theorem', html: `<div class="eq">f(0<sup>+</sup>) = lim<sub>s→∞</sub> s F(s)</div>
+      <p>Multiply F(s) by s and let s get huge: only the highest powers of s matter. The answer must equal the starting value of the signal (A&amp;S 15.3). Example: 4 cos 3t ⇔ ${FR('4s', 's<sup>2</sup> + 9')}; s × ${FR('4s', 's<sup>2</sup> + 9')} = ${FR('4s<sup>2</sup>', 's<sup>2</sup> + 9')} → 4 = f(0) ✓.</p>` },
+  ];
+
+  const questions = [
+    // warm-up
+    { level: 'warm', title: 'A delayed step', kind: 'val', f: pow(4, 0, 0, 2), ts: [1, 3], mistake: 'Thinking u(t − 2) is already on at t = 1. It switches on at t = 2.' },
+    { level: 'warm', title: 'A decaying exponential', kind: 'val', f: pow(6, 0, 2), ts: [0, 0.5], mistake: 'Using e<sup>+2t</sup>, or forgetting that e<sup>0</sup> = 1.' },
+    { level: 'warm', title: 'Transform a step', kind: 'fwd', f: pow(7), mistake: 'Writing 7 instead of 7/s: a step is not a constant in the s-domain.' },
+    { level: 'warm', title: 'Transform an impulse', kind: 'fwd', f: imp(3), mistake: 'Writing 3/s: that is a step. δ(t) ⇔ 1.' },
+    { level: 'warm', title: 'Back from 5/s', kind: 'inv', f: pow(5), mistake: 'Writing 5δ(t): an impulse has no s at all.' },
+    // basics
+    { level: 'basic', title: 'An exponential', kind: 'fwd', f: pow(4, 0, 3), mistake: 'Writing 4/(s − 3): e<sup>−3t</sup> goes with s + 3.' },
+    { level: 'basic', title: 'A ramp', kind: 'fwd', f: pow(5, 1), mistake: 'Writing 5/s: the ramp t has s² on the bottom.' },
+    { level: 'basic', title: 'A cube of t', kind: 'fwd', f: pow(2, 3), mistake: 'Forgetting the 3! = 6 on top: 2t³ ⇔ 12/s⁴, not 2/s⁴.' },
+    { level: 'basic', title: 'A sine', kind: 'fwd', f: sin(3, 4), mistake: 'Putting 3 on top instead of 3 × 4 = 12, or 4 instead of 16 on the bottom.' },
+    { level: 'basic', title: 'A cosine', kind: 'fwd', f: cos(6, 2), mistake: 'Writing 12/(s² + 4): that is the sine pattern. Cosine has s on top.' },
+    { level: 'basic', title: 'Back from 8/(s + 2)', kind: 'inv', f: pow(8, 0, 2), mistake: 'Writing 8e<sup>2t</sup>: (s + 2) belongs to e<sup>−2t</sup>.' },
+    { level: 'basic', title: 'Back from 10/(s² + 25)', kind: 'inv', f: sin(2, 5), mistake: 'Writing 10 sin 5t: the 5 on top belongs to the table, so only 10 ÷ 5 = 2 goes in front.' },
+    { level: 'basic', title: 'Back from 4s/(s² + 16)', kind: 'inv', f: cos(4, 4), mistake: 'Dividing by ω for a cosine: s on top already matches, so it is 4 cos 4t.' },
+    // core
+    { level: 'core', title: 't² with a decay', kind: 'fwd', f: pow(3, 2, 4), mistake: 'Writing 3/(s + 4)³: the 2! = 2 must go on top too, giving 6.' },
+    { level: 'core', title: 'A damped cosine', kind: 'fwd', f: cos(5, 3, 2), mistake: 'Putting s on top instead of (s + 2): the shift changes every s.' },
+    { level: 'core', title: 'A damped sine', kind: 'fwd', f: sin(4, 2, 1), mistake: 'Shifting only the s² and not the s: it is (s + 1)², not s² + 1.' },
+    { level: 'core', title: 'Back from 6/(s + 1)³', kind: 'inv', f: pow(3, 2, 1), mistake: 'Writing 6t² e<sup>−t</sup>: divide by 2! = 2 first, giving 3t² e<sup>−t</sup>.' },
+    { level: 'core', title: 'Back from a damped cosine', kind: 'inv', f: cos(2, 3, 1), mistake: 'Taking ω = 9: the bottom holds ω², so ω = 3.' },
+    { level: 'core', title: 'Back from 15/((s + 2)² + 25)', kind: 'inv', f: sin(3, 5, 2), mistake: 'Forgetting e<sup>−2t</sup>: the (s + 2) is a frequency shift.' },
+    // applied
+    { level: 'app', title: 'A delayed step', kind: 'fwd', f: pow(5, 0, 0, 2), mistake: 'Writing 5/(s + 2): a delay multiplies by e<sup>−2s</sup>, it does not shift s.' },
+    { level: 'app', title: 'A delayed ramp', kind: 'fwd', f: pow(3, 1, 0, 1), mistake: 'Treating 3(t − 1) as 3t − 3 and transforming each part: keep it as a delayed ramp.' },
+    { level: 'app', title: 'A sine with a phase angle', kind: 'phase', K: 10, w: 2, th: 30, fn: 'sin', mistake: 'Working out sin 30° in radians mode: θ is in degrees.' },
+    { level: 'app', title: 'Back from 4e<sup>−3s</sup>/s', kind: 'inv', f: pow(4, 0, 0, 3), mistake: 'Writing 4e<sup>−3t</sup>: e<sup>−3s</sup> is a delay of 3 s, not an exponential in t.' },
+    { level: 'app', title: 'Back from a delayed sine', kind: 'inv', f: sin(2, 3, 0, 2), mistake: 'Writing 2 sin 3t u(t − 2): inside the sine it must be (t − 2) too.' },
+    // challenge
+    { level: 'chal', title: 'Back from 12/(s + 3)⁴', kind: 'inv', f: pow(2, 3, 3), mistake: 'Dividing 12 by 4 (the power) instead of by 3! = 6.' },
+    { level: 'chal', title: 'Delay and decay together', kind: 'fwd', f: pow(2, 1, 3, 2), mistake: 'Putting the 2 of the delay into the bracket: the decay gives (s + 3), the delay gives e<sup>−2s</sup>.' },
+    { level: 'chal', title: 'A cosine with a phase angle', kind: 'phase', K: 6, w: 3, th: 60, fn: 'cos', mistake: 'Forgetting the minus sign in s cos θ − ω sin θ.' },
+    { level: 'chal', title: 'Back from a delayed damped sine', kind: 'inv', f: sin(5, 4, 1, 1), mistake: 'Writing 5e<sup>−t</sup> sin 4(t − 1): the decay is delayed too, e<sup>−(t − 1)</sup>.' },
+  ];
+
+  // ------------------------------------------------------------ practice templates (h = { R, pick, int })
+  const K = [1, 2, 3, 4, 5, 6], A = [1, 2, 3, 4, 5], Wv = [1, 2, 3, 4, 5, 6];
+  const templates = {
+    warm: [
+      h => ({ kind: 'val', f: pow(h.pick([2, 3, 4, 5, 8, 10]), 0, h.pick([1, 2, 3, 0.5])), ts: [0, h.pick([0.5, 1, 2])], anyNum: true }),
+      h => { const d = h.int(1, 3); return { kind: 'val', f: pow(h.pick([2, 3, 4, 5, 6]), 0, 0, d), ts: [d - h.pick([0.5, 1]), d + h.int(1, 2)], anyNum: true }; },
+      h => ({ kind: 'fwd', f: h.pick([pow(h.int(2, 9)), imp(h.int(2, 9)), pow(h.int(2, 9), 0, h.pick(A))]) }),
+      h => ({ kind: 'inv', f: h.pick([pow(h.int(2, 9)), imp(h.int(2, 9)), pow(h.int(2, 9), 0, h.pick(A))]) }),
+    ],
+    basic: [
+      h => ({ kind: h.pick(['fwd', 'inv']), f: pow(h.pick(K), h.int(1, 3)) }),
+      h => ({ kind: h.pick(['fwd', 'inv']), f: sin(h.pick(K), h.pick(Wv)) }),
+      h => ({ kind: h.pick(['fwd', 'inv']), f: cos(h.pick(K), h.pick(Wv)) }),
+      h => ({ kind: 'fwd', f: pow(h.pick(K), 0, h.pick(A)) }),
+    ],
+    core: [
+      h => ({ kind: h.pick(['fwd', 'inv']), f: pow(h.pick(K), h.int(1, 3), h.pick(A)) }),
+      h => ({ kind: h.pick(['fwd', 'inv']), f: sin(h.pick(K), h.pick(Wv), h.pick(A)) }),
+      h => ({ kind: h.pick(['fwd', 'inv']), f: cos(h.pick(K), h.pick(Wv), h.pick(A)) }),
+    ],
+    app: [
+      h => ({ kind: h.pick(['fwd', 'inv']), f: pow(h.pick(K), h.int(0, 1), 0, h.int(1, 4)) }),
+      h => ({ kind: h.pick(['fwd', 'inv']), f: pow(h.pick(K), 0, h.pick(A), h.int(1, 3)) }),
+      h => ({ kind: h.pick(['fwd', 'inv']), f: h.pick([sin, cos])(h.pick(K), h.pick(Wv), 0, h.int(1, 3)) }),
+      h => ({ kind: 'phase', K: h.pick([2, 4, 5, 6, 10]), w: h.pick(Wv), th: h.pick([30, 45, 60]), fn: h.pick(['sin', 'cos']), anyNum: true }),
+    ],
+    chal: [
+      h => ({ kind: h.pick(['fwd', 'inv']), f: pow(h.pick(K), h.int(1, 3), h.pick(A), h.int(1, 3)) }),
+      h => ({ kind: h.pick(['fwd', 'inv']), f: h.pick([sin, cos])(h.pick(K), h.pick(Wv), h.pick(A), h.int(1, 3)) }),
+      h => ({ kind: 'inv', f: pow(h.pick(K), h.int(2, 4), h.pick(A)) }),
+    ],
+  };
+  window.TOPIC = { title: 'Laplace Transform: Basics', levels, method, questions, templates, widgets: 'basic' };
+})();
+
+</script>
+<script>
+'use strict';
+// Shared by the self-study pages (transients, AC nodal and mesh, Laplace): reading typed answers, checking
+// them with hints for known mistakes, the step badges and icons, and the help modes (Watch / Guided / On my own) in
+// which the student works out one number at a time.  A page gives each question a list of "stages":
+//   { html, unit, kind: 'real' | 'cx' | 'deg', val (number, or [re, im] for 'cx'), step (index), wrong: [{ val, why }] }
+// and a reveal(n) that shows the first n steps.  Loaded before the page's shell.js, which defines $ and $$.
+
+// ---------------------------------------------------------------- reading a typed answer
+// real: 0.33, 330 ms, 330m, 1.5k, 2.4 kΩ, -24, 63.4°     complex: 4+j8, 4 + 8j, -j2, 8.94∠63.4, 8.94<63.4, 8.94@63.4
+const PFX = { G: 1e9, M: 1e6, k: 1e3, K: 1e3, m: 1e-3, u: 1e-6, 'µ': 1e-6, 'μ': 1e-6, n: 1e-9 };
+const UNITS = ['ohm', 'ohms', 'Ω', 'V', 'A', 's', 'F', 'H', 'J', 'W', 'VA', 'VAR', 'deg', 'rad/s'];
+function parseNum(s) {
+  s = String(s).trim().replace(/[−–]/g, '-').replace(/,/g, '').replace(/\s+/g, '').replace(/°$/, '');
+  const fr = /^([+-]?(?:\d+\.?\d*|\.\d+))\/((?:\d+\.?\d*|\.\d+))$/.exec(s);      // a fraction: 2/3, -7/4
+  if (fr) return +fr[2] ? Number(fr[1]) / Number(fr[2]) : null;
+  const m = /^([+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)(.*)$/.exec(s);
+  if (!m) return null;
+  const v = Number(m[1]), rest = m[2];
+  if (!rest || UNITS.includes(rest)) return v;
+  if (PFX[rest[0]] !== undefined && (rest.length === 1 || UNITS.includes(rest.slice(1)))) return v * PFX[rest[0]];
+  return null;
+}
+function parseCx(s) {
+  s = String(s).trim().replace(/[−–]/g, '-').replace(/\s+/g, '').replace(/°/g, '').replace(/(VA|VAR|[VAWΩ])$/i, '').replace(/i/g, 'j');
+  if (!s) return null;
+  const pm = /^(-?\d*\.?\d+)(?:∠|<|@|ang)(-?\d*\.?\d+)$/.exec(s);
+  if (pm) { const m = +pm[1], a = +pm[2] * Math.PI / 180; return [m * Math.cos(a), m * Math.sin(a)]; }
+  const toks = s.match(/[+-]?[^+-]+/g); if (!toks) return null;
+  let re = 0, im = 0;
+  for (const t of toks) {
+    if (t.includes('j')) { const n = t.replace('j', ''); const v = n === '' || n === '+' ? 1 : n === '-' ? -1 : Number(n); if (!Number.isFinite(v)) return null; im += v; }
+    else { const v = Number(t); if (!Number.isFinite(v)) return null; re += v; }
+  }
+  return [re, im];
+}
+const readIn = (st, s) => (st.kind === 'cx' ? parseCx(s) : parseNum(s));
+const angDiff = (a, b) => Math.abs((((a - b) % 360) + 540) % 360 - 180);
+
+// ---------------------------------------------------------------- checking it
+function isRight(st, v) {
+  if (v === null || v === undefined) return false;
+  if (st.kind === 'cx') { const [a, b] = st.val; return Math.hypot(v[0] - a, v[1] - b) <= Math.max(0.02, Math.hypot(a, b) * 0.01); }
+  if (st.kind === 'deg') return angDiff(v, st.val) <= 0.5;
+  return Math.abs(v - st.val) <= Math.max(1e-12, Math.abs(st.val) * (st.tol ?? 0.01), st.val === 0 ? 0.005 : 0);   // tol: relative, default 1 %
+}
+// a page may replace the generic real-number slip hints: SLIP_TEXT = { pow10: text | false, sign: text }
+const slipText = (k, d) => (typeof SLIP_TEXT !== 'undefined' && SLIP_TEXT[k] !== undefined ? SLIP_TEXT[k] : d);
+// the hint for a wrong answer: a known mistake first, then the slips that can happen in any question
+function diagnose(st, v, all) {
+  const as = val => isRight({ ...st, val }, v);
+  for (const w of st.wrong || []) if (as(w.val)) return w.why;
+  const nearRight = val => isRight(st, val);      // a "slip" value that is really the right answer is never reported
+  const slip = (val, why) => (!nearRight(val) && as(val) ? why : null);
+  let h = null;
+  if (st.kind === 'cx') {
+    const [a, b] = st.val, m = Math.hypot(a, b);
+    if (m > 0) h = slip([a, -b], 'Right size, but the j part has the wrong sign. Check 1/j = −j, and the sign of each reactance (+j for L, −j for C).')
+      || slip([-a, -b], 'Right size, wrong sign: check the direction (tail minus head), or which end of the source is +.')
+      || slip([b, a], 'The real part and the j part are swapped.')
+      || slip([-b, a], 'Off by a factor of j: check where the j goes when you multiply or divide.')
+      || slip([b, -a], 'Off by a factor of −j: remember 1/j = −j.')
+      || (Math.abs(v[1]) < 1e-9 && Math.abs(b) > 1e-9 && Math.abs(v[0] - m) <= Math.max(0.02, m * 0.01) ? 'That is only the magnitude. Give the whole phasor: a + jb, or A∠θ.' : null);
+  } else if (st.kind === 'deg') {
+    const t = st.val;
+    h = slip(t + 180, 'Off by 180°: check which quadrant the phasor is in. When the real part is negative, add or subtract 180° from what tan⁻¹ gives.')
+      || (Math.abs(v - t * Math.PI / 180) < 0.01 && Math.abs(t) > 1 ? 'That is the angle in radians. Set your calculator to degrees (DEG).' : null)
+      || slip(90 - t, 'That is tan⁻¹(a ÷ b). The angle is tan⁻¹(b ÷ a): the j part goes on top.')
+      || slip(-t, 'Right size, wrong sign: a phasor below the real axis has a negative angle.');
+  } else if (st.val !== 0) {
+    const p10 = slipText('pow10', 'Right digits, wrong power of ten. Check the prefixes: k = 10³, m = 10⁻³, µ = 10⁻⁶ (kΩ × µF = ms). You can type the prefix too: 330 ms, 2.4k.');
+    if (p10) for (const f of [1e3, 1e6, 1e9, 1e-3, 1e-6, 1e-9]) if (!h) h = slip(st.val * f, p10);
+    h = h || slip(-st.val, slipText('sign', 'Right size, wrong sign. Check the bracket [x(0<sup>+</sup>) − x(∞)], or which way the current flows.'));
+  }
+  if (h) return h;
+  for (const o of all) if (o !== st && o.kind === st.kind && as(o.val) && !nearRight(o.val)) return `That is the value of ${o.html}. Which number does this box ask for?`;
+  return null;
+}
+
+// ---------------------------------------------------------------- step badges and icons
+// every step title of the three pages falls under one of these (test.js checks that none is left over)
+const STEP_TYPES = [
+  ['check', /^check|rising or falling|power balance/i],
+  ['setup', /^before the switch|just after|long after|after the second switching|redraw|reference node|draw the mesh|already known|spot the|phasor domain|rectangular form|how many time constants/i],
+  ['equation', /^kcl|^kvl|use the (voltage|current) source|controlling quantity|write the (response|second response|decay|charging)|put in the known/i],
+  ['algebra', /tidy|solve|back-substitute|rearrange|read the ruler|when does|make it reach/i],
+  ['answer', /value|time constant|current|voltage|polar form|energy|largest|choose|find|settl|charging time|how long|at t =/i],
+];
+const STEP_NAME = { setup: 'set-up', equation: 'equation', algebra: 'algebra', answer: 'answer', check: 'check' };
+function stepType(title) { const t = String(title).replace(/<[^>]+>/g, ''); const m = STEP_TYPES.find(([, r]) => r.test(t)); return m ? m[0] : null; }
+const STEP_KINDS = Object.keys(STEP_NAME);
+const typeOf = s => (STEP_KINDS.includes(s.type) ? s.type : stepType(s.title));      // an explicit type wins
+const ICON = {
+  setup: '<path d="M0 8h3l1.5-4 3 8 3-8 1.5 4H16"/>',
+  equation: '<path d="M3 5.5h10M3 10.5h10"/>',
+  algebra: '<path d="M3 13l1-4 7-7 3 3-7 7zM9.5 3.5l3 3"/>',
+  answer: '<circle cx="8" cy="8" r="6"/><circle cx="8" cy="8" r="2.2"/>',
+  check: '<path d="M2.5 8.5l3.5 3.5 7.5-8"/>',
+};
+const iconSVG = ty => `<svg class="sico" viewBox="0 0 16 16" aria-hidden="true">${ICON[ty]}</svg>`;
+function stepHTML(s, deCls = 'de') {
+  const lines = (s.lines || []).map(l => `<div class="line">${l.how ? `<div class="how">${l.how}</div>` : ''}${l.eq ? `<div class="eq">${l.eq}</div>` : ''}</div>`).join('');
+  const cap = h => h.replace(/^((?:<[^>]+>)*)([a-z])/, (m, t, c) => t + c.toUpperCase());
+  const ty = typeOf(s) || 'answer';
+  return `<h3>${iconSVG(ty)}<span class="sty">${STEP_NAME[ty]}</span> ${s.title}</h3>${s.say ? `<p>${cap(s.say)}</p>` : ''}${lines}${s.note ? `<div class="note">${s.note}</div>` : ''}` +
+    (s.details ? `<details><summary>${s.details.title}</summary><div class="${deCls}">${s.details.html}</div></details>` : '');
+}
+function stepsHTML(steps, deCls) {
+  return `<ol class="steps${stg && mode === 'own' ? ' own' : ''}">${steps.map(s => `<li hidden class="t-${typeOf(s) || 'answer'}">${stepHTML(s, deCls)}</li>`).join('')}</ol>`;
+}
+
+// ---------------------------------------------------------------- help modes
+const MODES = [{ id: 'watch', name: 'Watch', tip: 'See every step worked out for you.' },
+  { id: 'guided', name: 'Guided', tip: 'Each step tells you what to do; you work out the number.' },
+  { id: 'own', name: 'On my own', tip: 'Only the step titles: you do all the working.' }];
+let mode = 'guided', stg = null;
+try { const m = localStorage.getItem('eeeMode'); if (MODES.some(x => x.id === m)) mode = m; } catch (e) { /* storage blocked */ }
+const modeBarHTML = () => `<div class="modes"><span class="muted">How much help?</span>${MODES.map(m => `<button data-m="${m.id}" title="${m.tip}"${m.id === mode ? ' class="on"' : ''}>${m.name}</button>`).join('')}
+  <span class="muted">${MODES.find(m => m.id === mode).tip}</span></div>`;
+function bindModeBar(box, rerender) {
+  $$('.modes button', box).forEach(b => { b.onclick = () => {
+    mode = b.dataset.m; try { localStorage.setItem('eeeMode', mode); } catch (e) { /* storage blocked */ }
+    rerender();
+  }; });
+}
+
+// ---------------------------------------------------------------- one number at a time (Guided / On my own)
+// stage k asks for list[k]; the steps up to its step are "pending" (title shown, result hidden) until it is right.
+// hooks: reveal(n) shows the first n steps; restart() renders the question again; fmt(st) writes an answer.
+function stageStart(list, steps, hooks) {
+  stg = list.length && mode !== 'watch' ? { list, steps, i: 0, tries: 0, res: [], ...hooks } : null;
+  return !!stg;
+}
+const pendEnd = shown => (stg && stg.i < stg.list.length ? stg.list[stg.i].step + 1 : shown);
+// show the earned steps in full and the pending ones as titles (and, in Guided, their "how" text)
+function markSteps(shown) {
+  const li = $$('ol.steps>li'), upto = Math.max(shown, pendEnd(shown));
+  li.forEach((l, i) => { l.hidden = i >= upto; l.classList.toggle('pend', i >= shown); l.classList.toggle('new', i === shown - 1); });
+  return li;
+}
+function stepHint(st) {
+  const s = stg.steps[st.step], l = (s.lines || []).find(x => x.how);
+  return s.say || (l ? l.how : 'Look at the step title: what does it ask you to work out?');
+}
+const TYPE_TIP = { real: 'Type a number with or without a prefix and unit: 0.33, 330 ms, 2.4k, −24.', cx: 'Type rectangular form (4 + j8) or polar form (8.94∠63.4 or 8.94&lt;63.4).', deg: 'Type the angle in degrees: 63.4 or −116.6.' };
+function drawStage() {
+  const box = $('#stage'), A = stg.list, n = A.length;
+  if (stg.i >= n) {
+    const alone = stg.res.filter(r => r === 'alone').length;
+    box.innerHTML = `<b>${alone === n ? 'All done on your own <span class="ok">✓</span>' : `Done: ${alone} of ${n} on your own.`}</b>
+      <ul>${A.map((a, k) => `<li>${a.html} = ${stg.fmt(a)} &nbsp; ${stg.res[k] === 'alone' ? '<span class="ok">✓</span>' : '<span class="muted">✓ with help</span>'}</li>`).join('')}</ul>
+      ${alone < n ? '<p class="muted">Try another question and aim to get every number with no help.</p>' : ''}
+      <button id="sagain">Start this question again</button>`;
+    $('#sagain').onclick = () => stg.restart();
+    return;
+  }
+  const a = A[stg.i];
+  box.innerHTML = `<div class="sq">Number ${stg.i + 1} of ${n}: find <b>${a.html}</b></div>
+    <div class="srow"><label>${a.html} = <input id="sin" class="${a.kind}" autocomplete="off" spellcheck="false" aria-label="your answer"> ${a.unit}</label>
+      <button class="primary" id="sck">Check</button><button id="sshow" hidden>Show me this step</button></div>
+    <div id="shint"></div><div class="muted">${TYPE_TIP[a.kind || 'real']}</div>`;
+  const inp = $('#sin'), hint = $('#shint');
+  const check = () => {
+    if (!inp.value.trim()) return;
+    const v = readIn(a, inp.value);
+    if (v === null) { hint.innerHTML = `<div class="warn">That is not a number I can read. ${TYPE_TIP[a.kind || 'real']}</div>`; return; }
+    if (isRight(a, v)) { advance('alone'); return; }
+    stg.tries++;
+    const d = diagnose(a, v, A);
+    hint.innerHTML = `<div class="warn"><b>Not yet.</b> ${d || (mode === 'own' ? `Hint: ${stepHint(a)}` : 'Read what the step above tells you to do, then try once more.')}</div>`;
+    inp.style.borderColor = 'var(--bad)';
+    if (stg.tries >= 2) $('#sshow').hidden = false;
+  };
+  $('#sck').onclick = check;
+  inp.onkeydown = e => { if (e.key === 'Enter') check(); };
+  inp.oninput = () => { inp.style.borderColor = ''; };
+  $('#sshow').onclick = () => advance('help');
+}
+function advance(r) {
+  const A = stg.list, a = A[stg.i], li = $$('ol.steps>li');
+  stg.res[stg.i] = r; li[a.step].classList.add(r === 'alone' ? 'won' : 'helped');
+  stg.i++; stg.tries = 0;
+  stg.reveal(stg.i >= A.length ? li.length : a.step + 1);
+  drawStage();
+  ($('ol.steps>li.pend') || $('#stage')).scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  if ($('#sin')) $('#sin').focus({ preventScroll: true });
+}
+
+if (typeof module !== 'undefined') module.exports = { parseNum, parseCx, isRight, diagnose, stepType, typeOf };
+
+</script>
+<script>
+'use strict';
+// Page shell: method view with widgets, question bank (every question open, in any order), practice generator.
+// The left-hand card holds the t ⇔ s pair, the pole map and the graph of f(t); each one appears when the step that
+// earns it is reached (or at once with "Show now"). Nothing here is timed or locked.
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const TOPIC = window.TOPIC;
+let view = 'questions', cur = null, shown = 0, genLevel = TOPIC.levels[1].id, forced = {}, tCur = null;
+
+const fmtAns = a => (a.kind === 'cx' ? `${Nt(a.val[0])} ${a.val[1] < 0 ? MI : '+'} j${Nt(Math.abs(a.val[1]))}` : Nt(a.val) + (a.unit ? ' ' + a.unit : ''));
+
+// ---------------------------------------------------------------- one question (bank or generated)
+function renderQ(box, q, label) {
+  const sol = solveQ(q); cur = { q, sol, box, label }; shown = 0; forced = {}; tCur = null;
+  const lvi = TOPIC.levels.findIndex(l => l.id === q.level), lv = TOPIC.levels[lvi];
+  const tryable = sol.answers;
+  const staged = stageStart(tryable, sol.steps, { reveal, restart: () => renderQ(box, q, label), fmt: fmtAns });
+  const ph = (id, what) => `<div class="plotph" id="${id}ph"><button data-show="${id}">Show it now</button><span class="muted">${what}</span></div><div id="${id}box" hidden></div>`;
+  const left = `${sol.pair ? `<div class="pairbox" id="pairbox"></div>` : ''}
+    ${sol.pz ? `<h3 class="ptitle">Poles on the s-plane</h3>${ph('pz', 'The pole map appears when the step that finds the poles is reached.')}` : ''}
+    ${sol.plot ? `<h3 class="ptitle">Graph of ${sol.plot.name}(t)</h3>${ph('plot', 'The graph appears when the answer is reached.')}<p class="hint" id="plothint" hidden>Move the pointer over the graph to read values.</p>` : ''}`;
+  box.innerHTML = `<div class="qgrid scope" data-lv="${lvi}">
+    <div class="sticky"><div class="card">${left}</div></div>
+    <div class="card qcard">
+      <div class="qhead"><span class="chip" data-lv="${lvi}">${lv ? lv.name : ''}</span><h2>${label}</h2></div>
+      <div class="qtext">${sol.text}</div>
+      ${tryable.length ? modeBarHTML() : ''}
+      ${staged ? '' : tryable.length ? `<details class="try"><summary>Try it yourself first, then check your answers here</summary>
+        <div class="muted">Type a number or a fraction: 3, −2, 2/3, 0.25.</div>
+        <div>${tryable.map((a, i) => `<label>${a.html} = <input data-i="${i}" autocomplete="off" spellcheck="false"> ${a.unit}</label>`).join('')}
+        <button id="chk">Check</button> <span id="chkout"></span></div></details>` : ''}
+      ${staged ? '' : `<div class="ctl"><button class="primary" id="nx">Show next step</button><button id="all">Show all steps</button><button id="hide">Hide steps</button>
+        <span class="muted" id="cnt"></span></div>`}
+      ${stepsHTML(sol.steps, 'de')}
+      ${staged ? '<div class="stage" id="stage" aria-live="polite"></div>' : ''}
+      <div class="answer" id="ansbox" hidden><b>Answers:</b> ${tryable.map(a => `${a.html} = <b>${fmtAns(a)}</b>`).join('; &nbsp; ')}</div>
+      ${q.mistake ? `<div class="warn" id="mist" hidden><b>Common mistake:</b> ${q.mistake}</div>` : ''}
+      <div class="more"><button id="more">Practise more like this →</button><span class="muted">a new ${lv ? lv.name : ''} question with its own step-by-step solution</span></div>
+    </div></div>`;
+  bindModeBar(box, () => renderQ(box, q, label));
+  if (!staged) {
+    $('#nx').onclick = () => reveal(shown + 1);
+    $('#all').onclick = () => reveal(sol.steps.length);
+    $('#hide').onclick = () => reveal(0);
+  }
+  $('#more').onclick = () => { genLevel = q.level; setView('practice'); gen(genLevel, newSeed()); };
+  $$('[data-show]', box).forEach(b => { b.onclick = () => { forced[b.dataset.show] = true; drawPics(); }; });
+  const ck = $('#chk');
+  if (ck) ck.onclick = () => {
+    let good = 0;
+    $$('.try input', box).forEach(inp => {
+      const a = tryable[+inp.dataset.i], v = readIn(a, inp.value), ok = isRight(a, v);
+      inp.style.borderColor = v === null ? (inp.value.trim() ? 'var(--bad)' : '') : ok ? 'var(--ok)' : 'var(--bad)'; if (ok) good++;
+    });
+    $('#chkout').innerHTML = good === tryable.length ? '<span class="ok">All correct ✓</span>' : `<span class="bad">${good} of ${tryable.length} correct.</span> Open the steps to see where it goes wrong.`;
+  };
+  reveal(0);
+  if (staged) drawStage();
+}
+
+// the pictures follow the earned steps: an item with "at" = k shows once step k is shown (at = −1: from the start)
+const earned = at => at < 0 || shown > at;
+function drawPics() {
+  const sol = cur.sol;
+  if (sol.pair && $('#pairbox')) {
+    const p = sol.pair, done = earned(p.at), q = '<span class="qmark">?</span>';
+    const tS = p.known === 't' || done ? p.t : q, sS = p.known === 's' || done ? p.s : q;
+    $('#pairbox').innerHTML = `<div class="pair"><div class="side tside"><small>time domain</small><div>f(t) = ${tS}</div></div>
+      <div class="arrow" aria-hidden="true">${p.known === 't' ? 'ℒ →' : '← ℒ<sup>−1</sup>'}</div><div class="side sside"><small>s-domain</small><div>F(s) = ${sS}</div></div></div>`;
+  }
+  if (sol.pz && $('#pzbox')) {
+    const vis = forced.pz || earned(sol.pzAt);
+    $('#pzbox').hidden = !vis; $('#pzph').hidden = vis;
+    if (vis) {
+      const fin = sol.plotAt >= 0 && shown > sol.plotAt;
+      const ps = sol.pz.poles.filter(p => p.after === undefined || forced.pz || earned(p.after)).map(p => ({ ...p, lab: fin && p.labF ? p.labF : p.lab }));
+      $('#pzbox').innerHTML = pzSVG({ ...sol.pz, poles: ps, note: ps.length < sol.pz.poles.length ? 'the complex pair appears once the square is completed' : '' });
+    }
+  }
+  if (sol.plot && $('#plotbox')) {
+    const vis = forced.plot || earned(sol.plotAt);
+    $('#plotbox').hidden = !vis; $('#plotph').hidden = vis; $('#plothint').hidden = !vis;
+    if (vis) {
+      $('#plotbox').innerHTML = plotSVG(sol.plot, tCur);
+      const svg = $('#plotbox svg');
+      const setT = e => {
+        const r = svg.getBoundingClientRect(), W = +svg.dataset.w, x = (e.clientX - r.left) * W / r.width;
+        const span = +svg.dataset.span, tmin = +svg.dataset.tmin, L = +svg.dataset.l, R = +svg.dataset.r;
+        tCur = Math.max(0, Math.min(span, tmin + (x - L) / (W - L - R) * (span - tmin))); drawPics();
+      };
+      svg.onpointermove = setT; svg.onpointerdown = setT;
+    }
+  }
+}
+function reveal(n) {
+  shown = Math.max(0, Math.min($$('ol.steps>li').length, n));
+  const li = markSteps(shown);
+  if (!stg) {
+    $('#cnt').textContent = `${shown} of ${li.length} steps shown`;
+    $('#nx').disabled = shown >= li.length; $('#hide').disabled = shown === 0; $('#all').disabled = shown >= li.length;
+  }
+  $('#ansbox').hidden = shown < li.length; const m = $('#mist'); if (m) m.hidden = shown < li.length;
+  drawPics();
+  if (!stg && n > 0 && li[shown - 1] && n === shown && n !== li.length) li[shown - 1].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+// ---------------------------------------------------------------- method widgets
+const flow = (boxes, on = -1) => `<div class="flow">${boxes.map((b, i) => `<button class="fbox f${i % 6}${i === on ? ' on' : ''}" data-i="${i}">${b}</button>`).join('<span class="farr">→</span>')}</div>`;
+function widget(name, host) {
+  if (name === 'machine') {
+    host.innerHTML = `<div class="machine"><div class="mbox t"><small>time domain</small><div>f(t) = 3e<sup>−2t</sup></div>${plotSVG({ terms: [TM.pow(3, 0, 2)], T: 3, name: 'f' })}</div>
+      <div class="mgear"><span>× e<sup>−st</sup></span><span>∫<sub>0</sub><sup>∞</sup> … dt</span><b>ℒ</b></div>
+      <div class="mbox s"><small>s-domain</small><div>F(s) = ${FR(3, 's + 2')}</div>${pzSVG({ poles: [{ re: -2, im: 0, m: 1 }] })}</div></div>
+      ${flow(['differential equation in t (hard)', 'algebra in s (easy)', 'answer in t'])}`;
+  } else if (name === 'gallery') {
+    const G = [['step u(t)', TM.pow(1)], ['impulse δ(t)', TM.imp(1)], ['ramp t', TM.pow(1, 1)], ['t²', TM.pow(1, 2)], ['e<sup>−t</sup>', TM.pow(1, 0, 1)], ['sin 2t', TM.sin(1, 2)],
+      ['cos 2t', TM.cos(1, 2)], ['e<sup>−0.5t</sup> sin 4t', TM.sin(1, 4, 0.5)], ['delayed step u(t − 1)', TM.pow(1, 0, 0, 1)]];
+    let i = 0;
+    const draw = () => {
+      const f = G[i][1];
+      host.innerHTML = `<div class="wbar">${G.map((g, k) => `<button data-k="${k}"${k === i ? ' class="on"' : ''}>${g[0]}</button>`).join('')}</div>
+        <div class="eq big">${tH(f)} &nbsp;⇔&nbsp; ${sH(f, true)}</div><div class="two">${plotSVG({ terms: [f], T: f.sh === 'imp' ? 3 : plotSpan([f]), name: 'f' })}${pzSVG({ poles: polesOf(f), delay: f.d })}</div>`;
+      $$('.wbar button', host).forEach(b => { b.onclick = () => { i = +b.dataset.k; draw(); }; });
+    };
+    draw();
+  } else if (name === 'tiles') {
+    const C = [['δ(t)', '1'], ['u(t)', FR(1, 's')], ['e<sup>−at</sup>', FR(1, 's + a')], ['t', FR(1, 's<sup>2</sup>')], ['t<sup>n</sup>', FR('n!', 's<sup>n+1</sup>')], ['t e<sup>−at</sup>', FR(1, '(s + a)<sup>2</sup>')],
+      ['t<sup>n</sup>e<sup>−at</sup>', FR('n!', '(s + a)<sup>n+1</sup>')], ['sin ωt', FR('ω', 's<sup>2</sup> + ω<sup>2</sup>')], ['cos ωt', FR('s', 's<sup>2</sup> + ω<sup>2</sup>')],
+      ['e<sup>−at</sup> sin ωt', FR('ω', '(s + a)<sup>2</sup> + ω<sup>2</sup>')], ['e<sup>−at</sup> cos ωt', FR('s + a', '(s + a)<sup>2</sup> + ω<sup>2</sup>')], ['f(t − d) u(t − d)', 'e<sup>−ds</sup> F(s)'], ['e<sup>−at</sup> f(t)', 'F(s + a)']];
+    let side = 't';
+    const draw = () => {
+      host.innerHTML = `<div class="wbar"><button data-s="t"${side === 't' ? ' class="on"' : ''}>Show the t side</button><button data-s="s"${side === 's' ? ' class="on"' : ''}>Show the s side</button></div>
+        <div class="tiles">${C.map((c, k) => `<button class="tile" data-k="${k}" aria-label="flash card"><span class="front">${side === 't' ? c[0] : c[1]}</span><span class="back">${side === 't' ? c[1] : c[0]}</span></button>`).join('')}</div>`;
+      $$('.wbar button', host).forEach(b => { b.onclick = () => { side = b.dataset.s; draw(); }; });
+      $$('.tile', host).forEach(t => { t.onclick = () => t.classList.toggle('flip'); });
+    };
+    draw();
+  } else if (name === 'shift') {
+    const B = { step: (a, d) => TM.pow(2, 0, a, d), ramp: (a, d) => TM.pow(1, 1, a, d), sine: (a, d) => TM.sin(2, 3, a, d), cosine: (a, d) => TM.cos(2, 3, a, d) };
+    let b = 'sine';
+    host.innerHTML = `<div class="wbar">${Object.keys(B).map(k => `<button data-b="${k}">${k}</button>`).join('')}</div>
+      <div class="sliders"><label><span class="k2">a (decay)</span><input type="range" id="sa" min="0" max="3" step="0.5" value="1"><b id="sav"></b></label>
+      <label><span class="kx">d (delay)</span><input type="range" id="sd" min="0" max="3" step="0.5" value="0"><b id="sdv"></b></label></div><div class="eq big" id="sform"></div><div id="splot"></div>`;
+    const draw = () => {
+      const a = +$('#sa', host).value, d = +$('#sd', host).value, f = B[b](a, d), g = B[b](0, 0);
+      $('#sav', host).textContent = a; $('#sdv', host).textContent = d + ' s';
+      $('#sform', host).innerHTML = `${tH(f)} &nbsp;⇔&nbsp; ${sH(f, true)}`;
+      $('#splot', host).innerHTML = plotSVG({ terms: [f], ghost: [g], T: Math.max(6, d + 4), name: 'f' });
+      $$('.wbar button', host).forEach(x => x.classList.toggle('on', x.dataset.b === b));
+    };
+    $$('.wbar button', host).forEach(x => { x.onclick = () => { b = x.dataset.b; draw(); }; });
+    $$('input', host).forEach(x => { x.oninput = draw; }); draw();
+  } else if (name === 'poles') {
+    host.innerHTML = `<div class="sliders"><label>σ (real part)<input type="range" id="ps" min="-3" max="1" step="0.5" value="-1"><b id="psv"></b></label>
+      <label>ω (j part)<input type="range" id="pw" min="0" max="6" step="1" value="3"><b id="pwv"></b></label></div><div class="eq big" id="pform"></div><div class="two" id="ppics"></div><p class="note" id="pword"></p>`;
+    const draw = () => {
+      const s = +$('#ps', host).value, w = +$('#pw', host).value, f = w ? TM.sin(1, w, -s) : TM.pow(1, 0, -s);
+      $('#psv', host).textContent = s; $('#pwv', host).textContent = w;
+      $('#pform', host).innerHTML = `${sH(f, true)} &nbsp;⇔&nbsp; ${tH(f)}`;
+      $('#ppics', host).innerHTML = pzSVG({ poles: polesOf(f) }) + plotSVG({ terms: [f], T: s < 0 ? Math.min(8, 5 / -s) : 4, name: 'f' });
+      $('#pword', host).innerHTML = s > 0 ? '<b>Right half:</b> the signal grows without limit (unstable).' : s === 0 ? (w ? '<b>On the jω axis:</b> it oscillates for ever, never dying away.' : '<b>At the origin:</b> a step, constant for ever.')
+        : w ? `<b>Left half, a pair:</b> it oscillates at ω = ${w} rad/s while dying away; the further left, the faster it dies.` : '<b>Left half, on the axis:</b> a plain decay; the further left, the faster.';
+    };
+    $$('input', host).forEach(x => { x.oninput = draw; }); draw();
+  } else if (name === 'recipe') {
+    const words = TOPIC.widgets === 'adv' ? ['transform', 'collect Y(s)', 'divide', 'split', 'table backwards', 'check'] : ['delay?', 'bottom → row', 'top → sin or cos', 'make the top match', 'check'];
+    host.innerHTML = flow(words);
+  } else if (name === 'roadmap') {
+    const R = [['problem in t', 'y′(t) + 2y(t) = 6u(t), &nbsp; y(0) = 1. Calculus: hard to solve directly.'],
+      ['transform', `Each term through the table and the derivative rule: [sY(s) − 1] + 2Y(s) = ${FR(6, 's')}`],
+      ['algebra in s', `Collect and divide: (s + 2)Y(s) = 1 + ${FR(6, 's')} &nbsp;→&nbsp; Y(s) = ${FR('s + 6', 's(s + 2)')}`],
+      ['split', `Partial fractions (cover-up): Y(s) = ${FR(3, 's')} − ${FR(2, 's + 2')}`],
+      ['table backwards', `${FR(3, 's')} ⇔ 3, &nbsp; ${FR(2, 's + 2')} ⇔ 2e<sup>−2t</sup>`],
+      ['answer in t', 'y(t) = 3 − 2e<sup>−2t</sup>. Check: y(0) = 3 − 2 = 1 ✓']];
+    let i = 0;
+    const draw = () => { host.innerHTML = flow(R.map(r => r[0]), i) + `<div class="eq big">${R[i][1]}</div>`; $$('.fbox', host).forEach(b => { b.onclick = () => { i = +b.dataset.i; draw(); }; }); };
+    draw();
+  } else if (name === 'split') {
+    const terms = [TM.pow(2, 0, 1), TM.pow(-3, 0, 2), TM.pow(1, 0, 3)], cls = ['k1', 'k2', 'k3'];
+    let k = -1;
+    const draw = () => {
+      const tiles = terms.map((f, j) => `<button class="stile ${cls[j]}${k === j ? ' on' : ''}" data-j="${j}">${j && f.c > 0 ? '+ ' : ''}${sH(f)}</button>`).join('');
+      const pl = k < 0 ? { terms, T: 4, name: 'f' } : { terms: [terms[k]], ghost: terms, T: 4, name: 'f' };
+      host.innerHTML = `<div class="splitrow"><span class="bigfr">${FR('s + 5', '(s + 1)(s + 2)(s + 3)')}</span><span>=</span>${tiles}</div>
+        <div class="two">${pzSVG({ poles: terms.map((f, j) => ({ re: -f.a, im: 0, m: 1, lab: Nt(f.c), cls: cls[j] })) })}${plotSVG(pl)}</div>
+        <p class="muted">${k < 0 ? 'The graph is the sum, f(t) = 2e<sup>−t</sup> − 3e<sup>−2t</sup> + e<sup>−3t</sup>. Click a small fraction to see its own piece (the faint curve is the sum).' : `This piece: ${tH(terms[k])}. Click it again to go back to the sum.`}</p>`;
+      $$('.stile', host).forEach(b => { b.onclick = () => { k = k === +b.dataset.j ? -1 : +b.dataset.j; draw(); }; });
+    };
+    draw();
+  } else if (name === 'coverup') {
+    const Nn = [7, 1], fs = [1, 3];
+    let k = -1;
+    const draw = () => {
+      const bot = fs.map((p, j) => `<button class="cfac${k === j ? ' cov' : ''}" data-j="${j}">(${linH(p)})</button>`).join('');
+      let out = '<p class="muted">Click a bracket on the bottom to cover it.</p>';
+      if (k >= 0) {
+        const v = -fs[k], o = fs[1 - k], top = pev(Nn, v), rv = v + o, L = 'AB'[k];
+        out = `<div class="eq">${L} = ${FR(polyH(Nn), linP(o))} at s = ${N(v)} &nbsp;=&nbsp; ${FR(subH(Nn, v), `(${N(v)} + ${N(o)})`)} = ${FR(N(top), N(rv))} = <b>${N(top / rv)}</b></div>`;
+      }
+      host.innerHTML = `<div class="covbox"><span class="fr"><span>${polyH(Nn)}</span><span>${bot}</span></span> = ${FR('A', 's + 1')} + ${FR('B', 's + 3')}</div>${out}`;
+      $$('.cfac', host).forEach(b => { b.onclick = () => { k = k === +b.dataset.j ? -1 : +b.dataset.j; draw(); }; });
+    };
+    draw();
+  } else if (name === 'square') {
+    host.innerHTML = `<div class="sliders"><label>b (s-number)<input type="range" id="qb" min="0" max="10" step="2" value="4"><b id="qbv"></b></label>
+      <label>c (constant)<input type="range" id="qc" min="1" max="40" step="1" value="13"><b id="qcv"></b></label></div><div class="eq big" id="qform"></div><div class="two" id="qpics"></div>`;
+    const draw = () => {
+      const b = +$('#qb', host).value, c = +$('#qc', host).value, al = b / 2, r = c - al * al;
+      $('#qbv', host).textContent = b; $('#qcv', host).textContent = c;
+      $('#qform', host).innerHTML = `${quadH({ b, c })} = ${linP(al)}<sup>2</sup> ${r < 0 ? MI : '+'} ${N(Math.abs(r))} &nbsp; ${r > 0 ? `= ${linP(al)}<sup>2</sup> + ${sf(Math.sqrt(r), 3)}<sup>2</sup>: complex poles ${MI}${N(al)} ± j${sf(Math.sqrt(r), 3)}` : r === 0 ? `: a double pole at ${N(-al)}` : ': β² is negative, so it factorises into real brackets'}`;
+      const S = 120, u = Math.min(14, 120 / Math.max(al, 1)), a = al * u, X0 = 20, Y0 = 20;
+      const area = `<svg class="sqpic" viewBox="0 0 ${S + a + 300} ${S + a + 50}" role="img" aria-label="completing the square as areas">
+        <rect class="sq0" x="${X0}" y="${Y0}" width="${S}" height="${S}"/><text x="${X0 + S / 2}" y="${Y0 + S / 2}" text-anchor="middle">s²</text>
+        ${a ? `<rect class="sq1" x="${X0 + S}" y="${Y0}" width="${a}" height="${S}"/><rect class="sq1" x="${X0}" y="${Y0 + S}" width="${S}" height="${a}"/><rect class="sq2" x="${X0 + S}" y="${Y0 + S}" width="${a}" height="${a}"/>
+        <text x="${X0 + S + a / 2}" y="${Y0 + S / 2}" text-anchor="middle" class="sm">αs</text><text x="${X0 + S / 2}" y="${Y0 + S + a / 2 + 5}" text-anchor="middle" class="sm">αs</text>` : ''}
+        <text x="${X0 + S + a + 14}" y="${Y0 + 24}">bs = 2αs: two strips of ${N(al)}s</text><text x="${X0 + S + a + 14}" y="${Y0 + 50}">corner α² = ${N(al * al)} is borrowed</text>
+        <text x="${X0 + S + a + 14}" y="${Y0 + 76}">from c = ${N(c)}: left over ${N(r)}</text><text x="${X0}" y="${S + a + 44}">(s + α)² is the whole square</text></svg>`;
+      $('#qpics', host).innerHTML = area + pzSVG({ poles: r > 0 ? [{ re: -al, im: Math.sqrt(r), m: 1, cls: 'cx' }, { re: -al, im: -Math.sqrt(r), m: 1, cls: 'cx' }] : r === 0 ? [{ re: -al, im: 0, m: 2 }] : [{ re: -al + Math.sqrt(-r), im: 0, m: 1 }, { re: -al - Math.sqrt(-r), im: 0, m: 1 }] });
+    };
+    $$('input', host).forEach(x => { x.oninput = draw; }); draw();
+  } else if (name === 'ivfv') {
+    const EX = [['settles', { facs: [{ p: 0, A: 1 }, { p: 2, A: 1 }, { p: 4, A: 4 }] }], ['dies away', { facs: [{ p: 1, A: 3 }, { p: 3, A: -1 }] }], ['oscillates', { N: [6, 2], quad: { b: 0, c: 9 } }]];
+    let i = 0;
+    const draw = () => {
+      const R = ratSpec(EX[i][1]), so = pfSolve(R), D = denom(R.facs, R.quad), v0 = ivtVal(R.N, D);
+      const zero = R.facs.find(f => Math.abs(f.p) < 1e-12), osc = R.quad && R.quad.b === 0;
+      const vinf = osc ? NaN : zero ? pev(R.N, 0) / pev(denom(R.facs.filter(f => f !== zero), R.quad), 0) : 0;
+      host.innerHTML = `<div class="wbar">${EX.map((e, k) => `<button data-k="${k}"${k === i ? ' class="on"' : ''}>${e[0]}</button>`).join('')}</div>
+        <div class="eq big">F(s) = ${ratH(R)} &nbsp; → &nbsp; f(0<sup>+</sup>) = ${N(v0)}, &nbsp; f(∞) = ${osc ? 'none (poles on the jω axis)' : N(vinf)}</div>
+        ${plotSVG({ terms: so.terms, T: osc ? 6 : 4, name: 'f', marks: { f0: v0, finf: vinf } })}`;
+      $$('.wbar button', host).forEach(b => { b.onclick = () => { i = +b.dataset.k; draw(); }; });
+    };
+    draw();
+  }
+}
+
+// ---------------------------------------------------------------- views
+const newSeed = () => Math.floor(Math.random() * 90000) + 10000;
+function setView(v) {
+  view = v;
+  $$('nav.tabs button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  const M = $('main');
+  if (v === 'method') {
+    M.innerHTML = `<div class="mgrid">${TOPIC.method.map((s, i) => `<div class="card"><h2>${s.title}</h2>${s.widget ? `<div class="wg" data-i="${i}"></div>` : ''}${s.html}</div>`).join('')}</div>`;
+    $$('.wg').forEach(d => widget(TOPIC.method[+d.dataset.i].widget, d));
+  } else if (v === 'questions') {
+    M.innerHTML = `<div class="card levels">${TOPIC.levels.map((l, li) => `<div class="level" data-lv="${li}"><div class="lname"><span class="lnum">${li + 1}</span><span>${l.name}<small>${l.blurb}</small></span></div>${TOPIC.questions.map((q, i) => [q, i]).filter(([q]) => q.level === l.id).map(([q, i]) => `<button class="qbtn" data-i="${i}">Q${i + 1} · ${q.title}</button>`).join('')}</div>`).join('')}
+      <p class="muted">Every question is open: start anywhere. They get harder from top to bottom. Each one has a "Practise more like this" button for fresh questions at the same level.</p></div><div id="qbox"></div>`;
+    $$('.qbtn').forEach(b => { b.onclick = () => openQ(+b.dataset.i); });
+    const i = cur && TOPIC.questions.indexOf(cur.q) >= 0 ? TOPIC.questions.indexOf(cur.q) : 0;
+    openQ(i, true);
+  } else {
+    M.innerHTML = `<div class="card gen"><b>Difficulty:</b> ${TOPIC.levels.map((l, li) => `<button class="lvb" data-lv="${li}" data-l="${l.id}" title="${l.blurb}">${l.name}</button>`).join('')}
+      <button class="primary" id="go">Generate question</button>
+      <span class="code" id="code"></span>
+      <span style="margin-left:auto"></span><input id="cin" placeholder="question code" aria-label="question code"><button id="cgo">Load</button></div>
+      <p class="muted">Each question is new: the numbers are picked so that every answer comes out as a whole number or a simple fraction. The solution is worked out step by step, the same way as in the question bank. Share the code to give a classmate the same question.</p><div id="qbox"></div>`;
+    const mark = () => $$('.lvb').forEach(b => b.classList.toggle('on', b.dataset.l === genLevel));
+    $$('.lvb').forEach(b => { b.onclick = () => { genLevel = b.dataset.l; mark(); }; });
+    mark();
+    $('#go').onclick = () => gen(genLevel, newSeed());
+    $('#cgo').onclick = () => {
+      const m = /^\s*([A-Za-z])-(\d+)\s*$/.exec($('#cin').value), lv = m && TOPIC.levels.find(l => l.code.toLowerCase() === m[1].toLowerCase());
+      if (lv) { genLevel = lv.id; mark(); gen(lv.id, +m[2]); } else $('#code').textContent = 'Code not recognised (example: C-12345)';
+    };
+    if (!cur || !cur.q.generated) gen(genLevel, newSeed(), true);
+    else renderQ($('#qbox'), cur.q, `Practice question (${TOPIC.levels.find(l => l.id === cur.q.level).name})`);
+  }
+}
+function openQ(i, quiet) {
+  const q = TOPIC.questions[i];
+  $$('.qbtn').forEach(b => b.classList.toggle('on', +b.dataset.i === i));
+  renderQ($('#qbox'), q, `Question ${i + 1}: ${q.title}`);
+  if (!quiet) $('#qbox').scrollIntoView({ block: 'start', behavior: 'smooth' });
+}
+function gen(level, seed, quiet) {
+  const lv = TOPIC.levels.find(l => l.id === level);
+  let q;
+  try { q = generate(TOPIC, level, seed); } catch (e) { $('#qbox').innerHTML = '<p class="bad">Could not make a question this time. Click Generate again.</p>'; return; }
+  genLevel = level; $$('.lvb').forEach(b => b.classList.toggle('on', b.dataset.l === level));
+  $('#code').textContent = `Code: ${lv.code}-${seed}`;
+  renderQ($('#qbox'), q, `Practice question (${lv.name})`);
+  if (!quiet) $('#qbox').scrollIntoView({ block: 'start', behavior: 'smooth' });
+}
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || !$('#nx')) return;
+  if (e.key === 'ArrowRight') reveal(shown + 1); if (e.key === 'ArrowLeft') reveal(shown - 1);
+});
+$$('nav.tabs button').forEach(b => { b.onclick = () => setView(b.dataset.v); });
+setView('questions');
+
+</script>
+<script>
+document.getElementById('theme').onclick = () => {
+  const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  r.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('theme', r.dataset.theme); } catch (e) { }
+};
+</script>
+</body>
+</html>
